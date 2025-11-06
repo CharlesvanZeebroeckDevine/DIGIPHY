@@ -1,14 +1,15 @@
 import * as THREE from 'three';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 
 // Scene setup
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x87ceeb); // Sky blue background
+// Background will be set by HDRI
 
 // Camera setup
 const camera = new THREE.PerspectiveCamera(
-    20, // Field of view
+    75, // Field of view
     window.innerWidth / window.innerHeight, // Aspect ratio
     0.1, // Near plane
     1000 // Far plane
@@ -21,6 +22,15 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1;
+// Use outputColorSpace for Three.js r152+ (replaces outputEncoding)
+if (renderer.outputColorSpace !== undefined) {
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+} else {
+    // Fallback for older versions
+    renderer.outputEncoding = THREE.sRGBEncoding;
+}
 document.getElementById('app').appendChild(renderer.domElement);
 
 // Camera controls
@@ -34,11 +44,50 @@ controls.minPolarAngle = 0; // Allow looking from above
 controls.target.set(0, 0, 0); // Look at the origin initially
 controls.update(); // Initialize controls
 
-// Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-scene.add(ambientLight);
+// HDRI Environment Lighting
+const hdrLoader = new HDRLoader();
+hdrLoader.load(
+    '/studio_small_08_2k.hdr',
+    (texture) => {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        // Set as scene background
+        scene.background = texture;
+
+        // Set as environment map for realistic reflections and lighting
+        scene.environment = texture;
+
+        // Update all materials to use the environment map
+        scene.traverse((child) => {
+            if (child.isMesh && child.material) {
+                const materials = Array.isArray(child.material)
+                    ? child.material
+                    : [child.material];
+
+                materials.forEach((material) => {
+                    if (material.isMeshStandardMaterial || material.isMeshPhysicalMaterial) {
+                        material.needsUpdate = true;
+                    }
+                });
+            }
+        });
+
+        console.log('HDRI environment loaded successfully');
+    },
+    (progress) => {
+        console.log('HDRI loading progress:', (progress.loaded / progress.total * 100) + '%');
+    },
+    (error) => {
+        console.error('Error loading HDRI:', error);
+        // Fallback to simple lighting if HDRI fails
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        scene.background = new THREE.Color(0x87ceeb);
+    }
+);
+
+// Additional directional light for shadows (optional, HDRI provides most lighting)
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.3);
 directionalLight.position.set(10, 10, 5);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 2048;
@@ -68,21 +117,56 @@ scene.add(plane);
 const gridHelper = new THREE.GridHelper(20, 20, 0x888888, 0xcccccc);
 scene.add(gridHelper);
 
-// FBX Loader
-const fbxLoader = new FBXLoader();
+// GLTF Loader
+const gltfLoader = new GLTFLoader();
 let model = null;
+const materialGroups = new Map(); // Store materials organized by name/vertex group
 
-fbxLoader.load(
-    '/DigiPHY_model.fbx',
-    (fbx) => {
-        model = fbx;
+gltfLoader.load(
+    '/GLTF/Test.gltf',
+    (gltf) => {
+        model = gltf.scene;
 
-        // Enable shadows on the model
+        // Enable shadows and organize materials by vertex groups
         model.traverse((child) => {
             if (child.isMesh) {
                 child.castShadow = true;
                 child.receiveShadow = true;
+
+                // Organize materials by name (vertex groups)
+                if (child.material) {
+                    // Handle both single material and material arrays
+                    const materials = Array.isArray(child.material)
+                        ? child.material
+                        : [child.material];
+
+                    materials.forEach((material, index) => {
+                        const materialName = material.name || `material_${index}`;
+
+                        if (!materialGroups.has(materialName)) {
+                            materialGroups.set(materialName, {
+                                material: material,
+                                meshes: []
+                            });
+                        }
+
+                        // Store reference to this mesh for this material
+                        materialGroups.get(materialName).meshes.push(child);
+
+                        // Ensure material uses environment map if available
+                        if (scene.environment && (material.isMeshStandardMaterial || material.isMeshPhysicalMaterial)) {
+                            material.envMap = scene.environment;
+                            material.needsUpdate = true;
+                        }
+                    });
+                }
             }
+        });
+
+        // Log all material groups found
+        console.log('Material groups (vertex groups) found:');
+        materialGroups.forEach((group, name) => {
+            console.log(`  - ${name}: ${group.meshes.length} mesh(es)`);
         });
 
         // Calculate bounding box to center and scale the model
@@ -129,16 +213,20 @@ fbxLoader.load(
         controls.target.set(0, modelHeight * 0.4, 0);
         controls.update();
 
-        console.log('FBX model loaded successfully');
+        console.log('GLTF model loaded successfully');
         console.log('Model size:', size);
         console.log('Camera position:', camera.position);
         console.log('Camera distance:', distance);
+
+        // Export material groups to window for easy access
+        window.materialGroups = materialGroups;
+        window.model = model;
     },
     (progress) => {
         console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%');
     },
     (error) => {
-        console.error('Error loading FBX model:', error);
+        console.error('Error loading GLTF model:', error);
     }
 );
 
