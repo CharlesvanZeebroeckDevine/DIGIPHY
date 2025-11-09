@@ -1,249 +1,349 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
+import '/style.css?url';
+import { Application, Sprite, Assets, DisplacementFilter, BlurFilter, Graphics, Texture } from 'pixi.js';
 
-// Scene setup
-const scene = new THREE.Scene();
-// Background will be set by HDRI
+// 1. Create a new Pixi Application
+const app = new Application();
 
-// Camera setup
-const camera = new THREE.PerspectiveCamera(
-    75, // Field of view
-    window.innerWidth / window.innerHeight, // Aspect ratio
-    0.1, // Near plane
-    1000 // Far plane
-);
-// Initial camera position (will be adjusted when model loads)
-camera.position.set(0, 3, 5);
+// IIFE (Immediately Invoked Function Expression) to use async/await
+(async () => {
+    // Initialize the app and make it fullscreen
+    await app.init({
+        width: window.innerWidth,
+        height: window.innerHeight,
+        resizeTo: window, // Automatically resize renderer to fill the browser
+        background: '#000000', // Black background (behind both layers)
+    });
+    
+    // Append canvas to the hero section instead of body
+    const heroSection = document.getElementById('hero');
+    heroSection.appendChild(app.canvas);
 
-// Renderer setup
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1;
-// Use outputColorSpace for Three.js r152+ (replaces outputEncoding)
-if (renderer.outputColorSpace !== undefined) {
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-} else {
-    // Fallback for older versions
-    renderer.outputEncoding = THREE.sRGBEncoding;
-}
-document.getElementById('app').appendChild(renderer.domElement);
+    // 2. Load your assets
+// The '/_filename_.jpg' path works because they are in the 'public/' folder
+const loadedAssets = await Assets.load([
+    '/my_photo-3.jpg',           // Background image
+    '/my_depth_map-3.jpg',       // Background depth map
+    '/my_photo-4.png',         // Overlay image
+    '/my_depth_map-4.png',     // Overlay depth map
+]);
 
-// Camera controls
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true; // Enable smooth camera movement
-controls.dampingFactor = 0.05;
-controls.minDistance = 1; // Minimum zoom distance
-controls.maxDistance = 50; // Maximum zoom distance
-controls.maxPolarAngle = Math.PI * 0.75; // Allow looking from below but not completely upside down
-controls.minPolarAngle = 0; // Allow looking from above
-controls.target.set(0, 0, 0); // Look at the origin initially
-controls.update(); // Initialize controls
+// 3. Create sprites for BACKGROUND layer (always visible with parallax)
+const backgroundSprite = new Sprite(loadedAssets['/my_photo-3.jpg']);
+const backgroundDepthSprite = new Sprite(loadedAssets['/my_depth_map-3.jpg']);
 
-// HDRI Environment Lighting
-const hdrLoader = new HDRLoader();
-hdrLoader.load(
-    '/studio_small_08_2k.hdr',
-    (texture) => {
-        texture.mapping = THREE.EquirectangularReflectionMapping;
+// 4. Create sprites for OVERLAY layer (revealed on hover)
+const originalSprite = new Sprite(loadedAssets['/my_photo-4.png']);
+const depthSprite = new Sprite(loadedAssets['/my_depth_map-4.png']);
 
-        // Set as scene background
-        scene.background = texture;
+    // 5. Set up sprite properties for both layers
+    // Background layer
+    backgroundSprite.anchor.set(0.5);
+    backgroundDepthSprite.anchor.set(0.5);
+    
+    // Overlay layer
+    originalSprite.anchor.set(0.5);
+    depthSprite.anchor.set(0.5);
 
-        // Set as environment map for realistic reflections and lighting
-        scene.environment = texture;
-
-        // Update all materials to use the environment map
-        scene.traverse((child) => {
-            if (child.isMesh && child.material) {
-                const materials = Array.isArray(child.material)
-                    ? child.material
-                    : [child.material];
-
-                materials.forEach((material) => {
-                    if (material.isMeshStandardMaterial || material.isMeshPhysicalMaterial) {
-                        material.needsUpdate = true;
-                    }
-                });
-            }
-        });
-
-        console.log('HDRI environment loaded successfully');
-    },
-    (progress) => {
-        console.log('HDRI loading progress:', (progress.loaded / progress.total * 100) + '%');
-    },
-    (error) => {
-        console.error('Error loading HDRI:', error);
-        // Fallback to simple lighting if HDRI fails
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
-        scene.background = new THREE.Color(0x87ceeb);
-    }
-);
-
-// Additional directional light for shadows (optional, HDRI provides most lighting)
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.3);
-directionalLight.position.set(10, 10, 5);
-directionalLight.castShadow = true;
-directionalLight.shadow.mapSize.width = 2048;
-directionalLight.shadow.mapSize.height = 2048;
-directionalLight.shadow.camera.near = 0.5;
-directionalLight.shadow.camera.far = 50;
-directionalLight.shadow.camera.left = -20;
-directionalLight.shadow.camera.right = 20;
-directionalLight.shadow.camera.top = 20;
-directionalLight.shadow.camera.bottom = -20;
-scene.add(directionalLight);
-
-// Plane floor
-const planeGeometry = new THREE.PlaneGeometry(20, 20);
-const planeMaterial = new THREE.MeshStandardMaterial({
-    color: 0x90ee90, // Light green
-    roughness: 0.8,
-    metalness: 0.2
-});
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-plane.rotation.x = -Math.PI / 2; // Rotate to be horizontal
-plane.position.y = 0;
-plane.receiveShadow = true;
-scene.add(plane);
-
-// Grid helper for reference
-const gridHelper = new THREE.GridHelper(20, 20, 0x888888, 0xcccccc);
-scene.add(gridHelper);
-
-// GLTF Loader
-const gltfLoader = new GLTFLoader();
-let model = null;
-const materialGroups = new Map(); // Store materials organized by name/vertex group
-
-gltfLoader.load(
-    '/GLTF/Test.gltf',
-    (gltf) => {
-        model = gltf.scene;
-
-        // Enable shadows and organize materials by vertex groups
-        model.traverse((child) => {
-            if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-
-                // Organize materials by name (vertex groups)
-                if (child.material) {
-                    // Handle both single material and material arrays
-                    const materials = Array.isArray(child.material)
-                        ? child.material
-                        : [child.material];
-
-                    materials.forEach((material, index) => {
-                        const materialName = material.name || `material_${index}`;
-
-                        if (!materialGroups.has(materialName)) {
-                            materialGroups.set(materialName, {
-                                material: material,
-                                meshes: []
-                            });
-                        }
-
-                        // Store reference to this mesh for this material
-                        materialGroups.get(materialName).meshes.push(child);
-
-                        // Ensure material uses environment map if available
-                        if (scene.environment && (material.isMeshStandardMaterial || material.isMeshPhysicalMaterial)) {
-                            material.envMap = scene.environment;
-                            material.needsUpdate = true;
-                        }
-                    });
-                }
-            }
-        });
-
-        // Log all material groups found
-        console.log('Material groups (vertex groups) found:');
-        materialGroups.forEach((group, name) => {
-            console.log(`  - ${name}: ${group.meshes.length} mesh(es)`);
-        });
-
-        // Calculate bounding box to center and scale the model
-        const box = new THREE.Box3().setFromObject(model);
-        const center = box.getCenter(new THREE.Vector3());
-        const size = box.getSize(new THREE.Vector3());
-
-        // Optionally scale if model is too large/small
-        const maxDimension = Math.max(size.x, size.y, size.z);
-        if (maxDimension > 10) {
-            const scale = 10 / maxDimension;
-            model.scale.multiplyScalar(scale);
-            // Recalculate box after scaling
-            box.setFromObject(model);
-            box.getCenter(center);
-            box.getSize(size);
+    // Function to resize and center sprites
+    function resizeSprites() {
+        const screenAspect = app.screen.width / app.screen.height;
+        const textureAspect = originalSprite.texture.width / originalSprite.texture.height;
+        
+        let scale = 1;
+        if (screenAspect > textureAspect) {
+            scale = app.screen.width / originalSprite.texture.width;
+        } else {
+            scale = app.screen.height / originalSprite.texture.height;
         }
 
-        // Center the model horizontally, but place it on the floor
-        model.position.x = -center.x;
-        model.position.y = -box.min.y; // Place bottom of model on floor (y=0)
-        model.position.z = -center.z;
-
-        scene.add(model);
-
-        // Adjust camera to frame the model nicely
-        // Calculate distance to fit the model in view
-        const fov = camera.fov * (Math.PI / 180);
-        const modelWidth = Math.max(size.x, size.z);
-        const modelHeight = size.y;
-
-        // Calculate distance needed to fit model width in view
-        const distanceForWidth = (modelWidth / 2) / Math.tan(fov / 2) * 1.2;
-        // Calculate distance needed to fit model height in view
-        const distanceForHeight = (modelHeight / 2) / Math.tan(fov / 2) * 1.2;
-
-        // Use the larger distance to ensure model fits
-        const distance = Math.max(distanceForWidth, distanceForHeight);
-        const height = modelHeight * 0.3 + 1; // Position camera at about 30% up the model
-
-        camera.position.set(0, height, distance);
-
-        // Update controls target to center of model
-        controls.target.set(0, modelHeight * 0.4, 0);
-        controls.update();
-
-        console.log('GLTF model loaded successfully');
-        console.log('Model size:', size);
-        console.log('Camera position:', camera.position);
-        console.log('Camera distance:', distance);
-
-        // Export material groups to window for easy access
-        window.materialGroups = materialGroups;
-        window.model = model;
-    },
-    (progress) => {
-        console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%');
-    },
-    (error) => {
-        console.error('Error loading GLTF model:', error);
+        // Position and scale background layer
+        backgroundSprite.x = app.screen.width / 2;
+        backgroundSprite.y = app.screen.height / 2;
+        backgroundSprite.scale.set(scale);
+        backgroundDepthSprite.x = app.screen.width / 2;
+        backgroundDepthSprite.y = app.screen.height / 2;
+        backgroundDepthSprite.scale.set(scale);
+        
+        // Position and scale overlay layer
+        originalSprite.x = app.screen.width / 2;
+        originalSprite.y = app.screen.height / 2;
+        originalSprite.scale.set(scale);
+        depthSprite.x = app.screen.width / 2;
+        depthSprite.y = app.screen.height / 2;
+        depthSprite.scale.set(scale);
     }
-);
 
-// Handle window resize
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    controls.update();
-});
+    // Call it once to set initial size
+    resizeSprites(); 
+    // Listen for window resize to adjust
+    window.addEventListener('resize', resizeSprites);
 
-// Animation loop
-function animate() {
-    requestAnimationFrame(animate);
-    controls.update(); // Update controls for smooth damping
-    renderer.render(scene, camera);
-}
+    // 6. Create displacement filters for both layers
+    // Background parallax filter
+    const backgroundDisplacementFilter = new DisplacementFilter(backgroundDepthSprite);
+    backgroundSprite.filters = [backgroundDisplacementFilter];
+    backgroundDisplacementFilter.scale.x = 40;
+    backgroundDisplacementFilter.scale.y = 40;
+    
+    // Overlay parallax filter
+    const displacementFilter = new DisplacementFilter(depthSprite);
+    originalSprite.filters = [displacementFilter];
+    displacementFilter.scale.x = 40;
+    displacementFilter.scale.y = 40;
+    
+    // 7. Add sprites to the stage in layers
+    // Layer 1: Background (always visible)
+    app.stage.addChild(backgroundDepthSprite);
+    app.stage.addChild(backgroundSprite);
+    
+    // Layer 2: Overlay (revealed on hover)
+    app.stage.addChild(depthSprite);
+    app.stage.addChild(originalSprite);
 
-animate();
+    // 8. Implement the mouse pan effect for parallax on BOTH layers
+    app.stage.interactive = true; // Make the stage listen for events
 
+    let mousePosition = { x: app.screen.width / 2, y: app.screen.height / 2 };
+    let isMouseInside = false; // Track if mouse is inside canvas
+    let isMouseMoving = false; // Track if mouse is actively moving
+    let mouseMovementTimeout = null;
+
+    app.stage.on('mousemove', (event) => {
+        // Store mouse position
+        mousePosition.x = event.global.x;
+        mousePosition.y = event.global.y;
+        isMouseInside = true;
+        isMouseMoving = true;
+
+        // Clear previous timeout
+        if (mouseMovementTimeout) {
+            clearTimeout(mouseMovementTimeout);
+        }
+
+        // Set timeout to stop painting after mouse stops moving
+        mouseMovementTimeout = setTimeout(() => {
+            isMouseMoving = false;
+        }, 200); // 100ms after last movement, stop painting
+
+        // Get mouse position as a normalized value from -0.5 to +0.5
+        const mouseX = (event.global.x / app.screen.width) - 0.5;
+        const mouseY = (event.global.y / app.screen.height) - 0.5;
+
+        // Apply parallax to BOTH layers with the same effect
+        backgroundDisplacementFilter.scale.x = -mouseX * 40;
+        backgroundDisplacementFilter.scale.y = -mouseY * 40;
+        
+        displacementFilter.scale.x = -mouseX * 40;
+        displacementFilter.scale.y = -mouseY * 40;
+    });
+
+    // Detect when mouse leaves the canvas
+    app.stage.on('mouseout', () => {
+        isMouseInside = false;
+        isMouseMoving = false;
+        if (mouseMovementTimeout) {
+            clearTimeout(mouseMovementTimeout);
+        }
+    });
+
+    // Detect when mouse enters the canvas
+    app.stage.on('mouseover', () => {
+        isMouseInside = true;
+    });
+
+    // 9. Create paint reveal mask with fade-out effect (only for overlay layer)
+    const revealCanvas = document.createElement('canvas');
+    revealCanvas.width = app.screen.width;
+    revealCanvas.height = app.screen.height;
+    const revealCtx = revealCanvas.getContext('2d', { willReadFrequently: true });
+    
+    // Start with fully transparent (important!)
+    revealCtx.clearRect(0, 0, revealCanvas.width, revealCanvas.height);
+    
+    // Create texture from canvas
+    const revealTexture = Texture.from(revealCanvas);
+    const revealMaskSprite = new Sprite(revealTexture);
+    
+    // Position and scale the mask to match screen
+    revealMaskSprite.x = 0;
+    revealMaskSprite.y = 0;
+    revealMaskSprite.width = app.screen.width;
+    revealMaskSprite.height = app.screen.height;
+    
+    // Apply the reveal mask to the original sprite
+    app.stage.addChild(revealMaskSprite);
+    originalSprite.mask = revealMaskSprite;
+
+    // Paint reveal parameters
+    const brushRadius = 150; // Size of the reveal brush
+    const fadeSpeed = 0.98; // How fast revealed areas fade (lower = faster fade to transparent)
+
+    // 9. Create animated liquid displacement map for hover effect
+    const liquidCanvas = document.createElement('canvas');
+    liquidCanvas.width = 512;
+    liquidCanvas.height = 512;
+    const liquidCtx = liquidCanvas.getContext('2d');
+    
+    // Initialize with gray (neutral displacement)
+    liquidCtx.fillStyle = 'rgb(128, 128, 128)';
+    liquidCtx.fillRect(0, 0, 512, 512);
+    
+    // Create texture from canvas using PixiJS Texture
+    const liquidTexture = Texture.from(liquidCanvas);
+    const liquidSprite = new Sprite(liquidTexture);
+    liquidSprite.anchor.set(0.5);
+    
+    // Create second displacement filter for liquid effect
+    const liquidDisplacementFilter = new DisplacementFilter({
+        sprite: liquidSprite,
+        scale: 0
+    });
+    
+    // Apply both filters to the original sprite: parallax + liquid
+    originalSprite.filters = [displacementFilter, liquidDisplacementFilter];
+    
+    // Add liquid sprite to stage (invisible, just for displacement data)
+    liquidSprite.x = app.screen.width / 2;
+    liquidSprite.y = app.screen.height / 2;
+    liquidSprite.scale.set(Math.max(app.screen.width, app.screen.height) / 512);
+    app.stage.addChild(liquidSprite);
+    liquidSprite.renderable = false;
+
+    // Animation variables
+    let time = 0;
+    const ripples = [];
+    
+    // Create ripple on mouse move
+    let lastRippleTime = 0;
+    let lastMousePos = { x: mousePosition.x, y: mousePosition.y };
+    
+    app.stage.on('mousemove', (event) => {
+        const currentTime = Date.now();
+        // Create ripples more frequently for smoother effect
+        if (currentTime - lastRippleTime > 30) {
+            ripples.push({
+                x: (event.global.x / app.screen.width) * 512,
+                y: (event.global.y / app.screen.height) * 512,
+                radius: 0,
+                maxRadius: 180,
+                strength: 1.5
+            });
+            lastRippleTime = currentTime;
+        }
+        lastMousePos.x = event.global.x;
+        lastMousePos.y = event.global.y;
+    });
+
+    // Animation loop for paint reveal and liquid effect
+    app.ticker.add((ticker) => {
+        time += ticker.deltaTime * 0.05;
+        
+        // Fade out the reveal mask to TRANSPARENT (not black!)
+        // We need to scale down the alpha channel to fade to transparent
+        const imageData = revealCtx.getImageData(0, 0, revealCanvas.width, revealCanvas.height);
+        const data = imageData.data;
+        
+        for (let i = 0; i < data.length; i += 4) {
+            // Multiply alpha channel by fadeSpeed to gradually fade to transparent
+            data[i + 3] *= fadeSpeed;
+        }
+        
+        revealCtx.putImageData(imageData, 0, 0);
+        
+        // Only paint the brush if mouse is inside the canvas AND actively moving
+        if (isMouseInside && isMouseMoving) {
+            // Create organic, liquid-like paint brush with animated distortion
+            const numPoints = 32; // More points = smoother circle
+            const distortionAmount = 15; // How much the brush edge wobbles
+            
+            revealCtx.beginPath();
+            for (let i = 0; i <= numPoints; i++) {
+                const angle = (i / numPoints) * Math.PI * 2;
+                
+                // Add animated noise to create organic liquid edge
+                const noise1 = Math.sin(angle * 3 + time * 2) * distortionAmount;
+                const noise2 = Math.cos(angle * 5 - time * 1.5) * (distortionAmount * 0.5);
+                const noise3 = Math.sin(angle * 7 + time * 3) * (distortionAmount * 0.3);
+                
+                const radius = brushRadius + noise1 + noise2 + noise3;
+                
+                const x = mousePosition.x + Math.cos(angle) * radius;
+                const y = mousePosition.y + Math.sin(angle) * radius;
+                
+                if (i === 0) {
+                    revealCtx.moveTo(x, y);
+                } else {
+                    revealCtx.lineTo(x, y);
+                }
+            }
+            revealCtx.closePath();
+            
+            // Create gradient for soft edges
+            const gradient = revealCtx.createRadialGradient(
+                mousePosition.x, mousePosition.y, brushRadius * 0.3,
+                mousePosition.x, mousePosition.y, brushRadius * 1.2
+            );
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            gradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.8)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            
+            revealCtx.fillStyle = gradient;
+            revealCtx.fill();
+        }
+        
+        // Update reveal texture
+        revealTexture.source.update();
+        
+        // Clear canvas
+        liquidCtx.fillStyle = 'rgb(128, 128, 128)';
+        liquidCtx.fillRect(0, 0, 512, 512);
+        
+        // Update and draw ripples
+        for (let i = ripples.length - 1; i >= 0; i--) {
+            const ripple = ripples[i];
+            ripple.radius += 4;
+            ripple.strength *= 0.96;
+            
+            if (ripple.radius > ripple.maxRadius || ripple.strength < 0.01) {
+                ripples.splice(i, 1);
+                continue;
+            }
+            
+            // Draw ripple with more dramatic distortion
+            const gradient = liquidCtx.createRadialGradient(
+                ripple.x, ripple.y, 0,
+                ripple.x, ripple.y, ripple.radius
+            );
+            
+            const intensity = ripple.strength * 80; // Increased from 50
+            gradient.addColorStop(0, `rgb(${128 + intensity}, ${128}, ${128 - intensity})`);
+            gradient.addColorStop(0.3, `rgb(${128 - intensity}, ${128 + intensity * 0.5}, ${128 + intensity})`);
+            gradient.addColorStop(0.6, `rgb(${128 + intensity * 0.5}, ${128 - intensity}, ${128})`);
+            gradient.addColorStop(1, 'rgb(128, 128, 128)');
+            
+            liquidCtx.fillStyle = gradient;
+            liquidCtx.fillRect(0, 0, 512, 512);
+        }
+        
+        // Add more pronounced ambient waves
+        for (let y = 0; y < 512; y += 6) {
+            for (let x = 0; x < 512; x += 6) {
+                const wave = Math.sin(x * 0.03 + time * 2) * Math.cos(y * 0.03 + time * 2) * 15;
+                const wave2 = Math.sin(x * 0.05 - time) * Math.cos(y * 0.05 + time) * 8;
+                liquidCtx.fillStyle = `rgb(${128 + wave + wave2}, 128, ${128 - wave - wave2})`;
+                liquidCtx.fillRect(x, y, 6, 6);
+            }
+        }
+        
+        // Update texture
+        liquidTexture.source.update();
+        
+        // Animate displacement strength with more dramatic effect
+        const targetScale = ripples.length > 0 ? 50 : 20;
+        const currentScale = liquidDisplacementFilter.scale.x;
+        const newScale = currentScale * 0.9 + targetScale * 0.1;
+        liquidDisplacementFilter.scale.x = newScale;
+        liquidDisplacementFilter.scale.y = newScale;
+    });
+
+})(); // End of the async IIFE
