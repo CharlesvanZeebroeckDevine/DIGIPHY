@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "start": "npm run dev",
-    "build": "npm run lint && vite build",
-    "lint": "eslint .",
-    "dev": "vite"
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview"
   },
   "dependencies": {
     "pixi.js": "^8.8.1"

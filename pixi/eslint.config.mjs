@@ -1,15 +1,24 @@
 import js from "@eslint/js";
-import prettier from "eslint-plugin-prettier/recommended";
+import eslintPluginPrettier from "eslint-plugin-prettier";
 
 export default [
   { ignores: ["dist"] },
+  js.configs.recommended,
   {
-    extends: [js.configs.recommended, prettier],
     files: ["**/*.{js,jsx}"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
+      globals: {
+        window: "readonly",
+        document: "readonly",
+      },
     },
-    rules: {},
+    plugins: {
+      prettier: eslintPluginPrettier,
+    },
+    rules: {
+      ...eslintPluginPrettier.configs.recommended.rules,
+    },
   },
 ];
