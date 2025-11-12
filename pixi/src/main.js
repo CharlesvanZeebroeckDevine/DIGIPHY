@@ -20,10 +20,10 @@ const app = new Application();
   heroSection.appendChild(app.canvas);
 
   const loadedAssets = await Assets.load([
-    "/my_photo-3.jpg", 
-    "/my_depth_map-3.jpg", 
-    "/my_photo-4.png", 
-    "/my_depth_map-4.png", 
+    "/my_photo-3.jpg",
+    "/my_depth_map-3.jpg",
+    "/my_photo-4.png",
+    "/my_depth_map-4.png",
   ]);
 
   const backgroundSprite = new Sprite(loadedAssets["/my_photo-3.jpg"]);
@@ -31,7 +31,6 @@ const app = new Application();
 
   const originalSprite = new Sprite(loadedAssets["/my_photo-4.png"]);
   const depthSprite = new Sprite(loadedAssets["/my_depth_map-4.png"]);
-
 
   backgroundSprite.anchor.set(0.5);
   backgroundDepthSprite.anchor.set(0.5);
