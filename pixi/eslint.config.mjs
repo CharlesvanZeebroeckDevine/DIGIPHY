@@ -12,6 +12,9 @@ export default [
       globals: {
         window: "readonly",
         document: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        Date: "readonly",
       },
     },
     plugins: {
