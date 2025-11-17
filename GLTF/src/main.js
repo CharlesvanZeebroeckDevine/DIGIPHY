@@ -100,73 +100,44 @@ directionalLight.shadow.camera.top = 20;
 directionalLight.shadow.camera.bottom = -20;
 scene.add(directionalLight);
 
-// Plane floor
-const planeGeometry = new THREE.PlaneGeometry(20, 20);
-const planeMaterial = new THREE.MeshStandardMaterial({
-    color: 0x90ee90, // Light green
-    roughness: 0.8,
-    metalness: 0.2
-});
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-plane.rotation.x = -Math.PI / 2; // Rotate to be horizontal
-plane.position.y = 0;
-plane.receiveShadow = true;
-scene.add(plane);
-
-// Grid helper for reference
-const gridHelper = new THREE.GridHelper(20, 20, 0x888888, 0xcccccc);
-scene.add(gridHelper);
-
 // GLTF Loader
 const gltfLoader = new GLTFLoader();
 let model = null;
-const materialGroups = new Map(); // Store materials organized by name/vertex group
+let rig = null; // Store the rig/skeleton
+const bones = new Map(); // Store bones by name
+const initialBonePositions = new Map(); // Store initial bone positions for reset
+const wireframeMaterials = []; // Store wireframe materials for pulsating effect
 
 gltfLoader.load(
-    '/GLTF/Test.gltf',
+    '/SB.glb',
     (gltf) => {
         model = gltf.scene;
 
-        // Enable shadows and organize materials by vertex groups
+        // Enable shadows and access rig
         model.traverse((child) => {
             if (child.isMesh) {
                 child.castShadow = true;
                 child.receiveShadow = true;
 
-                // Organize materials by name (vertex groups)
-                if (child.material) {
-                    // Handle both single material and material arrays
-                    const materials = Array.isArray(child.material)
-                        ? child.material
-                        : [child.material];
+                // Access skeleton/rig if this is a skinned mesh
+                if (child.isSkinnedMesh && child.skeleton) {
+                    rig = child.skeleton;
 
-                    materials.forEach((material, index) => {
-                        const materialName = material.name || `material_${index}`;
-
-                        if (!materialGroups.has(materialName)) {
-                            materialGroups.set(materialName, {
-                                material: material,
-                                meshes: []
-                            });
-                        }
-
-                        // Store reference to this mesh for this material
-                        materialGroups.get(materialName).meshes.push(child);
-
-                        // Ensure material uses environment map if available
-                        if (scene.environment && (material.isMeshStandardMaterial || material.isMeshPhysicalMaterial)) {
-                            material.envMap = scene.environment;
-                            material.needsUpdate = true;
-                        }
+                    // Store all bones by name and their initial positions
+                    child.skeleton.bones.forEach((bone) => {
+                        bones.set(bone.name, bone);
+                        // Store initial position (clone to avoid reference issues)
+                        initialBonePositions.set(bone.name, bone.position.clone());
                     });
+
+                    console.log('Rig found!');
+                    console.log('Number of bones:', child.skeleton.bones.length);
+                    console.log('Bone names:', child.skeleton.bones.map(b => b.name));
+
+                    // Create HUD controls after bones are loaded
+                    createBoneControls();
                 }
             }
-        });
-
-        // Log all material groups found
-        console.log('Material groups (vertex groups) found:');
-        materialGroups.forEach((group, name) => {
-            console.log(`  - ${name}: ${group.meshes.length} mesh(es)`);
         });
 
         // Calculate bounding box to center and scale the model
@@ -218,15 +189,86 @@ gltfLoader.load(
         console.log('Camera position:', camera.position);
         console.log('Camera distance:', distance);
 
-        // Export material groups to window for easy access
-        window.materialGroups = materialGroups;
+        // Export model, rig, and bones to window for easy access from DOM
         window.model = model;
+        window.rig = rig;
+        window.bones = bones;
+
+        // Helper function to get a bone by name (for easier DOM access)
+        window.getBone = (name) => {
+            return bones.get(name);
+        };
+
+        // Helper function to list all bone names
+        window.getBoneNames = () => {
+            return Array.from(bones.keys());
+        };
+
+        console.log('Rig and bones exported to window. Use window.bones or window.getBone(name) to access bones.');
     },
     (progress) => {
         console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%');
     },
     (error) => {
         console.error('Error loading GLTF model:', error);
+    }
+);
+
+// Load Lamborghini model with transparent wireframe shader
+gltfLoader.load(
+    '/Lamborghini.glb',
+    (gltf) => {
+        const lamborghiniModel = gltf.scene;
+
+        // Apply transparent wireframe shader to all meshes
+        lamborghiniModel.traverse((child) => {
+            if (child.isMesh) {
+                // Create wireframe material with transparency
+                const wireframeMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xffffff, // White wireframe
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.02,
+                    side: THREE.FrontSide
+                });
+
+                // Handle both single material and material arrays
+                if (Array.isArray(child.material)) {
+                    child.material = child.material.map(() => {
+                        const clonedMaterial = wireframeMaterial.clone();
+                        wireframeMaterials.push(clonedMaterial);
+                        return clonedMaterial;
+                    });
+                } else {
+                    child.material = wireframeMaterial;
+                    wireframeMaterials.push(wireframeMaterial);
+                }
+
+                child.castShadow = false;
+                child.receiveShadow = false;
+            }
+        });
+
+        // Calculate bounding box to position the Lamborghini
+        const box = new THREE.Box3().setFromObject(lamborghiniModel);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+
+        // Center the model horizontally, but place it on the floor
+        lamborghiniModel.position.x = -center.x;
+        lamborghiniModel.position.y = -box.min.y; // Place bottom of model on floor (y=0)
+        lamborghiniModel.position.z = -center.z;
+
+        scene.add(lamborghiniModel);
+
+        console.log('Lamborghini model loaded with wireframe shader');
+        console.log('Lamborghini size:', size);
+    },
+    (progress) => {
+        console.log('Lamborghini loading progress:', (progress.loaded / progress.total * 100) + '%');
+    },
+    (error) => {
+        console.error('Error loading Lamborghini model:', error);
     }
 );
 
@@ -239,11 +281,187 @@ window.addEventListener('resize', () => {
 });
 
 // Animation loop
+let time = 0;
 function animate() {
     requestAnimationFrame(animate);
     controls.update(); // Update controls for smooth damping
+
+    // Update skeleton/rig if it exists
+    if (rig) {
+        rig.update();
+    }
+
+    // Pulsating wireframe opacity effect
+    time += 0.05; // Adjust speed of pulsation (lower = slower)
+    // Use sine wave to create smooth on/off effect (oscillates between 0 and 1)
+    // Then map it to opacity range (e.g., 0.02 to 0.8)
+    const opacity = (Math.sin(time) * 0.5 + 0.5) * 0.03 + 0.01; // Range: 0.02 to 0.8
+
+    wireframeMaterials.forEach(material => {
+        material.opacity = opacity;
+    });
+
     renderer.render(scene, camera);
 }
 
 animate();
+
+// HUD Functions
+function createBoneControls() {
+    const boneControlsContainer = document.getElementById('boneControls');
+    if (!boneControlsContainer) return;
+
+    if (bones.size === 0) {
+        boneControlsContainer.innerHTML = '<div class="no-bones">No bones found in the model.</div>';
+        return;
+    }
+
+    boneControlsContainer.innerHTML = '';
+
+    // Create controls for each bone
+    bones.forEach((bone, boneName) => {
+        const boneGroup = document.createElement('div');
+        boneGroup.className = 'bone-group';
+        boneGroup.dataset.boneName = boneName.toLowerCase();
+
+        const boneHeader = document.createElement('div');
+        boneHeader.className = 'bone-header';
+
+        const boneNameLabel = document.createElement('div');
+        boneNameLabel.className = 'bone-name';
+        boneNameLabel.textContent = boneName;
+
+        const resetBtn = document.createElement('button');
+        resetBtn.className = 'reset-btn';
+        resetBtn.textContent = 'Reset';
+        resetBtn.onclick = () => resetBonePosition(boneName);
+
+        boneHeader.appendChild(boneNameLabel);
+        boneHeader.appendChild(resetBtn);
+        boneGroup.appendChild(boneHeader);
+
+        // Create controls for X, Y, Z
+        const axes = ['x', 'y', 'z'];
+
+        axes.forEach(axis => {
+            const controlRow = document.createElement('div');
+            controlRow.className = 'control-row';
+
+            const axisLabel = document.createElement('div');
+            axisLabel.className = `axis-label ${axis}`;
+            axisLabel.textContent = axis.toUpperCase();
+
+            const sliderContainer = document.createElement('div');
+            sliderContainer.className = 'slider-container';
+
+            const slider = document.createElement('input');
+            slider.type = 'range';
+            slider.min = '-200';
+            slider.max = '200';
+            slider.step = '0.01';
+            slider.value = bone.position[axis];
+            slider.dataset.boneName = boneName;
+            slider.dataset.axis = axis;
+
+            const numberInput = document.createElement('input');
+            numberInput.type = 'number';
+            numberInput.step = '0.01';
+            numberInput.value = bone.position[axis].toFixed(2);
+            numberInput.dataset.boneName = boneName;
+            numberInput.dataset.axis = axis;
+
+            // Update bone position when slider changes
+            slider.addEventListener('input', (e) => {
+                const value = parseFloat(e.target.value);
+                numberInput.value = value.toFixed(2);
+                updateBonePosition(boneName, axis, value);
+            });
+
+            // Update bone position when number input changes
+            numberInput.addEventListener('input', (e) => {
+                const value = parseFloat(e.target.value) || 0;
+                slider.value = value;
+                updateBonePosition(boneName, axis, value);
+            });
+
+            sliderContainer.appendChild(slider);
+            sliderContainer.appendChild(numberInput);
+
+            controlRow.appendChild(axisLabel);
+            controlRow.appendChild(sliderContainer);
+
+            boneGroup.appendChild(controlRow);
+        });
+
+        boneControlsContainer.appendChild(boneGroup);
+    });
+
+    // Setup search functionality
+    const searchInput = document.getElementById('boneSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const boneGroups = document.querySelectorAll('.bone-group');
+
+            boneGroups.forEach(group => {
+                const boneName = group.dataset.boneName;
+                if (boneName.includes(searchTerm)) {
+                    group.classList.remove('hidden');
+                } else {
+                    group.classList.add('hidden');
+                }
+            });
+        });
+    }
+
+    // Setup toggle button
+    const toggleBtn = document.getElementById('toggleHud');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            const hud = document.getElementById('hud');
+            if (hud) {
+                hud.classList.toggle('collapsed');
+                toggleBtn.textContent = hud.classList.contains('collapsed') ? '+' : '−';
+            }
+        });
+    }
+}
+
+function updateBonePosition(boneName, axis, value) {
+    const bone = bones.get(boneName);
+    if (bone) {
+        bone.position[axis] = value;
+        // Mark bone as needing update
+        if (rig) {
+            rig.update();
+        }
+    }
+}
+
+function resetBonePosition(boneName) {
+    const initialPos = initialBonePositions.get(boneName);
+    const bone = bones.get(boneName);
+
+    if (initialPos && bone) {
+        bone.position.copy(initialPos);
+
+        // Update UI controls
+        const sliders = document.querySelectorAll(`input[type="range"][data-bone-name="${boneName}"]`);
+        const numberInputs = document.querySelectorAll(`input[type="number"][data-bone-name="${boneName}"]`);
+
+        sliders.forEach(slider => {
+            const axis = slider.dataset.axis;
+            slider.value = initialPos[axis];
+        });
+
+        numberInputs.forEach(input => {
+            const axis = input.dataset.axis;
+            input.value = initialPos[axis].toFixed(2);
+        });
+
+        if (rig) {
+            rig.update();
+        }
+    }
+}
 

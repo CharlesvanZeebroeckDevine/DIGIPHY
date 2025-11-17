@@ -10,6 +10,21 @@
 
 <body>
   <div id="app"></div>
+
+  <!-- Bone Control HUD -->
+  <div id="hud" class="hud">
+    <div class="hud-header">
+      <h2>Bone Position Controls</h2>
+      <button id="toggleHud" class="toggle-btn">−</button>
+    </div>
+    <div class="hud-content">
+      <div class="search-container">
+        <input type="text" id="boneSearch" placeholder="Search bones..." />
+      </div>
+      <div id="boneControls" class="bone-controls"></div>
+    </div>
+  </div>
+
   <script type="module" src="/src/main.js"></script>
 </body>
 
