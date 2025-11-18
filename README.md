@@ -15,3 +15,8 @@ Resources:
 
 
 ## Week 2
+
+We're starting the dev research by trying to make a Next.js project with React Three Fiber on top. 
+
+## Week 3
+
