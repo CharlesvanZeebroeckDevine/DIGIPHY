@@ -7,8 +7,9 @@ import './App.css'
 
 // Preload car models for smooth transitions
 function PreloadModels() {
-  useGLTF.preload('/Lamborghini.glb')
+  useGLTF.preload('/BMWGWagon.glb')
   useGLTF.preload('/CAR2.glb')
+  useGLTF.preload('/FordTransit.glb')
   return null
 }
 
@@ -23,7 +24,10 @@ function NavigationDots({ activeIndex, onDotClick }) {
         className={`nav-dot ${activeIndex === 1 ? 'active' : ''}`}
         onClick={() => onDotClick(1)}
       ></div>
-      <div className="nav-dot"></div>
+      <div
+        className={`nav-dot ${activeIndex === 2 ? 'active' : ''}`}
+        onClick={() => onDotClick(2)}
+      ></div>
     </div>
   )
 }
@@ -34,8 +38,9 @@ function App() {
   const animationFrameRef = useRef(null)
 
   const carModels = [
-    '/Lamborghini.glb',
-    '/CAR2.glb'
+    '/BMWGWagon.glb',
+    '/CAR2.glb',
+    '/FordTransit.glb'
   ]
 
   const activeModelPath = carModels[activeModelIndex]

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useMemo } from 'react'
 import * as THREE from 'three'
 import { WireframeRevealMaterial } from './WireframeRevealMaterial'
 import { useRevealMask } from './useRevealMask'
+import { patchSolidMaterial, patchWireframeMaterial, updateRevealUniforms } from './RevealMaterials'
 
 function CameraRig() {
     const { camera, pointer } = useThree()
@@ -80,18 +81,13 @@ function AutoScaledModel({ path, ...props }) {
 function CarModel({ path, envMap, opacity = 1.0 }) {
     const { scene } = useGLTF(path)
     const modelRef = useRef()
-    const groupRef = useRef()
+    const wireframeGroupRef = useRef()
 
     // Initialize custom hook for reveal mask
-    // Pass ref to model for raycasting
-    const revealMask = useRevealMask(modelRef)
+    const revealMaskRef = useRevealMask(modelRef)
     const { size, camera } = useThree()
 
-    // Constants
-    const WIREFRAME_OPACITY_MIN = 0.01
-    const WIREFRAME_OPACITY_MAX = 0.09
-    const WIREFRAME_PULSATION_SPEED = 0.5
-
+    // Prepare materials once when scene loads
     useEffect(() => {
         if (scene) {
             const box = new THREE.Box3().setFromObject(scene)
@@ -101,80 +97,73 @@ function CarModel({ path, envMap, opacity = 1.0 }) {
             scene.position.y = -box.min.y
             scene.position.z = -center.z
 
-            // Replace materials with WireframeRevealMaterial
+            // Create a clone for the wireframe pass
+            // We need to clone the scene deeply to have separate materials
+            const wireframeScene = scene.clone()
+
+            // Process Solid Pass (Original Scene)
             scene.traverse((child) => {
                 if (child.isMesh) {
-                    const originalMaterial = child.material
-                    const originalColor = originalMaterial.color ? originalMaterial.color.clone() : new THREE.Color(1, 1, 1)
-                    const hasTexture = originalMaterial.map !== null
-                    const originalTexture = hasTexture ? originalMaterial.map : new THREE.Texture()
-                    const hasRoughnessMap = originalMaterial.roughnessMap !== null
-                    const roughnessMap = hasRoughnessMap ? originalMaterial.roughnessMap : new THREE.Texture()
-                    const roughness = originalMaterial.roughness !== undefined ? originalMaterial.roughness : 0.5
+                    // Keep the original material but patch it
+                    // If it's not a standard material, convert it or wrap it
+                    if (!child.material.isMeshStandardMaterial) {
+                        // Fallback: create a standard material preserving color/map
+                        const newMat = new THREE.MeshStandardMaterial({
+                            color: child.material.color || new THREE.Color(1, 1, 1),
+                            map: child.material.map || null,
+                            roughness: child.material.roughness || 0.5,
+                            metalness: child.material.metalness || 0.5,
+                        })
+                        child.material = newMat
+                    }
 
-                    // Create new shader material
-                    const material = new WireframeRevealMaterial()
+                    patchSolidMaterial(child.material)
+                    child.castShadow = true
+                    child.receiveShadow = true
+                }
+            })
 
-                    material.uniforms.uTime.value = 0
-                    material.uniforms.uRevealMask.value = revealMask || new THREE.Texture()
-                    material.uniforms.uOriginalTexture.value = originalTexture
-                    material.uniforms.uHasTexture.value = hasTexture
-                    material.uniforms.uOriginalColor.value = originalColor
-                    material.uniforms.uWireframeOpacity.value = 0.025
-                    material.uniforms.uRevealMaskSize.value = new THREE.Vector2(size.width, size.height)
-                    material.uniforms.uEnvMap.value = envMap || new THREE.Texture()
-                    material.uniforms.uHasEnvMap.value = !!envMap
-                    material.uniforms.uCameraPosition.value = camera.position
-                    material.uniforms.uRoughness.value = roughness
-                    material.uniforms.uRoughnessMap.value = roughnessMap
-                    material.uniforms.uHasRoughnessMap.value = hasRoughnessMap
-
-                    material.transparent = true
-                    material.side = THREE.DoubleSide
-
-                    child.material = material
+            // Process Wireframe Pass (Cloned Scene)
+            wireframeScene.traverse((child) => {
+                if (child.isMesh) {
+                    // Create a basic material for wireframe
+                    const wireMat = new THREE.MeshBasicMaterial()
+                    patchWireframeMaterial(wireMat)
+                    child.material = wireMat
                     child.castShadow = false
                     child.receiveShadow = false
-
-                    // Store reference to material for animation if needed
-                    child.userData.shaderMaterial = material
                 }
             })
+
+            // Add wireframe scene to the group
+            if (wireframeGroupRef.current) {
+                wireframeGroupRef.current.clear()
+                wireframeGroupRef.current.add(wireframeScene)
+            }
         }
-    }, [scene, revealMask, envMap, size, camera])
+    }, [scene])
 
-    // Animate shader uniforms and handle opacity transition
+    // Animate uniforms
     useFrame((state) => {
-        if (modelRef.current) {
-            const time = state.clock.getElapsedTime()
-            const pulsation = Math.sin(time * WIREFRAME_PULSATION_SPEED) * 0.5 + 0.5
-            const wireframeOpacity = WIREFRAME_OPACITY_MIN + (pulsation * (WIREFRAME_OPACITY_MAX - WIREFRAME_OPACITY_MIN))
+        if (revealMaskRef.current) {
+            const drawingSize = new THREE.Vector2()
+            state.gl.getDrawingBufferSize(drawingSize)
 
-            modelRef.current.traverse((child) => {
-                if (child.isMesh && child.material) {
-                    // Apply opacity transition to material
-                    // This multiplies the final shader opacity by our transition opacity
-                    child.material.opacity = opacity
-
-                    if (child.material.uniforms) {
-                        child.material.uniforms.uTime.value = time
-                        child.material.uniforms.uCameraPosition.value.copy(camera.position)
-                        child.material.uniforms.uWireframeOpacity.value = wireframeOpacity
-                        child.material.uniforms.uRevealMaskSize.value.set(size.width, size.height)
-
-                        // Ensure textures are updated if they change
-                        if (revealMask) {
-                            child.material.uniforms.uRevealMask.value = revealMask
-                        }
-                    }
-                }
-            })
+            updateRevealUniforms(
+                revealMaskRef.current,
+                drawingSize,
+                state.clock.getElapsedTime()
+            )
         }
     })
 
     return (
         <group visible={opacity > 0}>
+            {/* Solid Pass */}
             <primitive ref={modelRef} object={scene} />
+
+            {/* Wireframe Pass */}
+            <group ref={wireframeGroupRef} position={[0, 0, 0]} />
         </group>
     )
 }
@@ -220,14 +209,19 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
 
             {/* Car Models with opacity transition */}
             <CarModel
-                path="/Lamborghini.glb"
+                path="/BMWGWagon.glb"
                 envMap={envMap}
-                opacity={activeModelPath === '/Lamborghini.glb' ? transitionOpacity : 0}
+                opacity={activeModelPath === '/BMWGWagon.glb' ? transitionOpacity : 0}
             />
             <CarModel
                 path="/CAR2.glb"
                 envMap={envMap}
                 opacity={activeModelPath === '/CAR2.glb' ? transitionOpacity : 0}
+            />
+            <CarModel
+                path="/FordTransit.glb"
+                envMap={envMap}
+                opacity={activeModelPath === '/FordTransit.glb' ? transitionOpacity : 0}
             />
         </>
     )
