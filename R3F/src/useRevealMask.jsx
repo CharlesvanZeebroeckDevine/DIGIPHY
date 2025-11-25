@@ -1,10 +1,10 @@
 import { useFBO } from '@react-three/drei'
-import { useFrame, useThree, createPortal } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { useMemo, useRef, useEffect } from 'react'
 import * as THREE from 'three'
 import { MaskSimulationMaterial } from './MaskSimulationMaterial'
 
-export function useRevealMask(modelRef) {
+export function useRevealMask(modelRef, isActive = true) {
     const { size, gl, camera, raycaster, pointer } = useThree()
 
     // Create two FBOs for ping-pong rendering
@@ -18,8 +18,13 @@ export function useRevealMask(modelRef) {
         depthBuffer: false,
     }
 
-    const targetA = useFBO(size.width, size.height, options)
-    const targetB = useFBO(size.width, size.height, options)
+    // OPTIMIZATION: Reduce FBO resolution
+    // Full screen resolution is overkill for a soft fluid mask
+    const fboWidth = Math.min(size.width * 0.5, 1024)
+    const fboHeight = Math.min(size.height * 0.5, 1024)
+
+    const targetA = useFBO(fboWidth, fboHeight, options)
+    const targetB = useFBO(fboWidth, fboHeight, options)
 
     // Refs to track ping-pong state
     const currentTarget = useRef(targetA)
@@ -48,9 +53,11 @@ export function useRevealMask(modelRef) {
 
     // Update FBO size on resize
     useEffect(() => {
-        targetA.setSize(size.width, size.height)
-        targetB.setSize(size.width, size.height)
-        simMaterial.uniforms.uResolution.value.set(size.width, size.height)
+        const w = Math.min(size.width * 0.5, 1024)
+        const h = Math.min(size.height * 0.5, 1024)
+        targetA.setSize(w, h)
+        targetB.setSize(w, h)
+        simMaterial.uniforms.uResolution.value.set(w, h)
     }, [size, targetA, targetB, simMaterial])
 
     // Cached data for hit detection
@@ -59,7 +66,8 @@ export function useRevealMask(modelRef) {
 
     // Raycasting logic
     useFrame(() => {
-        if (!modelRef.current) return
+        // OPTIMIZATION: Skip everything if not active
+        if (!isActive || !modelRef.current) return
 
         // Update cached model data if model changes
         if (modelRef.current !== lastModel.current) {
@@ -126,6 +134,9 @@ export function useRevealMask(modelRef) {
 
     // Render Loop
     useFrame((state) => {
+        // OPTIMIZATION: Skip simulation if not active
+        if (!isActive) return
+
         const time = state.clock.getElapsedTime()
 
         // Update uniforms

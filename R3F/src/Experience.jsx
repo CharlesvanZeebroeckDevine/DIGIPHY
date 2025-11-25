@@ -1,24 +1,24 @@
+
 import { useFrame, useThree } from '@react-three/fiber'
-import { useGLTF, Environment, PerspectiveCamera, useEnvironment } from '@react-three/drei'
+import { useGLTF, Environment, PerspectiveCamera, ContactShadows, BakeShadows } from '@react-three/drei'
 import { useEffect, useRef, useState, useMemo } from 'react'
 import * as THREE from 'three'
-import { WireframeRevealMaterial } from './WireframeRevealMaterial'
 import { useRevealMask } from './useRevealMask'
-import { patchSolidMaterial, patchWireframeMaterial, updateRevealUniforms } from './RevealMaterials'
+import { patchSolidMaterial, patchWireframeMaterial, updateRevealUniforms, createRevealUniforms } from './RevealMaterials'
 
 function CameraRig() {
     const { camera, pointer } = useThree()
-    const initialCameraPosition = new THREE.Vector3(0, 5, -20)
-    const lookAtTarget = new THREE.Vector3(0, 5, 7)
+    const initialCameraPosition = new THREE.Vector3(0, 5, -32)
+    const lookAtTarget = new THREE.Vector3(0, 4, 0)
 
     // Mutable state for rotation smoothing
     const rotation = useRef({ x: 0, y: 0 })
     const targetRotation = useRef({ x: 0, y: 0 })
-    const rotationSpeed = 0.2
+    const rotationSpeed = 0.1
 
     useFrame(() => {
-        targetRotation.current.y = pointer.x * Math.PI * 0.03
-        targetRotation.current.x = pointer.y * Math.PI * 0.01
+        targetRotation.current.y = pointer.x * Math.PI * 0.1
+        targetRotation.current.x = pointer.y * Math.PI * 0.05
 
         rotation.current.x += (targetRotation.current.x - rotation.current.x) * rotationSpeed
         rotation.current.y += (targetRotation.current.y - rotation.current.y) * rotationSpeed
@@ -35,7 +35,7 @@ function CameraRig() {
         camera.updateMatrixWorld()
     })
 
-    return <PerspectiveCamera makeDefault position={[0, 5, -20]} fov={50} near={0.1} far={1000} />
+    return <PerspectiveCamera makeDefault position={[0, 5, -15]} fov={30} near={0.1} far={1000} />
 }
 
 function AutoScaledModel({ path, ...props }) {
@@ -78,28 +78,45 @@ function AutoScaledModel({ path, ...props }) {
     return <primitive object={scene} {...props} />
 }
 
-function CarModel({ path, envMap, opacity = 1.0 }) {
+function CarModel({ path, opacity = 1.0 }) {
     const { scene } = useGLTF(path)
     const modelRef = useRef()
     const wireframeGroupRef = useRef()
+    const hitBoxRef = useRef()
+    const meshesRef = useRef([])
 
     // Initialize custom hook for reveal mask
-    const revealMaskRef = useRevealMask(modelRef)
+    // OPTIMIZATION: Raycast against the simple hitBox instead of the complex model
+    // Note: We keep simulation active even if opacity is 0 to ensure readiness, 
+    // or we can pause it but keep the mesh visible. Let's keep it active for now to avoid stutter.
+    const revealMaskRef = useRevealMask(hitBoxRef, true)
     const { size, camera } = useThree()
+
+    // Create unique uniforms for this car instance
+    const localUniforms = useMemo(() => createRevealUniforms(), [])
 
     // Prepare materials once when scene loads
     useEffect(() => {
         if (scene) {
             const box = new THREE.Box3().setFromObject(scene)
             const center = box.getCenter(new THREE.Vector3())
+            const size = box.getSize(new THREE.Vector3())
 
             scene.position.x = -center.x
             scene.position.y = -box.min.y
             scene.position.z = -center.z
 
+            // Update HitBox to match the model bounds
+            if (hitBoxRef.current) {
+                hitBoxRef.current.position.y = size.y / 2
+                hitBoxRef.current.scale.set(size.x, size.y, size.z)
+            }
+
             // Create a clone for the wireframe pass
             // We need to clone the scene deeply to have separate materials
             const wireframeScene = scene.clone()
+
+            meshesRef.current = [] // Reset meshes array
 
             // Process Solid Pass (Original Scene)
             scene.traverse((child) => {
@@ -117,9 +134,10 @@ function CarModel({ path, envMap, opacity = 1.0 }) {
                         child.material = newMat
                     }
 
-                    patchSolidMaterial(child.material)
+                    patchSolidMaterial(child.material, localUniforms)
                     child.castShadow = true
                     child.receiveShadow = true
+                    meshesRef.current.push(child) // Store for updates
                 }
             })
 
@@ -128,7 +146,7 @@ function CarModel({ path, envMap, opacity = 1.0 }) {
                 if (child.isMesh) {
                     // Create a basic material for wireframe
                     const wireMat = new THREE.MeshBasicMaterial()
-                    patchWireframeMaterial(wireMat)
+                    patchWireframeMaterial(wireMat, localUniforms)
                     child.material = wireMat
                     child.castShadow = false
                     child.receiveShadow = false
@@ -141,10 +159,22 @@ function CarModel({ path, envMap, opacity = 1.0 }) {
                 wireframeGroupRef.current.add(wireframeScene)
             }
         }
-    }, [scene])
+    }, [scene, localUniforms, path])
 
-    // Animate uniforms
+    // Animate uniforms and shadows
     useFrame((state) => {
+        // Update opacity uniform
+        if (localUniforms.uOpacity) {
+            localUniforms.uOpacity.value = opacity
+        }
+
+        // Toggle shadows based on visibility to avoid ghost shadows
+        const isVisible = opacity > 0.01
+        meshesRef.current.forEach(mesh => {
+            mesh.castShadow = isVisible
+            mesh.receiveShadow = isVisible
+        })
+
         if (revealMaskRef.current) {
             const drawingSize = new THREE.Vector2()
             state.gl.getDrawingBufferSize(drawingSize)
@@ -152,13 +182,20 @@ function CarModel({ path, envMap, opacity = 1.0 }) {
             updateRevealUniforms(
                 revealMaskRef.current,
                 drawingSize,
-                state.clock.getElapsedTime()
+                state.clock.getElapsedTime(),
+                localUniforms
             )
         }
     })
 
     return (
-        <group visible={opacity > 0}>
+        <group>
+            {/* HitBox Proxy for Raycasting - Only active when visible */}
+            <mesh ref={hitBoxRef} visible={false}>
+                <boxGeometry args={[1, 1, 1]} />
+                <meshBasicMaterial color="red" wireframe />
+            </mesh>
+
             {/* Solid Pass */}
             <primitive ref={modelRef} object={scene} />
 
@@ -170,7 +207,6 @@ function CarModel({ path, envMap, opacity = 1.0 }) {
 
 export default function Experience({ activeModelPath, transitionOpacity }) {
     // Load environment map to pass to shader
-    const envMap = useEnvironment({ files: '/studio_small_08_2k.hdr' })
     const { scene } = useThree()
 
     // Set scene background to black (hiding HDRI background)
@@ -183,44 +219,33 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
             <CameraRig />
 
             {/* Lighting only (HDRI background hidden) */}
-            <Environment map={envMap} />
+            <Environment preset="city" background blur={0.8} />
 
-            <directionalLight
-                position={[10, 10, 5]}
-                intensity={0.3}
-                castShadow
-                shadow-mapSize={[2048, 2048]}
-                shadow-camera-near={0.5}
-                shadow-camera-far={50}
-                shadow-camera-left={-20}
-                shadow-camera-right={20}
-                shadow-camera-top={20}
-                shadow-camera-bottom={-20}
+            <ContactShadows
+                resolution={1024}
+                scale={50}
+                blur={5}
+                opacity={0.5}
+                far={10}
+                color="#000000"
             />
 
-            {/* Floor */}
-            <mesh rotation-x={-Math.PI / 2} receiveShadow>
-                <planeGeometry args={[50, 50]} />
-                <meshStandardMaterial color={0x808080} roughness={0.8} metalness={0.1} />
-            </mesh>
+            <BakeShadows />
 
             {/* Models */}
             <AutoScaledModel path="/SB.glb" />
 
             {/* Car Models with opacity transition */}
             <CarModel
-                path="/BMWGWagon.glb"
-                envMap={envMap}
-                opacity={activeModelPath === '/BMWGWagon.glb' ? transitionOpacity : 0}
+                path="/BmwSUV.glb"
+                opacity={activeModelPath === '/BmwSUV.glb' ? transitionOpacity : 0}
             />
             <CarModel
                 path="/CAR2.glb"
-                envMap={envMap}
                 opacity={activeModelPath === '/CAR2.glb' ? transitionOpacity : 0}
             />
             <CarModel
                 path="/FordTransit.glb"
-                envMap={envMap}
                 opacity={activeModelPath === '/FordTransit.glb' ? transitionOpacity : 0}
             />
         </>

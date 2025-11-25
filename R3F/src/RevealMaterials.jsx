@@ -15,10 +15,19 @@ const sharedUniforms = {
     uTime: { value: 0 }
 }
 
+// Helper to create a fresh set of uniforms for an instance
+export const createRevealUniforms = () => ({
+    uRevealMask: { value: defaultMask },
+    uRevealMaskSize: { value: new THREE.Vector2(1, 1) },
+    uTime: { value: 0 },
+    uOpacity: { value: 1.0 }
+})
+
 // Dithering function for the solid material
 const ditherFragmentChunk = `
   uniform sampler2D uRevealMask;
   uniform vec2 uRevealMaskSize;
+  uniform float uOpacity;
   
   float random(vec2 st) {
       return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
@@ -27,22 +36,38 @@ const ditherFragmentChunk = `
 
 // Logic to discard pixels based on the mask
 const ditherLogicChunk = `
+    // Apply global opacity first
+    // Use dithering for smooth fade out if needed, or just alpha
+    // For now, simple alpha multiplication for fade out
+    diffuseColor.a *= uOpacity;
+    
+    if (diffuseColor.a <= 0.01) discard;
+
     vec2 screenUV = gl_FragCoord.xy / uRevealMaskSize;
     float reveal = texture2D(uRevealMask, screenUV).a; // Use alpha channel from mask
     
-    float noise = random(gl_FragCoord.xy);
-    float alpha = smoothstep(0.0, 1.0, reveal);
+    // Sharp threshold for "liquid" look
+    // We discard anything below 0.1 to create a clean edge
+    if (reveal < 0.1) discard;
     
-    // Discard if the random noise is greater than our alpha/reveal value
-    // This creates the dissolve effect
-    if (alpha < noise) discard;
+    // Inner Shadow / Rim Effect
+    // Darken the edges of the blob to give it volume/shadow
+    // Map 0.1->0.2 range to 0.0->1.0
+    float edge = smoothstep(0.1, 0.25, reveal);
+    
+    // Apply shadow: darker at the edge (0.1), lighter inside (>0.25)
+    float shadow = 0.3 + 0.7 * edge;
+    
+    diffuseColor.rgb *= shadow;
 `
 
-export const patchSolidMaterial = (material) => {
+export const patchSolidMaterial = (material, customUniforms = null) => {
     material.onBeforeCompile = (shader) => {
-        shader.uniforms.uRevealMask = sharedUniforms.uRevealMask
-        shader.uniforms.uRevealMaskSize = sharedUniforms.uRevealMaskSize
-        shader.uniforms.uTime = sharedUniforms.uTime
+        const uniforms = customUniforms || sharedUniforms
+        shader.uniforms.uRevealMask = uniforms.uRevealMask
+        shader.uniforms.uRevealMaskSize = uniforms.uRevealMaskSize
+        shader.uniforms.uTime = uniforms.uTime
+        shader.uniforms.uOpacity = uniforms.uOpacity
 
         // Inject uniforms at the top of the fragment shader
         shader.fragmentShader = `
@@ -62,7 +87,7 @@ export const patchSolidMaterial = (material) => {
         )
     }
 
-    material.transparent = false // Important for Z-buffer
+    material.transparent = true // Enable transparency for fading
     material.depthWrite = true
     material.needsUpdate = true
 
@@ -74,14 +99,20 @@ const wireframeFragmentChunk = `
   uniform sampler2D uRevealMask;
   uniform vec2 uRevealMaskSize;
   uniform float uTime;
+  uniform float uOpacity;
 `
 
 const wireframeLogicChunk = `
+    // Apply global opacity
+    diffuseColor.a *= uOpacity;
+
     vec2 screenUV = gl_FragCoord.xy / uRevealMaskSize;
     float reveal = texture2D(uRevealMask, screenUV).a;
     
     // Visible when reveal is LOW (0)
-    float visibility = 1.0 - smoothstep(0.0, 0.5, reveal);
+    // Tighten the fade out so it disappears right before the solid blob starts (at 0.1)
+    // This prevents overlap and creates a "cutout" effect for the shadow
+    float visibility = 1.0 - smoothstep(0.0, 0.15, reveal);
     
     if (visibility <= 0.01) discard;
     
@@ -91,11 +122,13 @@ const wireframeLogicChunk = `
     diffuseColor.a *= visibility * (0.01 + 0.05 * pulse);
 `
 
-export const patchWireframeMaterial = (material) => {
+export const patchWireframeMaterial = (material, customUniforms = null) => {
     material.onBeforeCompile = (shader) => {
-        shader.uniforms.uRevealMask = sharedUniforms.uRevealMask
-        shader.uniforms.uRevealMaskSize = sharedUniforms.uRevealMaskSize
-        shader.uniforms.uTime = sharedUniforms.uTime
+        const uniforms = customUniforms || sharedUniforms
+        shader.uniforms.uRevealMask = uniforms.uRevealMask
+        shader.uniforms.uRevealMaskSize = uniforms.uRevealMaskSize
+        shader.uniforms.uTime = uniforms.uTime
+        shader.uniforms.uOpacity = uniforms.uOpacity
 
         shader.fragmentShader = `
       ${wireframeFragmentChunk}
@@ -121,10 +154,11 @@ export const patchWireframeMaterial = (material) => {
     return material
 }
 
-export const updateRevealUniforms = (maskTexture, size, time) => {
+export const updateRevealUniforms = (maskTexture, size, time, customUniforms = null) => {
+    const uniforms = customUniforms || sharedUniforms
     if (maskTexture) {
-        sharedUniforms.uRevealMask.value = maskTexture
+        uniforms.uRevealMask.value = maskTexture
     }
-    sharedUniforms.uRevealMaskSize.value.set(size.width, size.height)
-    sharedUniforms.uTime.value = time
+    uniforms.uRevealMaskSize.value.set(size.width, size.height)
+    uniforms.uTime.value = time
 }
