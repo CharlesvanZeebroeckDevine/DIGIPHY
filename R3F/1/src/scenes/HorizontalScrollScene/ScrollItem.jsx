@@ -1,16 +1,21 @@
-import { Image } from '@react-three/drei'
+import { forwardRef } from 'react'
+import { useGLTF } from '@react-three/drei'
 
-const ITEM_WIDTH = 4
+const WireframeSphere = forwardRef(({ position, opacity = 1 }, ref) => {
+    const { scene } = useGLTF('/side-scroll/sphere-1.glb')
 
-const ScrollItem = ({ url, position }) => {
     return (
-        <Image
-            url={url}
-            position={position}
-            scale={[ITEM_WIDTH, 6, 1]}
-            transparent
-        />
+        <group ref={ref} position={position}>
+            <primitive 
+                object={scene.clone()} 
+                scale={8}
+            />
+        </group>
     )
-}
+})
 
-export default ScrollItem
+WireframeSphere.displayName = 'WireframeSphere'
+
+useGLTF.preload('/side-scroll/sphere-1.glb')
+
+export default WireframeSphere

@@ -1,37 +1,54 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
+import { Html } from '@react-three/drei'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import ScrollItem from './ScrollItem'
+import WireframeSphere from './ScrollItem'
+import './HorizontalScrollScene.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const IMAGES = [
-    'https://images.unsplash.com/photo-1764416756521-f039ff3263f1?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'https://images.unsplash.com/photo-1764416756521-f039ff3263f1?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'https://images.unsplash.com/photo-1764416756521-f039ff3263f1?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'https://images.unsplash.com/photo-1764416756521-f039ff3263f1?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'https://images.unsplash.com/photo-1764416756521-f039ff3263f1?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    'https://images.unsplash.com/photo-1764416756521-f039ff3263f1?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-]
-
-const ITEM_WIDTH = 4
-const GAP = 0.5
-
 function ScrollContent() {
-    const groupRef = useRef(null)
+    const leftSphereRef = useRef(null)
+    const rightSphereRef = useRef(null)
+    const textRef = useRef(null)
+    const [refsReady, setRefsReady] = useState(false)
+
+    // Check when refs are ready
+    useEffect(() => {
+        const checkRefs = () => {
+            if (leftSphereRef.current && rightSphereRef.current && textRef.current) {
+                console.log('All refs ready!', {
+                    left: leftSphereRef.current,
+                    right: rightSphereRef.current
+                })
+                setRefsReady(true)
+            } else {
+                console.log('Refs status:', {
+                    left: !!leftSphereRef.current,
+                    right: !!rightSphereRef.current,
+                    text: !!textRef.current
+                })
+            }
+        }
+
+        // Check immediately and after a delay
+        checkRefs()
+        const timeout = setTimeout(checkRefs, 100)
+        
+        return () => clearTimeout(timeout)
+    }, [])
 
     useEffect(() => {
-        if (!groupRef.current) return
+        if (!refsReady) return
 
-        const totalItems = IMAGES.length
-        const totalWidth = (ITEM_WIDTH + GAP) * totalItems
+        console.log('Setting up animation', leftSphereRef.current.position)
 
         const tl = gsap.timeline({
             scrollTrigger: {
-                trigger: '#horizontal-scroll',
+                trigger: '.horizontal-scroll-container',
                 start: 'top top',
-                end: '+=300%',
+                end: 'bottom bottom',
                 scrub: 1,
                 markers: {
                     startColor: 'green',
@@ -40,67 +57,95 @@ function ScrollContent() {
                     fontWeight: 'bold',
                     indent: 20
                 },
-                id: 'horizontal-scroll',
+                id: 'horizontal-scroll-animation',
                 invalidateOnRefresh: true
             }
         })
 
-        tl.to(groupRef.current.position, {
-            x: -totalWidth + ITEM_WIDTH + GAP,
-            ease: 'none'
-        })
+        // Phase 1: Move spheres to center (0% - 50%)
+        tl.to(leftSphereRef.current.position, {
+            x: 0,
+            ease: 'power2.inOut',
+            duration: 0.5
+        }, 0)
+
+        tl.to(rightSphereRef.current.position, {
+            x: 0,
+            ease: 'power2.inOut',
+            duration: 0.5
+        }, 0)
+
+        // Move text up during Phase 1
+        tl.fromTo(textRef.current,
+            {
+                opacity: 0.3,
+                y: 0
+            },
+            {
+                opacity: 1,
+                y: 100,
+                ease: 'power2.inOut',
+                duration: 0.5
+            }, 0)
+
+        // Phase 2: Scale down spheres to dots (50% - 100%)
+        tl.to(leftSphereRef.current.scale, {
+            x: 0.05,
+            y: 0.05,
+            z: 0.05,
+            ease: 'power2.inOut',
+            duration: 0.5
+        }, 0.5)
+
+        tl.to(rightSphereRef.current.scale, {
+            x: 0.05,
+            y: 0.05,
+            z: 0.05,
+            ease: 'power2.inOut',
+            duration: 0.5
+        }, 0.5)
 
         return () => {
             tl.scrollTrigger?.kill()
             tl.kill()
         }
-    }, [])
+    }, [refsReady])
 
     return (
-        <group ref={groupRef}>
-            {IMAGES.map((url, i) => (
-                <ScrollItem
-                    key={i}
-                    url={url}
-                    position={[i * (ITEM_WIDTH + GAP), 0, 0]}
-                />
-            ))}
-        </group>
+        <>
+            <ambientLight intensity={0.5} />
+            <directionalLight position={[10, 10, 5]} intensity={1} />
+            <directionalLight position={[-10, -10, -5]} intensity={0.5} />
+            
+            <WireframeSphere ref={leftSphereRef} position={[-12, 0, 0]} />
+            <WireframeSphere ref={rightSphereRef} position={[12, 0, 0]} />
+            
+            <Html
+                ref={textRef}
+                center
+                position={[0, 0, 0]}
+            >
+                <div className="auto-alignment-title">
+                    Auto<br/>Alignment
+                </div>
+            </Html>
+        </>
     )
 }
 
 function HorizontalScrollScene() {
-    const sectionRef = useRef(null)
-
-    useEffect(() => {
-        console.log('Horizontal scroll section mounted:', sectionRef.current)
-    }, [])
-
     return (
-        <>
-            <div ref={sectionRef} style={{ width: '100%', height: '300vh', background: 'linear-gradient(180deg, #000 0%, #1a1a2e 100%)' }}>
-                <div style={{ 
-                    position: 'sticky', 
-                    top: 0, 
-                    width: '100%', 
-                    height: '100vh',
-                    overflow: 'hidden'
-                }}>
-                    <Canvas 
-                        gl={{ antialias: false }} 
-                        dpr={[1, 1.5]}
-                        camera={{ position: [0, 0, 10], fov: 50 }}
-                    >
-                        <ScrollContent />
-                    </Canvas>
-                </div>
+        <div className="horizontal-scroll-container">
+            <div className="horizontal-scroll-sticky">
+                <Canvas 
+                    gl={{ antialias: true }} 
+                    dpr={[1, 2]}
+                    camera={{ position: [0, 0, 12], fov: 50 }}
+                >
+                    <ScrollContent />
+                </Canvas>
             </div>
-            <section style={{ height: '100vh', width: '100vw', padding: '5rem', backgroundColor: 'black' }}>
-                <h1 style={{ color: 'white'}}>Design at the speed of thought</h1>
-                <p style={{ color: 'white'}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis nisi ut sem dignissim pretium. Ut non auctor risus. Nam porta commodo lorem sed tristique. Suspendisse potenti. Sed in dignissim arcu, id vehicula purus. Donec vestibulum mi a iaculis efficitur. Vivamus tempus iaculis ligula nec maximus. Pellentesque sodales neque sed suscipit consectetur. Aliquam at mi mauris. Integer dignissim tempus porta. Morbi pharetra interdum vehicula. Donec ultrices feugiat dictum.</p>
-                <a style={{ color: 'white'}} href="#">Button</a>
-            </section>
-        </>
+        </div>
     )
 }
 

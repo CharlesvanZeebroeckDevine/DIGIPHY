@@ -109,7 +109,7 @@ function App() {
         </section>
         
         {/* Section 2: Horizontal scroll storytelling - covers CarScene */}
-        <section id="horizontal-scroll" data-scroll-section style={{ position: 'relative', zIndex: 2, background: 'transparent' }}>
+        <section data-scroll-section style={{ position: 'relative', zIndex: 2, background: 'transparent' }}>
           <HorizontalScrollScene />
         </section>
 
