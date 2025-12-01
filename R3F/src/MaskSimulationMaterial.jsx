@@ -9,8 +9,8 @@ const MaskSimulationMaterial = shaderMaterial(
     uResolution: new THREE.Vector2(1, 1),
     uIsHovering: false,
     uTime: 0,
-    uFadeSpeed: 0.02, // Subtractive decay amount
-    uBrushRadius: 0.2,
+    uFadeSpeed: 0.03, // Slower fade for accumulation
+    uBrushRadius: 0.22,
   },
   // Vertex Shader
   `
@@ -106,22 +106,18 @@ const MaskSimulationMaterial = shaderMaterial(
                                     dot(p2,x2), dot(p3,x3) ) );
     }
 
-    // Smooth Maximum (Metaball function)
-    // k controls the smoothness of the blend
-    float smax(float a, float b, float k) {
-        float h = clamp(0.5 + 0.5 * (a - b) / k, 0.0, 1.0);
-        float boost = k * h * (1.0 - h);
-        
-        // Fix: Gate the boost using MIN to only apply when merging TWO blobs
-        // If one value is zero (isolated blob), we don't want to boost it
-        // This allows the decay to work properly
-        boost *= smoothstep(0.0, 0.05, min(a, b));
-        
-        return mix(b, a, h) + boost;
-    }
-
     void main() {
-      vec4 oldColor = texture2D(uTexture, vUv);
+      // Diffusion Blur: Sample neighbors to smooth out the liquid
+      vec2 texel = 1.0 / uResolution;
+      
+      vec4 center = texture2D(uTexture, vUv);
+      vec4 up     = texture2D(uTexture, vUv + vec2(0.0, texel.y));
+      vec4 down   = texture2D(uTexture, vUv - vec2(0.0, texel.y));
+      vec4 left   = texture2D(uTexture, vUv - vec2(texel.x, 0.0));
+      vec4 right  = texture2D(uTexture, vUv + vec2(texel.x, 0.0));
+      
+      // Average the samples
+      vec4 oldColor = (center + up + down + left + right) / 5.0;
       float oldAlpha = oldColor.a;
 
       // --- Organic Decay ---
@@ -130,7 +126,8 @@ const MaskSimulationMaterial = shaderMaterial(
       // OPTIMIZATION: Only calculate expensive decay noise if there is actually paint to decay
       // This skips the heavy snoise calculation for the vast majority of empty pixels
       if (oldAlpha > 0.001) {
-          float decayNoise = snoise(vec3(vUv * 8.0, uTime * 0.2));
+          // Larger noise pattern (3.0 vs 8.0) for bigger islands
+          float decayNoise = snoise(vec3(vUv * 3.0, uTime * 0.2));
           float decayFactor = 0.5 + (decayNoise * 0.5 + 0.5);
           newAlpha = oldAlpha - (uFadeSpeed * decayFactor);
           
@@ -148,6 +145,10 @@ const MaskSimulationMaterial = shaderMaterial(
         vec2 mouseCorrected = uMouse * aspect;
         
         vec2 diff = uvCorrected - mouseCorrected;
+        
+        // Horizontal stretch: Scale X distance to make it "closer" (wider shape)
+        diff.x *= 0.8;
+        
         float dist = length(diff);
         
         // OPTIMIZATION: Only calculate expensive brush noise if we are close to the brush
@@ -166,9 +167,9 @@ const MaskSimulationMaterial = shaderMaterial(
         }
       }
       
-      // Combine using Smooth Max for metaball merging effect
-      // k = 0.2 gives a nice gooey blend
-      float finalAlpha = smax(newAlpha, brushAlpha, 0.2);
+      // Combine using Additive Blending
+      // This creates perfect metaball merging (densities sum up)
+      float finalAlpha = newAlpha + brushAlpha;
       
       finalAlpha = clamp(finalAlpha, 0.0, 1.0);
       
