@@ -11,23 +11,22 @@ gsap.registerPlugin(ScrollTrigger)
 function ScrollContent() {
     const leftSphereRef = useRef(null)
     const rightSphereRef = useRef(null)
-    const textRef = useRef(null)
+    const autoTextRef = useRef(null)
+    const alignmentTextRef = useRef(null)
     const [refsReady, setRefsReady] = useState(false)
 
     // Check when refs are ready
     useEffect(() => {
         const checkRefs = () => {
-            if (leftSphereRef.current && rightSphereRef.current && textRef.current) {
-                console.log('All refs ready!', {
-                    left: leftSphereRef.current,
-                    right: rightSphereRef.current
-                })
+            if (leftSphereRef.current && rightSphereRef.current && autoTextRef.current && alignmentTextRef.current) {
+                console.log('All refs ready!')
                 setRefsReady(true)
             } else {
                 console.log('Refs status:', {
                     left: !!leftSphereRef.current,
                     right: !!rightSphereRef.current,
-                    text: !!textRef.current
+                    auto: !!autoTextRef.current,
+                    alignment: !!alignmentTextRef.current
                 })
             }
         }
@@ -76,19 +75,31 @@ function ScrollContent() {
         }, 0)
 
         // Move text up during Phase 1
-        tl.fromTo(textRef.current,
+        tl.fromTo(autoTextRef.current,
             {
                 opacity: 0.3,
-                y: 0
+                y: 50
             },
             {
                 opacity: 1,
-                y: 100,
+                y: 0,
                 ease: 'power2.inOut',
                 duration: 0.5
             }, 0)
 
-        // Phase 2: Scale down spheres to dots (50% - 100%)
+        tl.fromTo(alignmentTextRef.current,
+            {
+                opacity: 0.3,
+                y: -50
+            },
+            {
+                opacity: 1,
+                y: 0,
+                ease: 'power2.inOut',
+                duration: 0.5
+            }, 0)
+
+        // Phase 2: Scale down spheres to dots and split text (50% - 100%)
         tl.to(leftSphereRef.current.scale, {
             x: 0.05,
             y: 0.05,
@@ -101,6 +112,20 @@ function ScrollContent() {
             x: 0.05,
             y: 0.05,
             z: 0.05,
+            ease: 'power2.inOut',
+            duration: 0.5
+        }, 0.5)
+
+        // Move "AUTO" up
+        tl.to(autoTextRef.current, {
+            y: -80,
+            ease: 'power2.inOut',
+            duration: 0.5
+        }, 0.5)
+
+        // Move "ALIGNMENT" down
+        tl.to(alignmentTextRef.current, {
+            y: 80,
             ease: 'power2.inOut',
             duration: 0.5
         }, 0.5)
@@ -121,13 +146,19 @@ function ScrollContent() {
             <WireframeSphere ref={rightSphereRef} position={[12, 0, 0]} />
             
             <Html
-                ref={textRef}
+                ref={autoTextRef}
                 center
-                position={[0, 0, 0]}
+                position={[0, 1, 0]}
             >
-                <div className="auto-alignment-title">
-                    Auto<br/>Alignment
-                </div>
+                <h2 className="auto-alignment-title">Auto</h2>
+            </Html>
+
+            <Html
+                ref={alignmentTextRef}
+                center
+                position={[0, -1, 0]}
+            >
+                <h2 className="auto-alignment-title">Alignment</h2>
             </Html>
         </>
     )
