@@ -20,8 +20,8 @@ export function useRevealMask(modelRef, isActive = true) {
 
     // OPTIMIZATION: Reduce FBO resolution
     // Full screen resolution is overkill for a soft fluid mask
-    const fboWidth = Math.min(size.width * 0.5, 1024)
-    const fboHeight = Math.min(size.height * 0.5, 1024)
+    const fboWidth = Math.min(size.width * 1.0, 2048)
+    const fboHeight = Math.min(size.height * 1.0, 2048)
 
     const targetA = useFBO(fboWidth, fboHeight, options)
     const targetB = useFBO(fboWidth, fboHeight, options)
@@ -53,8 +53,8 @@ export function useRevealMask(modelRef, isActive = true) {
 
     // Update FBO size on resize
     useEffect(() => {
-        const w = Math.min(size.width * 0.5, 1024)
-        const h = Math.min(size.height * 0.5, 1024)
+        const w = Math.min(size.width * 1.0, 2048)
+        const h = Math.min(size.height * 1.0, 2048)
         targetA.setSize(w, h)
         targetB.setSize(w, h)
         simMaterial.uniforms.uResolution.value.set(w, h)

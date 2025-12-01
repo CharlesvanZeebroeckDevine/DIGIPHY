@@ -49,16 +49,6 @@ const ditherLogicChunk = `
     // Sharp threshold for "liquid" look
     // We discard anything below 0.1 to create a clean edge
     if (reveal < 0.1) discard;
-    
-    // Inner Shadow / Rim Effect
-    // Darken the edges of the blob to give it volume/shadow
-    // Map 0.1->0.2 range to 0.0->1.0
-    float edge = smoothstep(0.1, 0.25, reveal);
-    
-    // Apply shadow: darker at the edge (0.1), lighter inside (>0.25)
-    float shadow = 0.3 + 0.7 * edge;
-    
-    diffuseColor.rgb *= shadow;
 `
 
 export const patchSolidMaterial = (material, customUniforms = null) => {
@@ -116,10 +106,10 @@ const wireframeLogicChunk = `
     
     if (visibility <= 0.01) discard;
     
-    float pulse = 0.5 + 0.5 * sin(uTime * 2.0);
+    float pulse = 0.2 + 0.2 * sin(uTime);
     
     // Apply to outgoing color
-    diffuseColor.a *= visibility * (0.01 + 0.05 * pulse);
+    diffuseColor.a *= visibility * (0.005 + 0.02 * pulse);
 `
 
 export const patchWireframeMaterial = (material, customUniforms = null) => {
@@ -142,7 +132,7 @@ export const patchWireframeMaterial = (material, customUniforms = null) => {
       #include <color_fragment>
       ${wireframeLogicChunk}
       `
-        )
+        )   
     }
 
     material.transparent = true
