@@ -6,16 +6,16 @@ import Experience from './Experience'
 import NavigationDots from './NavigationDots'
 
 function PreloadModels() {
-  useGLTF.preload('/BmwSUV.glb')
-  useGLTF.preload('/CAR2.glb')
-  useGLTF.preload('/FordTransit.glb')
+  useGLTF.preload('/car-models/BmwSUV.glb')
+  useGLTF.preload('/car-models/CAR2.glb')
+  useGLTF.preload('/car-models/FordTransit.glb')
   return null
 }
 
 const carModels = [
-  '/BmwSUV.glb',
-  '/CAR2.glb',
-  '/FordTransit.glb'
+  '/car-models/BmwSUV.glb',
+  '/car-models/CAR2.glb',
+  '/car-models/FordTransit.glb'
 ]
 
 function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch }) {

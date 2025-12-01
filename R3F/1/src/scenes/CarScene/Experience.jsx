@@ -241,16 +241,16 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
 
             {/* Car Models with opacity transition */}
             <CarModel
-                path="/BmwSUV.glb"
-                opacity={activeModelPath === '/BmwSUV.glb' ? transitionOpacity : 0}
+                path="/car-models/BmwSUV.glb"
+                opacity={activeModelPath === '/car-models/BmwSUV.glb' ? transitionOpacity : 0}
             />
             <CarModel
-                path="/CAR2.glb"
-                opacity={activeModelPath === '/CAR2.glb' ? transitionOpacity : 0}
+                path="/car-models/CAR2.glb"
+                opacity={activeModelPath === '/car-models/CAR2.glb' ? transitionOpacity : 0}
             />
             <CarModel
-                path="/FordTransit.glb"
-                opacity={activeModelPath === '/FordTransit.glb' ? transitionOpacity : 0}
+                path="/car-models/FordTransit.glb"
+                opacity={activeModelPath === '/car-models/FordTransit.glb' ? transitionOpacity : 0}
             />
         </>
     )
