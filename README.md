@@ -23,3 +23,5 @@ We're starting the dev research by trying to make a Next.js project with React T
 I (Charles), implemented the 2D webgl effect that Wander created during week 1 in a 3D react-three-fiber and drei environment. I started by creating this effect in a basic Three.js environment and then ported it to react-three-fiber and drei for better post processing to apply later. 
 
 ## Week 4
+
+

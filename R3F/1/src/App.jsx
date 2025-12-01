@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { useState, useEffect, useRef } from 'react'
 import Experience from './Experience'
 import './App.css'
+import SideScrollSection from './sideScrollSection'
 
 // Preload car models for smooth transitions
 function PreloadModels() {
@@ -136,6 +137,7 @@ function App() {
         activeIndex={activeModelIndex}
         onDotClick={handleModelSwitch}
       />
+    <SideScrollSection />
     </>
   )
 }
