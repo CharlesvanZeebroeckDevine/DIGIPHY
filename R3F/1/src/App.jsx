@@ -137,7 +137,7 @@ function App() {
         activeIndex={activeModelIndex}
         onDotClick={handleModelSwitch}
       />
-    <SideScrollSection />
+      <SideScrollSection />
     </>
   )
 }
