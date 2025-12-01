@@ -82,7 +82,13 @@ function CarScene() {
   }, [])
 
   return (
-    <>
+    <div 
+      style={{ 
+        position: 'relative',
+        width: '100%', 
+        height: '100%'
+      }}
+    >
       <PreloadModels />
       <Canvas
         shadows
@@ -106,7 +112,7 @@ function CarScene() {
         activeIndex={activeModelIndex}
         onDotClick={handleModelSwitch}
       />
-    </>
+    </div>
   )
 }
 

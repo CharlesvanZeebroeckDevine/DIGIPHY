@@ -2,7 +2,7 @@ import { Image } from '@react-three/drei'
 
 const ITEM_WIDTH = 4
 
-const ScrollItem = ({ url, index, position }) => {
+const ScrollItem = ({ url, position }) => {
     return (
         <Image
             url={url}
