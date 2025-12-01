@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -11,6 +11,57 @@ gsap.registerPlugin(ScrollTrigger)
 
 function App() {
   const lenisRef = useRef(null)
+  const animationFrameRef = useRef(null)
+  const [activeModelIndex, setActiveModelIndex] = useState(0)
+  const [transitionOpacity, setTransitionOpacity] = useState(1.0)
+
+  const handleModelSwitch = (newIndex) => {
+    if (newIndex === activeModelIndex) return
+
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
+    }
+
+    const fadeOutDuration = 300
+    const waitDuration = 3000
+    const fadeInDuration = 300
+    const totalDuration = fadeOutDuration + waitDuration + fadeInDuration
+
+    const startTime = performance.now()
+    const startOpacity = transitionOpacity
+    let modelSwitched = false
+
+    const animate = (currentTime) => {
+      const elapsed = currentTime - startTime
+
+      if (elapsed < fadeOutDuration) {
+        const progress = elapsed / fadeOutDuration
+        const eased = 1 - Math.pow(1 - progress, 3)
+        setTransitionOpacity(startOpacity * (1 - eased))
+        animationFrameRef.current = requestAnimationFrame(animate)
+      } else if (elapsed < fadeOutDuration + waitDuration) {
+        setTransitionOpacity(0)
+
+        if (!modelSwitched) {
+          setActiveModelIndex(newIndex)
+          modelSwitched = true
+        }
+
+        animationFrameRef.current = requestAnimationFrame(animate)
+      } else if (elapsed < totalDuration) {
+        const fadeInElapsed = elapsed - (fadeOutDuration + waitDuration)
+        const progress = fadeInElapsed / fadeInDuration
+        const eased = progress * progress * progress
+        setTransitionOpacity(eased)
+        animationFrameRef.current = requestAnimationFrame(animate)
+      } else {
+        setTransitionOpacity(1.0)
+        animationFrameRef.current = null
+      }
+    }
+
+    animationFrameRef.current = requestAnimationFrame(animate)
+  }
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -33,21 +84,42 @@ function App() {
     return () => {
       lenis.destroy()
       gsap.ticker.remove(() => {})
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
     }
   }, [])
 
   return (
     <>
-      <div data-scroll-container>
-        <section id="car-scene" data-scroll-section style={{ height: '100vh', position: 'relative' }}>
-          <CarScene />
+      {/* Fixed CarScene - always in background */}
+      <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1 }}>
+        <CarScene 
+          activeModelIndex={activeModelIndex}
+          transitionOpacity={transitionOpacity}
+          onModelSwitch={handleModelSwitch}
+        />
+      </div>
+
+      {/* Scrollable content that overlays the CarScene */}
+      <div data-scroll-container style={{ position: 'relative', zIndex: 2 }}>
+        {/* Section 1: Initial car selection view - transparent to see CarScene */}
+        <section id="car-selection" data-scroll-section style={{ height: '100vh', position: 'relative', pointerEvents: 'none' }}>
+          {/* This section is transparent so CarScene shows through */}
         </section>
         
-        <section id="horizontal-scroll" data-scroll-section style={{ position: 'relative' }}>
+        {/* Section 2: Horizontal scroll storytelling - covers CarScene */}
+        <section id="horizontal-scroll" data-scroll-section style={{ position: 'relative', pointerEvents: 'auto' }}>
           <HorizontalScrollScene />
         </section>
 
-        <section id="next-scene" data-scroll-section style={{ height: '100vh', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', position: 'relative' }}>
+        {/* Section 3: Back to CarScene - transparent to reveal it again */}
+        <section id="car-usecases" data-scroll-section style={{ height: '100vh', position: 'relative', pointerEvents: 'none' }}>
+          {/* Transparent section - CarScene visible, camera will animate to wall */}
+        </section>
+
+        {/* Section 4: Tech features */}
+        <section id="tech-features" data-scroll-section style={{ height: '100vh', background: '#111', position: 'relative', pointerEvents: 'auto' }}>
           <TechFeatures />
         </section>
       </div>

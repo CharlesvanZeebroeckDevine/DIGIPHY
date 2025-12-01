@@ -95,7 +95,7 @@ function HorizontalScrollScene() {
                     </Canvas>
                 </div>
             </div>
-            <section style={{ height: '100vh', width: '100vw', padding: '5rem' }}>
+            <section style={{ height: '100vh', width: '100vw', padding: '5rem', backgroundColor: 'black' }}>
                 <h1 style={{ color: 'white'}}>Design at the speed of thought</h1>
                 <p style={{ color: 'white'}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis nisi ut sem dignissim pretium. Ut non auctor risus. Nam porta commodo lorem sed tristique. Suspendisse potenti. Sed in dignissim arcu, id vehicula purus. Donec vestibulum mi a iaculis efficitur. Vivamus tempus iaculis ligula nec maximus. Pellentesque sodales neque sed suscipit consectetur. Aliquam at mi mauris. Integer dignissim tempus porta. Morbi pharetra interdum vehicula. Donec ultrices feugiat dictum.</p>
                 <a style={{ color: 'white'}} href="#">Button</a>

@@ -24,7 +24,13 @@ I (Charles), implemented the 2D webgl effect that Wander created during week 1 i
 
 ## Week 4
 
+### Sidescroll 
+
 I (Wander) am trying to implement the abstract sidescroll section. I started by creating a basic scroll section with images. The plan is to implement the 3D models later.
 
 <video src="./assets-process/sidescroll/sidescroll-1.mp4" />
+
+With the first approach I had some troubles making the horizontal scroll section smooth. So I decided to use gsap scrolltriggers combined with Lenis to make a smooth feeling when scrolling the website. 
+
+<video src="./assets-process/sidescroll/sidescroll-2.mp4" />
 

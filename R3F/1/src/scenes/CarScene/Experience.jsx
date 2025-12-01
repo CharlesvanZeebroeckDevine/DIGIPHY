@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useMemo } from 'react'
 import * as THREE from 'three'
 import { useRevealMask } from './useRevealMask'
 import { patchSolidMaterial, patchWireframeMaterial, updateRevealUniforms, createRevealUniforms } from './RevealMaterials'
+import { useCameraScroll } from '../../hooks/useCameraScroll'
 
 function CameraRig() {
     const { camera, pointer } = useThree()
@@ -15,6 +16,9 @@ function CameraRig() {
     const rotation = useRef({ x: 0, y: 0 })
     const targetRotation = useRef({ x: 0, y: 0 })
     const rotationSpeed = 0.1
+    
+    // Enable scroll-based camera animations
+    useCameraScroll()
 
     useFrame(() => {
         targetRotation.current.y = pointer.x * Math.PI * 0.1
