@@ -102,24 +102,24 @@ function App() {
       </div>
 
       {/* Scrollable content that overlays the CarScene */}
-      <div data-scroll-container style={{ position: 'relative', zIndex: 2 }}>
+      <div data-scroll-container style={{ position: 'relative' }}>
         {/* Section 1: Initial car selection view - transparent to see CarScene */}
-        <section id="car-selection" data-scroll-section style={{ height: '100vh', position: 'relative', pointerEvents: 'none' }}>
-          {/* This section is transparent so CarScene shows through */}
+        <section id="car-selection" data-scroll-section style={{ height: '100vh', position: 'relative' }}>
+          {/* This section is transparent so CarScene shows through and can be interacted with */}
         </section>
         
         {/* Section 2: Horizontal scroll storytelling - covers CarScene */}
-        <section id="horizontal-scroll" data-scroll-section style={{ position: 'relative', pointerEvents: 'auto' }}>
+        <section id="horizontal-scroll" data-scroll-section style={{ position: 'relative', zIndex: 2, background: 'transparent' }}>
           <HorizontalScrollScene />
         </section>
 
         {/* Section 3: Back to CarScene - transparent to reveal it again */}
-        <section id="car-usecases" data-scroll-section style={{ height: '100vh', position: 'relative', pointerEvents: 'none' }}>
+        <section id="car-usecases" data-scroll-section style={{ height: '100vh', position: 'relative' }}>
           {/* Transparent section - CarScene visible, camera will animate to wall */}
         </section>
 
         {/* Section 4: Tech features */}
-        <section id="tech-features" data-scroll-section style={{ height: '100vh', background: '#111', position: 'relative', pointerEvents: 'auto' }}>
+        <section id="tech-features" data-scroll-section style={{ height: '100vh', background: '#111', position: 'relative', zIndex: 2 }}>
           <TechFeatures />
         </section>
       </div>
