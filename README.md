@@ -24,4 +24,7 @@ I (Charles), implemented the 2D webgl effect that Wander created during week 1 i
 
 ## Week 4
 
+I (Wander) am trying to implement the abstract sidescroll section. I started by creating a basic scroll section with images. The plan is to implement the 3D models later.
+
+<video src="./assets-process/sidescroll/sidescroll-1.mp4" />
 
