@@ -1,9 +1,11 @@
 import { useRef, useEffect, useState } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import WireframeSphere from './ScrollItem'
+import DotWithTrail from './DotWithTrail'
+import * as THREE from 'three'
 import './HorizontalScrollScene.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -11,6 +13,7 @@ gsap.registerPlugin(ScrollTrigger)
 function ScrollContent() {
     const leftSphereRef = useRef(null)
     const rightSphereRef = useRef(null)
+    const dotRef = useRef(null)
     const autoTextRef = useRef(null)
     const alignmentTextRef = useRef(null)
     const [refsReady, setRefsReady] = useState(false)
@@ -18,13 +21,16 @@ function ScrollContent() {
     // Check when refs are ready
     useEffect(() => {
         const checkRefs = () => {
-            if (leftSphereRef.current && rightSphereRef.current && autoTextRef.current && alignmentTextRef.current) {
+            if (leftSphereRef.current && rightSphereRef.current && 
+                dotRef.current &&
+                autoTextRef.current && alignmentTextRef.current) {
                 console.log('All refs ready!')
                 setRefsReady(true)
             } else {
                 console.log('Refs status:', {
                     left: !!leftSphereRef.current,
                     right: !!rightSphereRef.current,
+                    dot: !!dotRef.current,
                     auto: !!autoTextRef.current,
                     alignment: !!alignmentTextRef.current
                 })
@@ -99,22 +105,34 @@ function ScrollContent() {
                 duration: 0.5
             }, 0)
 
-        // Phase 2: Scale down spheres to dots and split text (50% - 100%)
+        // Phase 2: Scale down spheres and show dot (50% - 100%)
+        // Scale down spheres to very small
         tl.to(leftSphereRef.current.scale, {
-            x: 0.05,
-            y: 0.05,
-            z: 0.05,
+            x: 0.01,
+            y: 0.01,
+            z: 0.01,
             ease: 'power2.inOut',
             duration: 0.5
         }, 0.5)
 
         tl.to(rightSphereRef.current.scale, {
-            x: 0.05,
-            y: 0.05,
-            z: 0.05,
+            x: 0.01,
+            y: 0.01,
+            z: 0.01,
             ease: 'power2.inOut',
             duration: 0.5
         }, 0.5)
+
+        // Fade in the dot (after spheres are small)
+        tl.fromTo(dotRef.current.scale, 
+            { x: 0, y: 0, z: 0 },
+            {
+                x: 1,
+                y: 1,
+                z: 1,
+                ease: 'power2.out',
+                duration: 0.3
+            }, 0.7)
 
         // Move "AUTO" up
         tl.to(autoTextRef.current, {
@@ -144,6 +162,9 @@ function ScrollContent() {
             
             <WireframeSphere ref={leftSphereRef} position={[-12, 0, 0]} />
             <WireframeSphere ref={rightSphereRef} position={[12, 0, 0]} />
+            
+            {/* Single dot in center - initially hidden */}
+            <DotWithTrail ref={dotRef} position={[0, 0, 0]} color="#00ff88" scale={0} />
             
             <Html
                 ref={autoTextRef}
