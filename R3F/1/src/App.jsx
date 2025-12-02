@@ -93,33 +93,24 @@ function App() {
   return (
     <>
       {/* Fixed CarScene - always in background */}
-      <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1 }}>
+      <div className="car_scene--container">
         <CarScene 
           activeModelIndex={activeModelIndex}
           transitionOpacity={transitionOpacity}
           onModelSwitch={handleModelSwitch}
         />
       </div>
-
-      {/* Scrollable content that overlays the CarScene */}
-      <div data-scroll-container style={{ position: 'relative' }}>
-        {/* Section 1: Initial car selection view - transparent to see CarScene */}
-        <section id="car-selection" data-scroll-section style={{ height: '100vh', position: 'relative' }}>
+      <div data-scroll-container className="scroll_container">
+        <section id="car-selection" data-scroll-section className="section_car--selection">
           {/* This section is transparent so CarScene shows through and can be interacted with */}
         </section>
-        
-        {/* Section 2: Horizontal scroll storytelling - covers CarScene */}
-        <section data-scroll-section style={{ position: 'relative', zIndex: 2, background: 'transparent' }}>
+        <section data-scroll-section className="section_horizontal--scroll">
           <HorizontalScrollScene />
         </section>
-
-        {/* Section 3: Back to CarScene - transparent to reveal it again */}
-        <section id="car-usecases" data-scroll-section style={{ height: '100vh', position: 'relative' }}>
+        <section id="car-usecases" data-scroll-section className="section_car--usecases">
           {/* Transparent section - CarScene visible, camera will animate to wall */}
         </section>
-
-        {/* Section 4: Tech features */}
-        <section id="tech-features" data-scroll-section style={{ height: '100vh', background: '#111', position: 'relative', zIndex: 2 }}>
+        <section id="tech-features" data-scroll-section className="section_tech--features">
           <TechFeatures />
         </section>
       </div>

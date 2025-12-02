@@ -6,13 +6,13 @@
   font-display: block;
 }
 
-.horizontal-scroll-container {
+.horizontal_scroll--container {
   width: 100%;
-  height: 200vh;
+  height: 400vh;
   background: linear-gradient(180deg, #000 0%, #1a1a2e 100%);
 }
 
-.horizontal-scroll-sticky {
+.horizontal_scroll--sticky {
   position: sticky;
   top: 0;
   width: 100%;
@@ -20,7 +20,7 @@
   overflow: hidden;
 }
 
-.auto-alignment-title {
+.auto_alignment--title {
   font-family: 'GT Ultra';
   font-size: 4rem;
   font-weight: 300;
