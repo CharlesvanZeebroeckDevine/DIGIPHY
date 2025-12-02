@@ -2,47 +2,31 @@ import { useRef, forwardRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useState, useEffect } from 'react'
+import { Line } from '@react-three/drei'
 
 const DotWithTrail = forwardRef((props, ref) => {
-    const { position = [0, 0, 0], color = '#ffffff', scale = 1 } = props
-    const trailRef = useRef(null)
+    const { position = [0, 0, 0], color = '#00ff88', scale = 1 } = props
     const dotMaterialRef = useRef(null)
     const lastPositionRef = useRef(new THREE.Vector3(...position))
-    const [trailPoints] = useState(() => {
-        const points = []
-        const maxPoints = 30
-        for (let i = 0; i < maxPoints; i++) {
-            points.push(new THREE.Vector3(...position))
-        }
-        return points
-    })
+    const [trailPoints, setTrailPoints] = useState([new THREE.Vector3(...position)])
+    const maxPoints = 50
 
     useFrame(() => {
         if (ref?.current) {
             const currentPos = ref.current.position.clone()
             
-            // Only update trail if position has changed
-            if (!currentPos.equals(lastPositionRef.current)) {
-                // Shift all points back
-                for (let i = trailPoints.length - 1; i > 0; i--) {
-                    trailPoints[i].copy(trailPoints[i - 1])
-                }
-                
-                // Add new point at current position
-                trailPoints[0].copy(currentPos)
+            // Only update trail if position has changed significantly
+            const distance = currentPos.distanceTo(lastPositionRef.current)
+            if (distance > 0.05) {
+                setTrailPoints(prevPoints => {
+                    const newPoints = [currentPos.clone(), ...prevPoints]
+                    // Keep only the last maxPoints
+                    if (newPoints.length > maxPoints) {
+                        newPoints.pop()
+                    }
+                    return newPoints
+                })
                 lastPositionRef.current.copy(currentPos)
-                
-                // Update the line geometry
-                if (trailRef.current) {
-                    const positions = new Float32Array(trailPoints.length * 3)
-                    trailPoints.forEach((point, i) => {
-                        positions[i * 3] = point.x
-                        positions[i * 3 + 1] = point.y
-                        positions[i * 3 + 2] = point.z
-                    })
-                    trailRef.current.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-                    trailRef.current.attributes.position.needsUpdate = true
-                }
             }
         }
     })
@@ -62,16 +46,16 @@ const DotWithTrail = forwardRef((props, ref) => {
                 />
             </mesh>
             
-            {/* Trail line */}
-            <line>
-                <bufferGeometry ref={trailRef} />
-                <lineBasicMaterial 
-                    color={color} 
-                    opacity={0.6}
+            {/* Trail line using drei's Line component */}
+            {trailPoints.length > 1 && (
+                <Line
+                    points={trailPoints}
+                    color={color}
+                    lineWidth={3}
+                    opacity={0.8}
                     transparent
-                    linewidth={2}
                 />
-            </line>
+            )}
         </group>
     )
 })

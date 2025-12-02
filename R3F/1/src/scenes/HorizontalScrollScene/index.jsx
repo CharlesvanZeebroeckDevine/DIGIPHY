@@ -16,13 +16,20 @@ function ScrollContent() {
     const dotRef = useRef(null)
     const autoTextRef = useRef(null)
     const alignmentTextRef = useRef(null)
+    const cameraRef = useRef(null)
     const [refsReady, setRefsReady] = useState(false)
 
-    // Check when refs are ready
+    // Store camera ref
+    useFrame(({ camera }) => {
+        if (!cameraRef.current) {
+            cameraRef.current = camera
+        }
+    })
+
     useEffect(() => {
         const checkRefs = () => {
             if (leftSphereRef.current && rightSphereRef.current && 
-                dotRef.current &&
+                dotRef.current && cameraRef.current &&
                 autoTextRef.current && alignmentTextRef.current) {
                 console.log('All refs ready!')
                 setRefsReady(true)
@@ -31,13 +38,13 @@ function ScrollContent() {
                     left: !!leftSphereRef.current,
                     right: !!rightSphereRef.current,
                     dot: !!dotRef.current,
+                    camera: !!cameraRef.current,
                     auto: !!autoTextRef.current,
                     alignment: !!alignmentTextRef.current
                 })
             }
         }
 
-        // Check immediately and after a delay
         checkRefs()
         const timeout = setTimeout(checkRefs, 100)
         
@@ -51,7 +58,7 @@ function ScrollContent() {
 
         const tl = gsap.timeline({
             scrollTrigger: {
-                trigger: '.horizontal-scroll-container',
+                trigger: '.horizontal_scroll--container',
                 start: 'top top',
                 end: 'bottom bottom',
                 scrub: 1,
@@ -62,25 +69,24 @@ function ScrollContent() {
                     fontWeight: 'bold',
                     indent: 20
                 },
-                id: 'horizontal-scroll-animation',
+                id: 'horizontal_scroll--animation',
                 invalidateOnRefresh: true
             }
         })
 
-        // Phase 1: Move spheres to center (0% - 50%)
+        // Phase 1: Spheres move to center (0% - 25%)
         tl.to(leftSphereRef.current.position, {
             x: 0,
             ease: 'power2.inOut',
-            duration: 0.5
+            duration: 0.25
         }, 0)
 
         tl.to(rightSphereRef.current.position, {
             x: 0,
             ease: 'power2.inOut',
-            duration: 0.5
+            duration: 0.25
         }, 0)
 
-        // Move text up during Phase 1
         tl.fromTo(autoTextRef.current,
             {
                 opacity: 0.3,
@@ -90,7 +96,7 @@ function ScrollContent() {
                 opacity: 1,
                 y: 0,
                 ease: 'power2.inOut',
-                duration: 0.5
+                duration: 0.25
             }, 0)
 
         tl.fromTo(alignmentTextRef.current,
@@ -102,28 +108,26 @@ function ScrollContent() {
                 opacity: 1,
                 y: 0,
                 ease: 'power2.inOut',
-                duration: 0.5
+                duration: 0.25
             }, 0)
 
-        // Phase 2: Scale down spheres and show dot (50% - 100%)
-        // Scale down spheres to very small
+        // Phase 2: Spheres scale down, dot appears, text splits (25% - 50%)
         tl.to(leftSphereRef.current.scale, {
             x: 0.01,
             y: 0.01,
             z: 0.01,
             ease: 'power2.inOut',
-            duration: 0.5
-        }, 0.5)
+            duration: 0.25
+        }, 0.25)
 
         tl.to(rightSphereRef.current.scale, {
             x: 0.01,
             y: 0.01,
             z: 0.01,
             ease: 'power2.inOut',
-            duration: 0.5
-        }, 0.5)
+            duration: 0.25
+        }, 0.25)
 
-        // Fade in the dot (after spheres are small)
         tl.fromTo(dotRef.current.scale, 
             { x: 0, y: 0, z: 0 },
             {
@@ -131,20 +135,26 @@ function ScrollContent() {
                 y: 1,
                 z: 1,
                 ease: 'power2.out',
-                duration: 0.3
-            }, 0.7)
+                duration: 0.15
+            }, 0.35)
 
-        // Move "AUTO" up
         tl.to(autoTextRef.current, {
             y: -80,
             ease: 'power2.inOut',
-            duration: 0.5
-        }, 0.5)
+            duration: 0.25
+        }, 0.25)
 
-        // Move "ALIGNMENT" down
         tl.to(alignmentTextRef.current, {
             y: 80,
             ease: 'power2.inOut',
+            duration: 0.25
+        }, 0.25)
+
+        // Phase 3: Camera pans to the right (50% - 100%)
+        // Dot stays at center, camera moves right to reveal more scene
+        tl.to(cameraRef.current.position, {
+            x: 10,
+            ease: 'power1.inOut',
             duration: 0.5
         }, 0.5)
 
@@ -163,7 +173,6 @@ function ScrollContent() {
             <WireframeSphere ref={leftSphereRef} position={[-12, 0, 0]} />
             <WireframeSphere ref={rightSphereRef} position={[12, 0, 0]} />
             
-            {/* Single dot in center - initially hidden */}
             <DotWithTrail ref={dotRef} position={[0, 0, 0]} color="#00ff88" scale={0} />
             
             <Html
@@ -171,7 +180,7 @@ function ScrollContent() {
                 center
                 position={[0, 1, 0]}
             >
-                <h2 className="auto-alignment-title">Auto</h2>
+                <h2 className="auto_alignment--title">Auto</h2>
             </Html>
 
             <Html
@@ -179,7 +188,7 @@ function ScrollContent() {
                 center
                 position={[0, -1, 0]}
             >
-                <h2 className="auto-alignment-title">Alignment</h2>
+                <h2 className="auto_alignment--title">Alignment</h2>
             </Html>
         </>
     )
@@ -187,8 +196,8 @@ function ScrollContent() {
 
 function HorizontalScrollScene() {
     return (
-        <div className="horizontal-scroll-container">
-            <div className="horizontal-scroll-sticky">
+        <div className="horizontal_scroll--container">
+            <div className="horizontal_scroll--sticky">
                 <Canvas 
                     gl={{ antialias: true }} 
                     dpr={[1, 2]}
