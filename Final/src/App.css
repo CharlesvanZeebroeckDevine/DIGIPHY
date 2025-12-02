@@ -1,0 +1,65 @@
+.car_scene--container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+.scroll_container {
+  position: relative;
+}
+
+.section_car--selection {
+  height: 100vh;
+  position: relative;
+}
+
+.section_horizontal--scroll {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+.section_car--usecases {
+  height: 100vh;
+  position: relative;
+}
+
+.section_tech--features {
+  height: 100vh;
+  background: #111;
+  position: relative;
+  z-index: 2;
+}
+
+.navigation_dots {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 100px;
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+.nav_dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: white;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.nav_dot:hover {
+  opacity: 0.7;
+  transform: scale(1.2);
+}
+
+.nav_dot.active {
+  opacity: 1;
+  transform: scale(1.5);
+}
