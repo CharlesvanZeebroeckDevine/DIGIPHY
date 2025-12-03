@@ -1,4 +1,3 @@
-// Configuration for reveal mask effect
 export const REVEAL_CONFIG = {
   fadeSpeed: 0.02,
   brushRadius: 0.2,
@@ -22,15 +21,13 @@ export const CAMERA_CONFIG = {
   fov: 25,
 }
 
-// Car models available in the viewer
+// Car models available
 export const CAR_MODELS = [
   'car-models/BmwSUV.glb',
-  'car-models/CAR2.glb',
+  'car-models/AudiSport.glb',
   'car-models/FordTransit.glb'
 ]
 
-// initialPosition: { x: 10, y: 5, z: -22 },
-// lookAtTarget: { x: 0, y: 4, z: 0 },
 
 // Flip models on the X axis
 export const FLIP_MODELS_X = false
@@ -61,8 +58,8 @@ export const POST_PROCESSING_CONFIG = {
   },
   ssao: {
     intensity: 5,
-    radius: 0.1,
-    luminanceInfluence: 0.5,
+    radius: 1,
+    luminanceInfluence: 0.2,
     color: 'black'
   },
   toneMapping: {
@@ -73,7 +70,7 @@ export const POST_PROCESSING_CONFIG = {
 
 // Configuration for the Reflective Floor
 export const FLOOR_CONFIG = {
-  resolution: 1024,
+  resolution: 512,
   blur: [300, 50],
   mirror: 0.2,
   mixBlur: 0.3,

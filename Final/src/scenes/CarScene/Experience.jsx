@@ -1,5 +1,5 @@
 import { useFrame, useThree } from '@react-three/fiber'
-import { useGLTF, PerspectiveCamera, Environment, MeshReflectorMaterial } from '@react-three/drei'
+import { useGLTF, PerspectiveCamera, Environment, MeshReflectorMaterial, ContactShadows } from '@react-three/drei'
 import { useEffect, useRef, useMemo, useState } from 'react'
 import { EffectComposer, Bloom, Vignette, N8AO, ToneMapping } from '@react-three/postprocessing'
 import * as THREE from 'three'
@@ -260,9 +260,10 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
                     color={FLOOR_CONFIG.color}
                     metalness={FLOOR_CONFIG.metalness}
                     mirror={FLOOR_CONFIG.mirror}
-                    ignore={carsGroup ? [carsGroup] : undefined}
                 />
             </mesh>
+
+            <ContactShadows resolution={1024} scale={50} blur={1.5} opacity={0.6} far={10} color="#000000" />
 
             {/* Window */}
             {/* <WindowLight
@@ -285,8 +286,8 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
                     scale={modelScale}
                 />
                 <CarModel
-                    path="car-models/CAR2.glb"
-                    opacity={activeModelPath === 'car-models/CAR2.glb' ? transitionOpacity : 0}
+                    path="car-models/AudiSport.glb"
+                    opacity={activeModelPath === 'car-models/AudiSport.glb' ? transitionOpacity : 0}
                     scale={modelScale}
                 />
                 <CarModel
@@ -298,14 +299,14 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
 
 
             {/* Post-Processing */}
-            <EffectComposer disableNormalPass multisampling={6}>
+            <EffectComposer disableNormalPass multisampling={0} >
                 {/* <N8AO
                     halfRes
                     quality="performance"
                     screenSpaceRadius={false}
                     denoiseSamples={2}
                     denoiseRadius={0.1}
-                    aoRadius={0.2}
+                    aoRadius={0.5}
                     intensity={POST_PROCESSING_CONFIG.ssao.intensity}
                     radius={POST_PROCESSING_CONFIG.ssao.radius}
                     luminanceInfluence={POST_PROCESSING_CONFIG.ssao.luminanceInfluence}
@@ -317,10 +318,10 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
                     intensity={POST_PROCESSING_CONFIG.bloom.intensity}
                     luminanceSmoothing={POST_PROCESSING_CONFIG.bloom.luminanceSmoothing}
                 />
-                <Vignette
+                {/* <Vignette
                     offset={POST_PROCESSING_CONFIG.vignette.offset}
                     darkness={POST_PROCESSING_CONFIG.vignette.darkness}
-                />
+                /> */}
                 <ToneMapping
                     mode={THREE.NeutralToneMapping}
                     exposure={POST_PROCESSING_CONFIG.toneMapping.exposure}
