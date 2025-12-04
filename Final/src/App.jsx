@@ -6,6 +6,7 @@ import './App.css'
 import CarScene from './scenes/CarScene'
 import HorizontalScrollScene from './scenes/HorizontalScrollScene'
 import TechFeatures from './scenes/TechFeatures'
+import { TRANSITION_CONFIG } from './scenes/CarScene/config'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -22,9 +23,9 @@ function App() {
       cancelAnimationFrame(animationFrameRef.current)
     }
 
-    const fadeOutDuration = 300
-    const waitDuration = 3000
-    const fadeInDuration = 300
+    const fadeOutDuration = TRANSITION_CONFIG.fadeOutDuration
+    const waitDuration = TRANSITION_CONFIG.waitDuration
+    const fadeInDuration = TRANSITION_CONFIG.fadeInDuration
     const totalDuration = fadeOutDuration + waitDuration + fadeInDuration
 
     const startTime = performance.now()
@@ -83,7 +84,7 @@ function App() {
 
     return () => {
       lenis.destroy()
-      gsap.ticker.remove(() => {})
+      gsap.ticker.remove(() => { })
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
       }
@@ -94,7 +95,7 @@ function App() {
     <>
       {/* Fixed CarScene - always in background */}
       <div className="car_scene--container">
-        <CarScene 
+        <CarScene
           activeModelIndex={activeModelIndex}
           transitionOpacity={transitionOpacity}
           onModelSwitch={handleModelSwitch}
