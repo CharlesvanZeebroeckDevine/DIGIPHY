@@ -9,16 +9,16 @@ export const REVEAL_CONFIG = {
 // Configuration for model transition animations
 export const TRANSITION_CONFIG = {
   fadeOutDuration: 300,  // ms
-  waitDuration: 1000,    // ms
+  waitDuration: 300,    // ms
   fadeInDuration: 300,   // ms
 }
 
 // Configuration for camera behavior
 export const CAMERA_CONFIG = {
-  initialPosition: { x: 0, y: 10, z: -35 },
-  lookAtTarget: { x: 0, y: 5, z: 0 },
+  initialPosition: { x: 0, y: 7, z: -25 },
+  lookAtTarget: { x: 0, y: 4, z: 0 },
   rotationSpeed: 0.1,
-  fov: 25,
+  fov: 30,
 }
 
 // Car models available
@@ -34,20 +34,25 @@ export const FLIP_MODELS_X = false
 
 // Configuration for the LED material on the Seating Buck
 export const LED_CONFIG = {
-  color: '#583BFB',
+  color: '#913bfb',
   intensity: 200
+}
+
+// Configuration for the Window Glow
+export const WINDOW_CONFIG = {
+  intensity: 34, // High intensity for bloom
 }
 
 // Configuration for the HDRI Environment
 export const HDRI_CONFIG = {
-  rotation: { x: 1, y: 0, z: 0 },
-  intensity: 1
+  rotation: { x: 3, y: -0.4, z: 2 },
+  intensity: 1.1
 }
 
 // Configuration for Post-Processing Effects
 export const POST_PROCESSING_CONFIG = {
   bloom: {
-    intensity: 0.1,
+    intensity: 0.2,
     luminanceThreshold: 2,
     luminanceSmoothing: 0.025,
     mipmapBlur: true
@@ -70,15 +75,15 @@ export const POST_PROCESSING_CONFIG = {
 
 // Configuration for the Reflective Floor
 export const FLOOR_CONFIG = {
-  resolution: 512,
-  blur: [300, 50],
-  mirror: 0.2,
-  mixBlur: 0.3,
-  mixStrength: 12,
-  roughness: 0.8,
+  resolution: 1024, // Signifcant performance 
+  blur: [300, 100],
+  mirror: 0.5,
+  mixBlur: 0.7,
+  mixStrength: 1.5,
+  roughness: 1.0,
   depthScale: 0.1,
   minDepthThreshold: 0.5,
   maxDepthThreshold: 1.4,
-  color: '#151515',
+  color: '#16141a',
   metalness: 0.4,
 }

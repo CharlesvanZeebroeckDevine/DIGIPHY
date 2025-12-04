@@ -1,12 +1,12 @@
 import { useFrame, useThree } from '@react-three/fiber'
-import { useGLTF, PerspectiveCamera, Environment, MeshReflectorMaterial, ContactShadows } from '@react-three/drei'
+import { useGLTF, PerspectiveCamera, Environment, MeshReflectorMaterial, ContactShadows, Html } from '@react-three/drei'
 import { useEffect, useRef, useMemo, useState } from 'react'
 import { EffectComposer, Bloom, Vignette, N8AO, ToneMapping } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import { useRevealMask } from './useRevealMask'
 import { patchSolidMaterial, patchWireframeMaterial, updateRevealUniforms, createRevealUniforms } from './RevealMaterials'
 
-import { CAMERA_CONFIG, FLIP_MODELS_X, LED_CONFIG, HDRI_CONFIG, POST_PROCESSING_CONFIG, FLOOR_CONFIG } from './config'
+import { CAMERA_CONFIG, FLIP_MODELS_X, LED_CONFIG, HDRI_CONFIG, POST_PROCESSING_CONFIG, FLOOR_CONFIG, WINDOW_CONFIG } from './config'
 
 function CameraRig() {
     const { camera, pointer } = useThree()
@@ -174,31 +174,24 @@ function CarModel({ path, opacity = 1.0, scale = [1, 1, 1] }) {
     )
 }
 
-function WindowLight({ position, target, width, height, intensity }) {
-    const group = useRef()
-    const light = useRef()
+function WindowGlowModel({ intensity = 100 }) {
+    const { scene } = useGLTF('/Window.glb')
 
     useEffect(() => {
-        if (group.current) {
-            group.current.lookAt(new THREE.Vector3(...target))
+        if (scene) {
+            scene.traverse((child) => {
+                if (child.isMesh) {
+                    child.material = new THREE.MeshBasicMaterial({
+                        color: new THREE.Color(intensity, intensity, intensity),
+                        toneMapped: false,
+                        side: THREE.DoubleSide
+                    })
+                }
+            })
         }
-    }, [target])
+    }, [scene, intensity])
 
-    return (
-        <group ref={group} position={position}>
-            <rectAreaLight
-                ref={light}
-                width={width}
-                height={height}
-                color={"#ffffff"}
-                intensity={intensity}
-            />
-            <mesh rotation={[0, 0, 0]}>
-                <planeGeometry args={[width, height]} />
-                <meshBasicMaterial color="white" toneMapped={false} />
-            </mesh>
-        </group>
-    )
+    return <primitive object={scene} />
 }
 
 export default function Experience({ activeModelPath, transitionOpacity }) {
@@ -266,13 +259,8 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
             <ContactShadows resolution={1024} scale={50} blur={1.5} opacity={0.6} far={10} color="#000000" />
 
             {/* Window */}
-            {/* <WindowLight
-                width={150}
-                height={150}
-                intensity={10}
-                position={[-6.6, 19.2, 8.4]}
-                target={[0, 0, 0]}
-            /> */}
+            {/* Window Glow - Using the provided model for perfect alignment */}
+            <WindowGlowModel intensity={WINDOW_CONFIG.intensity} />
 
 
             {/* Seating Buck Environment - Rendered directly at native scale */}
