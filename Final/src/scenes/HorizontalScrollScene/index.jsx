@@ -28,7 +28,7 @@ function ScrollContent() {
 
     useEffect(() => {
         const checkRefs = () => {
-            if (leftSphereRef.current && rightSphereRef.current && 
+            if (leftSphereRef.current && rightSphereRef.current &&
                 dotRef.current && cameraRef.current &&
                 autoTextRef.current && alignmentTextRef.current) {
                 console.log('All refs ready!')
@@ -47,7 +47,7 @@ function ScrollContent() {
 
         checkRefs()
         const timeout = setTimeout(checkRefs, 100)
-        
+
         return () => clearTimeout(timeout)
     }, [])
 
@@ -65,7 +65,7 @@ function ScrollContent() {
                 markers: {
                     startColor: 'green',
                     endColor: 'red',
-                    fontSize: '18px',
+                    fontSize: '8px',
                     fontWeight: 'bold',
                     indent: 20
                 },
@@ -128,7 +128,7 @@ function ScrollContent() {
             duration: 0.25
         }, 0.25)
 
-        tl.fromTo(dotRef.current.scale, 
+        tl.fromTo(dotRef.current.scale,
             { x: 0, y: 0, z: 0 },
             {
                 x: 1,
@@ -169,12 +169,12 @@ function ScrollContent() {
             <ambientLight intensity={0.5} />
             <directionalLight position={[10, 10, 5]} intensity={1} />
             <directionalLight position={[-10, -10, -5]} intensity={0.5} />
-            
+
             <WireframeSphere ref={leftSphereRef} position={[-12, 0, 0]} />
             <WireframeSphere ref={rightSphereRef} position={[12, 0, 0]} />
-            
+
             <DotWithTrail ref={dotRef} position={[0, 0, 0]} color="#00ff88" scale={0} />
-            
+
             <Html
                 ref={autoTextRef}
                 center
@@ -198,8 +198,8 @@ function HorizontalScrollScene() {
     return (
         <div className="horizontal_scroll--container">
             <div className="horizontal_scroll--sticky">
-                <Canvas 
-                    gl={{ antialias: true }} 
+                <Canvas
+                    gl={{ antialias: true }}
                     dpr={[1, 2]}
                     camera={{ position: [0, 0, 12], fov: 50 }}
                 >

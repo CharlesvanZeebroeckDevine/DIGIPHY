@@ -51,7 +51,7 @@ function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch }) {
           outputColorSpace: THREE.SRGBColorSpace
         }}
       >
-        <Stats />
+        {/* <Stats /> */}
         <AdaptiveDpr pixelated />
         <AdaptiveEvents />
         <Experience
