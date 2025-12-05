@@ -45,8 +45,8 @@ export const WINDOW_CONFIG = {
 
 // Configuration for the HDRI Environment
 export const HDRI_CONFIG = {
-  rotation: { x: 3, y: -0.4, z: 2 },
-  intensity: 1.1
+  rotation: { x: 5, y: -0.4, z: 2 },
+  intensity: 3
 }
 
 // Configuration for Post-Processing Effects
@@ -58,8 +58,8 @@ export const POST_PROCESSING_CONFIG = {
     mipmapBlur: true
   },
   vignette: {
-    offset: 0.4,
-    darkness: 0.5
+    offset: 0.2,
+    darkness: 0.6
   },
   ssao: {
     intensity: 5,
@@ -67,23 +67,6 @@ export const POST_PROCESSING_CONFIG = {
     luminanceInfluence: 0.2,
     color: 'black'
   },
-  toneMapping: {
-    mode: 'Reinhard',
-    exposure: 1.0
-  }
 }
 
-// Configuration for the Reflective Floor
-export const FLOOR_CONFIG = {
-  resolution: 1024, // Signifcant performance 
-  blur: [300, 100],
-  mirror: 0.5,
-  mixBlur: 0.7,
-  mixStrength: 1.5,
-  roughness: 1.0,
-  depthScale: 0.1,
-  minDepthThreshold: 0.5,
-  maxDepthThreshold: 1.4,
-  color: '#16141a',
-  metalness: 0.4,
-}
+

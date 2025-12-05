@@ -109,7 +109,7 @@ const wireframeLogicChunk = `
     float pulse = 0.2 + 0.2 * sin(uTime);
     
     // Apply to outgoing color
-    diffuseColor.a *= visibility * (0.005 + 0.02 * pulse);
+    diffuseColor.a *= visibility * (0.045 + 0.03 * pulse);
 `
 
 export const patchWireframeMaterial = (material, customUniforms = null) => {
