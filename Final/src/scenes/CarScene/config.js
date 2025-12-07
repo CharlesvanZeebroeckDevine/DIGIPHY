@@ -18,7 +18,7 @@ export const CAMERA_CONFIG = {
   initialPosition: { x: 0, y: 7, z: -25 },
   lookAtTarget: { x: 0, y: 4, z: 0 },
   rotationSpeed: 0.1,
-  fov: 30,
+  fov: 35,
 }
 
 // Car models available

@@ -35,11 +35,11 @@
 }
 
 .navigation_dots {
+  display: flex;
   position: fixed;
   bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
   gap: 100px;
   z-index: 1000;
   pointer-events: auto;
