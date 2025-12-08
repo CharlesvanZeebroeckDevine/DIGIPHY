@@ -9,14 +9,14 @@ export const REVEAL_CONFIG = {
 // Configuration for model transition animations
 export const TRANSITION_CONFIG = {
   fadeOutDuration: 300,  // ms
-  waitDuration: 300,    // ms
+  waitDuration: 2400,    // ms (Wait for 20 frame animation @ ~24fps + safety buffer)
   fadeInDuration: 300,   // ms
 }
 
 // Configuration for camera behavior
 export const CAMERA_CONFIG = {
-  initialPosition: { x: 0, y: 7, z: -25 },
-  lookAtTarget: { x: 0, y: 4, z: 0 },
+  initialPosition: { x: 0, y: 8, z: -25 },
+  lookAtTarget: { x: 0, y: 5, z: 0 },
   rotationSpeed: 0.1,
   fov: 35,
 }
@@ -35,6 +35,7 @@ export const FLIP_MODELS_X = false
 // Configuration for the LED material on the Seating Buck
 export const LED_CONFIG = {
   color: '#913bfb',
+  activeColor: '#00ff00', // Green when animating
   intensity: 200
 }
 

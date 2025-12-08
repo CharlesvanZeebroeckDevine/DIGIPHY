@@ -7,6 +7,7 @@ import { useRevealMask } from './useRevealMask'
 import { patchSolidMaterial, patchWireframeMaterial, updateRevealUniforms, createRevealUniforms } from './RevealMaterials'
 
 import { CAMERA_CONFIG, FLIP_MODELS_X, LED_CONFIG, HDRI_CONFIG, POST_PROCESSING_CONFIG, WINDOW_CONFIG } from './config'
+import SeatingBuck from './SeatingBuck'
 
 function CameraRig() {
     const { camera, pointer } = useThree()
@@ -207,22 +208,8 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
     const { scene } = useThree()
     const [carsGroup, setCarsGroup] = useState(null)
 
-    // Load the Seating Buck model directly
-    const sbModel = useGLTF('/SB.glb')
+    // Load the studio scene directly
     const studioScene = useGLTF('/BakedScene.glb')
-
-    // Apply LED configuration to the Seating Buck
-    useEffect(() => {
-        if (sbModel.scene) {
-            sbModel.scene.traverse((child) => {
-                if (child.isMesh && child.material.name === 'Led') {
-                    child.material.emissive = new THREE.Color(LED_CONFIG.color)
-                    child.material.emissiveIntensity = LED_CONFIG.intensity
-                    child.material.toneMapped = false // Optional: makes it glow more in post-processing
-                }
-            })
-        }
-    }, [sbModel.scene])
 
     // Set scene background to white
     useEffect(() => {
@@ -265,7 +252,7 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
 
 
             {/* Seating Buck Environment - Rendered directly at native scale */}
-            <primitive object={sbModel.scene} scale={modelScale} />
+            <SeatingBuck activeModelIndex={activeModelPath === 'car-models/BmwSUV.glb' ? 0 : activeModelPath === 'car-models/AudiSport.glb' ? 1 : 2} />
 
             {/* Car Models with opacity transition */}
             <group ref={setCarsGroup}>
