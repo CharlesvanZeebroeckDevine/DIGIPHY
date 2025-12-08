@@ -7,14 +7,14 @@ import NavigationDots from './NavigationDots'
 
 function PreloadModels() {
   useGLTF.preload('car-models/BmwSUV.glb')
-  useGLTF.preload('car-models/CAR2.glb')
+  useGLTF.preload('car-models/AudiSport.glb')
   useGLTF.preload('car-models/FordTransit.glb')
   return null
 }
 
 const carModels = [
   'car-models/BmwSUV.glb',
-  'car-models/CAR2.glb',
+  'car-models/AudiSport.glb',
   'car-models/FordTransit.glb'
 ]
 
@@ -51,7 +51,7 @@ function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch }) {
           outputColorSpace: THREE.SRGBColorSpace
         }}
       >
-        <Stats />
+        {/* <Stats /> */}
         <AdaptiveDpr pixelated />
         <AdaptiveEvents />
         <Experience

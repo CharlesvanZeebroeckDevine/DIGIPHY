@@ -1,12 +1,12 @@
 import { useFrame, useThree } from '@react-three/fiber'
-import { useGLTF, PerspectiveCamera, Environment, MeshReflectorMaterial } from '@react-three/drei'
+import { useGLTF, PerspectiveCamera, Environment, MeshReflectorMaterial, ContactShadows, Html } from '@react-three/drei'
 import { useEffect, useRef, useMemo, useState } from 'react'
 import { EffectComposer, Bloom, Vignette, N8AO, ToneMapping } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import { useRevealMask } from './useRevealMask'
 import { patchSolidMaterial, patchWireframeMaterial, updateRevealUniforms, createRevealUniforms } from './RevealMaterials'
 
-import { CAMERA_CONFIG, FLIP_MODELS_X, LED_CONFIG, HDRI_CONFIG, POST_PROCESSING_CONFIG, FLOOR_CONFIG } from './config'
+import { CAMERA_CONFIG, FLIP_MODELS_X, LED_CONFIG, HDRI_CONFIG, POST_PROCESSING_CONFIG, WINDOW_CONFIG } from './config'
 
 function CameraRig() {
     const { camera, pointer } = useThree()
@@ -48,8 +48,9 @@ function CameraRig() {
     return <PerspectiveCamera makeDefault position={[0, 0, 0]} fov={CAMERA_CONFIG.fov} near={0.1} far={1000} />
 }
 
-function CarModel({ path, opacity = 1.0, scale = [1, 1, 1] }) {
+function CarModel({ path, opacity = 1.0, scale = [1, 1, 1], isActive }) {
     const { scene } = useGLTF(path)
+    const groupRef = useRef()
     const modelRef = useRef()
     const wireframeGroupRef = useRef()
     const hitBoxRef = useRef()
@@ -137,8 +138,16 @@ function CarModel({ path, opacity = 1.0, scale = [1, 1, 1] }) {
             localUniforms.uOpacity.value = opacity
         }
 
-        // Toggle shadows based on visibility to avoid ghost shadows
+        // Toggle entire group visibility based on active state
+        // This ensures the shadow camera sees the geometry even if opacity is 0 (during fade in)
+        if (groupRef.current) {
+            groupRef.current.visible = isActive
+        }
+
+        // We don't need to toggle specific castShadows anymore since the group visibility handles it
+        // But keeping it for completeness if needed logic changes
         const isVisible = opacity > 0.01
+
         meshesRef.current.forEach(mesh => {
             mesh.castShadow = isVisible
             mesh.receiveShadow = isVisible
@@ -158,7 +167,7 @@ function CarModel({ path, opacity = 1.0, scale = [1, 1, 1] }) {
     })
 
     return (
-        <group scale={scale}>
+        <group ref={groupRef} scale={scale}>
             {/* HitBox Proxy for Raycasting - Only active when visible */}
             <mesh ref={hitBoxRef} visible={false}>
                 <boxGeometry args={[1, 1, 1]} />
@@ -174,31 +183,24 @@ function CarModel({ path, opacity = 1.0, scale = [1, 1, 1] }) {
     )
 }
 
-function WindowLight({ position, target, width, height, intensity }) {
-    const group = useRef()
-    const light = useRef()
+function WindowGlowModel({ intensity = 10 }) {
+    const { scene } = useGLTF('/Window.glb')
 
     useEffect(() => {
-        if (group.current) {
-            group.current.lookAt(new THREE.Vector3(...target))
+        if (scene) {
+            scene.traverse((child) => {
+                if (child.isMesh) {
+                    child.material = new THREE.MeshBasicMaterial({
+                        color: new THREE.Color(intensity, intensity, intensity),
+                        toneMapped: false,
+                        side: THREE.DoubleSide
+                    })
+                }
+            })
         }
-    }, [target])
+    }, [scene, intensity])
 
-    return (
-        <group ref={group} position={position}>
-            <rectAreaLight
-                ref={light}
-                width={width}
-                height={height}
-                color={"#ffffff"}
-                intensity={intensity}
-            />
-            <mesh rotation={[0, 0, 0]}>
-                <planeGeometry args={[width, height]} />
-                <meshBasicMaterial color="white" toneMapped={false} />
-            </mesh>
-        </group>
-    )
+    return <primitive object={scene} />
 }
 
 export default function Experience({ activeModelPath, transitionOpacity }) {
@@ -207,7 +209,7 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
 
     // Load the Seating Buck model directly
     const sbModel = useGLTF('/SB.glb')
-    const studioScene = useGLTF('/StudioScene.glb')
+    const studioScene = useGLTF('/BakedScene.glb')
 
     // Apply LED configuration to the Seating Buck
     useEffect(() => {
@@ -235,7 +237,7 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
 
             {/* Realistic Lighting Setup */}
             <Environment
-                files="/brown_photostudio_02_1k.hdr"
+                files="/studio_small_09_1k.hdr"
                 // background // Hidden as per request
                 environmentRotation={[HDRI_CONFIG.rotation.x, HDRI_CONFIG.rotation.y, HDRI_CONFIG.rotation.z]}
                 // backgroundRotation={[HDRI_CONFIG.rotation.x, HDRI_CONFIG.rotation.y, HDRI_CONFIG.rotation.z]}
@@ -245,33 +247,21 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
             {/* Studio Environment */}
             <primitive object={studioScene.scene} />
 
-            {/* Reflective Floor */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]}>
-                <planeGeometry args={[100, 100]} />
-                <MeshReflectorMaterial
-                    blur={FLOOR_CONFIG.blur}
-                    resolution={FLOOR_CONFIG.resolution}
-                    mixBlur={FLOOR_CONFIG.mixBlur}
-                    mixStrength={FLOOR_CONFIG.mixStrength}
-                    roughness={FLOOR_CONFIG.roughness}
-                    depthScale={FLOOR_CONFIG.depthScale}
-                    minDepthThreshold={FLOOR_CONFIG.minDepthThreshold}
-                    maxDepthThreshold={FLOOR_CONFIG.maxDepthThreshold}
-                    color={FLOOR_CONFIG.color}
-                    metalness={FLOOR_CONFIG.metalness}
-                    mirror={FLOOR_CONFIG.mirror}
-                    ignore={carsGroup ? [carsGroup] : undefined}
-                />
-            </mesh>
+            <ContactShadows
+                key={activeModelPath} // Force-remount on model switch to bake new shadow
+                frames={1} // Bake only once for performance
+                resolution={512}
+                scale={[20, 10]}
+                blur={1}
+                opacity={0.3 * transitionOpacity} // Fade shadow with model
+                far={10}
+                color="#000000"
+                position={[0, 0.01, 0]}
+            />
 
             {/* Window */}
-            {/* <WindowLight
-                width={150}
-                height={150}
-                intensity={10}
-                position={[-6.6, 19.2, 8.4]}
-                target={[0, 0, 0]}
-            /> */}
+            {/* Window Glow - Using the provided model for perfect alignment */}
+            <WindowGlowModel intensity={WINDOW_CONFIG.intensity} />
 
 
             {/* Seating Buck Environment - Rendered directly at native scale */}
@@ -282,30 +272,33 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
                 <CarModel
                     path="car-models/BmwSUV.glb"
                     opacity={activeModelPath === 'car-models/BmwSUV.glb' ? transitionOpacity : 0}
+                    isActive={activeModelPath === 'car-models/BmwSUV.glb'}
                     scale={modelScale}
                 />
                 <CarModel
-                    path="car-models/CAR2.glb"
-                    opacity={activeModelPath === 'car-models/CAR2.glb' ? transitionOpacity : 0}
+                    path="car-models/AudiSport.glb"
+                    opacity={activeModelPath === 'car-models/AudiSport.glb' ? transitionOpacity : 0}
+                    isActive={activeModelPath === 'car-models/AudiSport.glb'}
                     scale={modelScale}
                 />
                 <CarModel
                     path="car-models/FordTransit.glb"
                     opacity={activeModelPath === 'car-models/FordTransit.glb' ? transitionOpacity : 0}
+                    isActive={activeModelPath === 'car-models/FordTransit.glb'}
                     scale={modelScale}
                 />
             </group>
 
 
             {/* Post-Processing */}
-            <EffectComposer disableNormalPass multisampling={6}>
+            <EffectComposer disableNormalPass multisampling={0} >
                 {/* <N8AO
                     halfRes
                     quality="performance"
                     screenSpaceRadius={false}
                     denoiseSamples={2}
                     denoiseRadius={0.1}
-                    aoRadius={0.2}
+                    aoRadius={0.5}
                     intensity={POST_PROCESSING_CONFIG.ssao.intensity}
                     radius={POST_PROCESSING_CONFIG.ssao.radius}
                     luminanceInfluence={POST_PROCESSING_CONFIG.ssao.luminanceInfluence}
@@ -322,8 +315,7 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
                     darkness={POST_PROCESSING_CONFIG.vignette.darkness}
                 />
                 <ToneMapping
-                    mode={THREE.NeutralToneMapping}
-                    exposure={POST_PROCESSING_CONFIG.toneMapping.exposure}
+                    mode={THREE.ACESFilmicToneMapping}
                 />
             </EffectComposer>
         </>
