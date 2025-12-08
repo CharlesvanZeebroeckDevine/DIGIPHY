@@ -6,6 +6,7 @@ import './App.css'
 import CarScene from './scenes/CarScene'
 import HorizontalScrollScene from './scenes/HorizontalScrollScene'
 import TechFeatures from './scenes/TechFeatures'
+import Contact from './scenes/Contact'
 import { TRANSITION_CONFIG } from './scenes/CarScene/config'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -113,6 +114,9 @@ function App() {
         </section>
         <section id="tech-features" data-scroll-section className="section_tech--features">
           <TechFeatures />
+        </section>
+        <section id="contact" data-scroll-section className="section_contact">
+          <Contact />
         </section>
       </div>
     </>
