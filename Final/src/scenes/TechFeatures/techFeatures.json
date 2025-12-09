@@ -1,9 +1,9 @@
 [
     {
         "index": 0,
-        "name": "Unknown Item 1",
+        "name": "HMI integration",
         "image": "/assets/placeholder.png",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis nisi ut sem dignissim pretium. Ut non auctor risus. Nam porta commodo lorem sed tristique. Suspendisse potenti. Sed in dignissim arcu, id vehicula purus. Donec vestibulum mi a iaculis efficitur. Vivamus tempus iaculis ligula nec maximus."
+        "description": "Test your HMI in real time using the VR integration."
     },
     {
         "index": 1,
@@ -19,14 +19,20 @@
     },
     {
         "index": 3,
-        "name": "Unknown Item 2",
+        "name": "Customizable",
         "image": "/assets/placeholder.png",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis nisi ut sem dignissim pretium. Ut non auctor risus. Nam porta commodo lorem sed tristique. Suspendisse potenti. Sed in dignissim arcu, id vehicula purus. Donec vestibulum mi a iaculis efficitur. Vivamus tempus iaculis ligula nec maximus."
+        "description": "Easy to add physical properties to customize it how you want."
     },
     {
         "index": 4,
-        "name": "Unknown Item 3",
+        "name": "Mobile",
         "image": "/assets/placeholder.png",
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis nisi ut sem dignissim pretium. Ut non auctor risus. Nam porta commodo lorem sed tristique. Suspendisse potenti. Sed in dignissim arcu, id vehicula purus. Donec vestibulum mi a iaculis efficitur. Vivamus tempus iaculis ligula nec maximus."
+        "description": "Designed to be easily moved, for example to a presentation room or next to a full-scale mockup"
+    },
+    {
+        "index": 5,
+        "name": "IPAD",
+        "image": "/assets/placeholder.png",
+        "description": "Save and switch instantly between layouts."
     }
 ]
