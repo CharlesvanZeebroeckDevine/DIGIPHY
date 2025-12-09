@@ -1,3 +1,11 @@
+@font-face {
+    font-family: 'GT Ultra';
+    src: url('/fonts/GT-Ultra-Trial-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: oblique 0deg 20deg;
+    font-display: swap;
+}
+
 body {
     color: white;
 }
@@ -7,16 +15,14 @@ body {
 }
 
 .feature__container {
-    width: 80%;
     margin: 0 auto;
 }
 
 .tech__container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 12rem;
-    padding-block: 7rem;
+    justify-content: space-evenly;
+    padding-block: 5rem;
 }
 
 .feature__intro {
@@ -30,43 +36,56 @@ body {
 
 .feature__title {
     font-size: 6.25em;
+    font-family: 'GT Ultra', sans-serif;
+    line-height: normal;
+    font-variation-settings: 'wght' 700, 'slnt' 0, 'CNTR' 50;
 }
 
 .feature__subtitle {
     font-size: 3.4375em;
+    font-family: 'GT Ultra', sans-serif;
+    line-height: normal;
+    font-variation-settings: 'wght' 400, 'slnt' 0, 'CNTR' 0;
 }
 
 .feature__nav {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    width: 20rem;
+    /* gap: 1rem; */
 }
 
 .feature__button {
     background: none;
-    border: 1px solid white;
-    padding: 0.5rem 1rem;
+    border-width: 0px 1px 0px 0px;
+    border-style: solid;
+    border-color: white;
+    padding: 1rem 1rem;
     color: white;
     cursor: pointer;
     transition: 0.2s;
     width: 10rem;
-    height: 2.5rem;
+    font-size: 1.25rem;
+    text-align: left;
 }
 
 .feature__button.active {
-    height: 4rem;
+    border-width: 0px 5px 0px 0px;
+    border-color: #149D7B;
 }
 
-.feature__button.active,
 .feature__button:hover {
-    background: white;
-    color: black;
+    border-width: 0px 5px 0px 0px;
 }
 
 .feature__image>img {
-    width: 27.375rem;
-    height: 35.3125rem;
-    aspect-ratio: 534/661;
+    width: 24rem;
+    height: 31rem;
+}
+
+.feature__description {
+    width: 20rem;
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 150%;
 }

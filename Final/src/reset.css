@@ -28,9 +28,11 @@ time, mark, audio, video {
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
     display: block;
+    font-family: "Montserrat", sans-serif;
 }
 body {
     line-height: 1;
+    font-family: "Montserrat", sans-serif;
 }
 ol, ul {
     list-style: none;
