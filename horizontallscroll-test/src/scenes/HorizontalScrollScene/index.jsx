@@ -1,48 +1,48 @@
-import { Canvas } from '@react-three/fiber'
+import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import AutoAlignmentScene from './AutoAlignmentScene'
+
+import AutoAlignmentScene2 from './autoAlignmentScene2'
+import TangibleTruth from './TangibleTruth'
+import WhyDigiphy from './WhyDigiphy'
+import PlugAndPlay from './PlugAndPlay'
+
 import './HorizontalScrollScene.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-// === SCROLL CONTENT: Container for all 3D scenes ===
-// Each scene is a separate component with its own ScrollTrigger
-// This makes it easy to add, remove, or reorder scenes
-function ScrollContent() {
+
+const HorizontalScrollScene = () => {
+    const containerRef = useRef(null)
+    const sectionsRef = useRef(null)
+
+    useEffect(() => {
+        const sections = gsap.utils.toArray('.horiz_scroll--scene')
+        
+        gsap.to(sections, {
+            xPercent: -100 * (sections.length - 1),
+            ease: 'none',
+            scrollTrigger: {
+                trigger: containerRef.current,
+                pin: true,
+                scrub: 1,
+                snap: 1 / (sections.length - 1),
+                end: () => `+=${sectionsRef.current.offsetWidth - window.innerWidth}`
+            }
+        })
+
+        return () => {
+            ScrollTrigger.getAll().forEach(st => st.kill())
+        }
+    }, [])
+
     return (
-        <>
-            {/* === LIGHTING SETUP === */}
-            <ambientLight intensity={0.5} /> {/* Soft ambient light */}
-            <directionalLight position={[10, 10, 5]} intensity={1} /> {/* Key light (top-right) */}
-            <directionalLight position={[-10, -10, -5]} intensity={0.5} /> {/* Fill light (bottom-left) */}
-
-            {/* === SCENE COMPONENTS === */}
-            {/* AutoAlignment Scene - spheres converge, transform to dot, slide left */}
-            <AutoAlignmentScene />
-            
-            {/* Add more scenes here as separate components */}
-            {/* <NextScene /> */}
-            {/* <AnotherScene /> */}
-        </>
-    )
-}
-
-
-// === MAIN COMPONENT: Horizontal scroll scene container ===
-function HorizontalScrollScene() {
-    return (
-        // 400vh container provides scroll distance (defined in CSS)
-        <div className="horizontal_scroll--container">
-            {/* Sticky wrapper keeps Canvas fixed while scrolling */}
-            <div className="horizontal_scroll--sticky">
-                <Canvas
-                    gl={{ antialias: true }} // Enable antialiasing
-                    dpr={[1, 2]} // Pixel ratio for retina displays
-                    camera={{ position: [0, 0, 12], fov: 50 }} // Camera at z:12, 50° FOV
-                >
-                    <ScrollContent /> {/* 3D scene content */}
-                </Canvas>
+        <div ref={containerRef} className="horizontal_scroll--container">
+            <div ref={sectionsRef} className="horizontal_scroll--sections">
+                <AutoAlignmentScene2 />
+                <TangibleTruth />
+                <WhyDigiphy />
+                <PlugAndPlay />
             </div>
         </div>
     )

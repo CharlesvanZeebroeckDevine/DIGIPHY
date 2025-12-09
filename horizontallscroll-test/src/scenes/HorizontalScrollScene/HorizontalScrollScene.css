@@ -8,16 +8,16 @@
 
 .horizontal_scroll--container {
   width: 100%;
-  height: 800vh;
+  height: 100vh;
+  overflow: hidden;
   background: linear-gradient(180deg, #000 0%, #1a1a2e 100%);
 }
 
-.horizontal_scroll--sticky {
-  position: sticky;
-  top: 0;
-  width: 100%;
+.horizontal_scroll--sections {
+  display: flex;
+  flex-wrap: nowrap;
+  width: fit-content;
   height: 100vh;
-  overflow: hidden;
 }
 
 .auto_alignment--title {
@@ -37,4 +37,13 @@
 
 h1 {
   color: white;
+}
+
+.horiz_scroll--scene {
+  width: 100vw;
+  height: 100vh;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
