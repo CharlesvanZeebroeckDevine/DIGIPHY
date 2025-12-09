@@ -1,0 +1,85 @@
+body {
+    color: white;
+}
+
+.contact__container{
+margin-inline-start: 10rem;
+}
+
+.contact__intro-title {
+    font-size: 4.375rem;
+    text-transform: uppercase;
+    font-weight: 100;
+}
+
+.contact__span {
+    font-weight: 400;
+}
+
+.contact__intro-subtitle {
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 150%;
+    letter-spacing: -0.06rem;
+}
+
+.contact__form-wrapper {
+    width: 40vw;
+}
+
+.contact__form{
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.contact__form-label {
+    color: #FFF;
+    font-family: Montserrat;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 100;
+    line-height: 140%;
+    letter-spacing: -0.08rem;
+    text-transform: uppercase;
+}
+
+.contact__form-input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    font-size: 1rem;
+    font-weight: 300;
+    outline: none;
+    border-radius: 0;
+    transition: border-color 0.2s ease;
+}
+
+.radio__label {
+    color: #FFF;
+    font-family: Montserrat;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 140%;
+    letter-spacing: -0.05rem;
+}
+
+.contact__submit{
+    margin-top: 2rem;
+    background: none;
+    border: 1px solid white;
+    padding: 0.8rem 2rem;
+    color: white;
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.contact__submit:hover {
+    background: white;
+    color: black;
+}
