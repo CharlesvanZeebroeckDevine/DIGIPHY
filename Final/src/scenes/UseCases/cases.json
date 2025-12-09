@@ -1,0 +1,182 @@
+[
+    {
+        "id": 1,
+        "title": "Drako Dragon Hypercar",
+        "buttons": [
+            {
+                "label": "Drako Dragon website",
+                "url": "https://www.drakomotors.com/",
+                "buttonType": "secondary"
+            },
+            {
+                "label": "Read full usecase",
+                "url": "https://static1.squarespace.com/static/6513fe5dc027a77c7b908405/t/663b8eb138a94f1a901a025f/1715179195709/2023_03_17_DigiPHY_Drako_Use-Case.pdf",
+                "buttonType": "primary"
+            }
+        ],
+        "heroImage": "/assets/useCases/hero_drakoDragon.jpg",
+        "subtitle": "Creating a “two-soul” electric hypercar with mixed-reality design.",
+        "overview": {
+            "title": "Project overview",
+            "body": "Drako Motors, in collaboration with Granstudio, used DigiPHY to redefine what an electric hypercar could be, combining the performance of a sports car with the versatility of an SUV. By leveraging mixed-reality design, the team rapidly explored and validated interior layouts, aerodynamics, and user interactions, ensuring both luxury and functionality. This approach enabled real-time simulation of complex design choices, accelerated decision-making, and minimized the need for costly physical prototypes, resulting in a fully optimized, innovative vehicle in record time.",
+            "image": "/assets/useCases/project_drakoDragon.jpg"
+        },
+        "accordion": [
+            {
+                "number": 1,
+                "title": "Phygital Packaging Optimization",
+                "body": "Refined seating positions, interior layout, and aerodynamics while evaluating multiple suspension modes. Blending physical reference points with virtual testing ensured comfort, performance, and spatial efficiency in every configuration."
+            },
+            {
+                "number": 2,
+                "title": "Gull-Wing Door Validation",
+                "body": "Verified easy ingress and egress while ensuring the large doors fit within tight parking spaces. Mixed-reality testing allowed the team to confirm both functionality and real-world practicality early in the design process."
+            },
+            {
+                "number": 3,
+                "title": "Premium “Living Room” Interior",
+                "body": "Developed a spacious, luxurious cabin for five passengers with ergonomic HMI and ample trunk capacity. The design balanced hypercar performance with SUV comfort, creating a user-centered interior experience."
+            },
+            {
+                "number": 4,
+                "title": "Real-Time Mixed-Reality Workflow",
+                "body": "Simulated and validated interior and exterior designs using DigiPHY and Unreal Engine. Teams could test ideas instantly, adjust models on the fly, and align decisions faster than with traditional workflows."
+            },
+            {
+                "number": 5,
+                "title": "Accelerated Development & Cost Savings",
+                "body": "Completed the full design process in just four months while saving over €1 million in physical prototypes. The mixed-reality approach drastically reduced development time and resource use without compromising quality."
+            }
+        ],
+        "ending": {
+            "image": "/assets/useCases/quote_drakoDragon.jpg",
+            "quote": "“Thanks to our mixed reality design process, we created a new typology of electric vehicle derived from lived experiences on DigiPHY.”",
+            "quoteBy": "— Lowie Vermeersch, CEO & Creative Director, Granstudio",
+            "button": {
+                "label": "Read full case",
+                "url": "https://static1.squarespace.com/static/6513fe5dc027a77c7b908405/t/663b8eb138a94f1a901a025f/1715179195709/2023_03_17_DigiPHY_Drako_Use-Case.pdf",
+                "buttonType": "primary"
+            }
+        }
+    },
+    {
+        "id": 2,
+        "title": "Lynk & Co Cool Family Car",
+        "buttons": [
+            {
+                "label": "Lynk & Co website",
+                "url": "https://www.lynkco.com/",
+                "buttonType": "secondary"
+            },
+            {
+                "label": "Read full usecase",
+                "url": "https://drive.google.com/file/d/1ePQXFbccubz7yNGjWAVLqADRl_AfxjWz/view",
+                "buttonType": "primary"
+            }
+        ],
+        "heroImage": "/assets/useCases/hero_lynk&co.jpg",
+        "subtitle": "Designing a mixed-reality experience for a family-focused concept car.",
+        "overview": {
+            "title": "Project overview",
+            "body": "The Lynk & Co Cool Family Car project reimagines the vehicle as a true extension of users’ identity, tailored to fit the way families live, move, and interact. Granstudio guided the design process using the DigiPHY platform, allowing teams to explore multiple concepts in immersive mixed reality, iterate rapidly, and test experiences virtually before committing to physical prototypes. The project combined human-centered design with innovative technology to create a concept that is both playful and practical, reflecting real-life family needs.",
+            "image": "/assets/useCases/project_lynk&co.jpg"
+        },
+        "accordion": [
+            {
+                "number": 1,
+                "title": "Concept Exploration",
+                "body": "Explored nine initial vehicle concepts in DigiPHY and narrowed them down to two strong directions. This allowed the team to quickly compare ideas, visualize variations, and focus on the most promising concepts early."
+            },
+            {
+                "number": 2,
+                "title": "Immersive User Testing",
+                "body": "Delivered the “Big Shebang!” gamified VR experience to evaluate user interactions and behavior. The playful, gamified approach made it easier to gather authentic user feedback in a dynamic setting."
+            },
+            {
+                "number": 3,
+                "title": "Adaptive Layout Transitions",
+                "body": "Used an adaptive mixed-reality platform to switch between layouts instantly and gather immediate feedback. Designers could evaluate ergonomics, space usage, and functional features without rebuilding physical models."
+            },
+            {
+                "number": 4,
+                "title": "Collaborative Design Flow",
+                "body": "Enabled multi-disciplinary collaboration across design, UX, and engineering teams. The shared mixed-reality environment helped teams align faster, make decisions together, and stay fully engaged."
+            },
+            {
+                "number": 5,
+                "title": "Rapid Mixed-Reality Iteration",
+                "body": "Workshops combined physical and virtual elements to test ideas quickly and refine them in real time. This hybrid workflow drastically sped up iteration, reducing uncertainty and increasing creative freedom."
+            }
+        ],
+        "ending": {
+            "image": "/assets/useCases/quote_lynk&co.jpg",
+            "quote": "“The teams got into a creative multi-disciplinary collaboration flow for hours.”",
+            "quoteBy": "— Simon Lamarre, Lynk & Co",
+            "button": {
+                "label": "Read full case",
+                "url": "https://drive.google.com/file/d/1ePQXFbccubz7yNGjWAVLqADRl_AfxjWz/view",
+                "buttonType": "primary"
+            }
+        }
+    },
+    {
+        "id": 3,
+        "title": "Mazda Design Workshop",
+        "buttons": [
+            {
+                "label": "Mazda website",
+                "url": "https://www.mazda.com/en/",
+                "buttonType": "secondary"
+            },
+            {
+                "label": "Read full usecase",
+                "url": "https://static1.squarespace.com/static/6513fe5dc027a77c7b908405/t/663b75b5ced1cc4d17055427/1715172796600/Mazda+Design+Workshop+on+DigiPHY+%281%29.pdf",
+                "buttonType": "primary"
+            }
+        ],
+        "heroImage": "/assets/useCases/hero_mazda.jpg",
+        "subtitle": "Immersive mixed-reality design for the Mazda MX5.",
+        "overview": {
+            "title": "Project overview",
+            "body": "Mazda Research Europe leveraged DigiPHY to revolutionize their design workflow for the Mazda MX5, comparing seating layouts and packaging alternatives in immersive VR. By combining physical seating bucks with virtual environments, designers were able to make faster, more accurate decisions, test ergonomics in real time, and iterate without the need for multiple costly physical prototypes. This mixed-reality approach streamlined collaboration between design, engineering, and user experience teams, enabling immediate feedback and highly informed design choices.",
+            "image": "/assets/useCases/project_mazda.jpg"
+        },
+        "accordion": [
+            {
+                "number": 1,
+                "title": "Dynamic VR Visualization",
+                "body": "Instantly switch between multiple package layouts while maintaining the correct seating position. This enabled designers to compare configurations directly and assess ergonomic differences without resetting or repositioning."
+            },
+            {
+                "number": 2,
+                "title": "Hybrid Physical–Virtual Workflow",
+                "body": "Combined physical seating bucks with VR environments for highly accurate mixed-reality evaluations. The approach delivered both tactile realism and digital flexibility, strengthening confidence in design decisions."
+            },
+            {
+                "number": 3,
+                "title": "Faster, More Informed Decisions",
+                "body": "Used an adaptive mixed-reality platform to switch between layouts instantly and gather immediate feedback. Designers could evaluate ergonomics, space usage, and functional features without rebuilding physical models."
+            },
+            {
+                "number": 4,
+                "title": "Custom Interaction Tools",
+                "body": "Used a physical steering wheel synchronized with the VR model for realistic interaction testing. This ensured true-to-life ergonomics and a more authentic driving experience within the virtual environment."
+            },
+            {
+                "number": 5,
+                "title": "Enhanced Team Collaboration",
+                "body": "Supported multi-disciplinary discussions and rapid iteration between design, UX, and engineering teams. Everyone worked from the same real-time context, improving alignment and accelerating the design process."
+            }
+        ],
+        "ending": {
+            "image": "/assets/useCases/quote_mazda.jpg",
+            "quote": "“Experiencing both designs in parallel and having confidence in the accuracy of DigiPHY enabled us to make key decisions on the spot.” ",
+            "quoteBy": "— Jo Stenuit, Design Director, Mazda Research Europe",
+            "button": {
+                "label": "Read full case",
+                "url": "https://static1.squarespace.com/static/6513fe5dc027a77c7b908405/t/663b75b5ced1cc4d17055427/1715172796600/Mazda+Design+Workshop+on+DigiPHY+%281%29.pdf",
+                "buttonType": "primary"
+            }
+        }
+    }
+]
