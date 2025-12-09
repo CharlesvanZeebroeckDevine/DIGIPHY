@@ -1,0 +1,32 @@
+[
+    {
+        "index": 0,
+        "name": "Unknown Item 1",
+        "image": "/assets/placeholder.png",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis nisi ut sem dignissim pretium. Ut non auctor risus. Nam porta commodo lorem sed tristique. Suspendisse potenti. Sed in dignissim arcu, id vehicula purus. Donec vestibulum mi a iaculis efficitur. Vivamus tempus iaculis ligula nec maximus."
+    },
+    {
+        "index": 1,
+        "name": "HMD Compatibility",
+        "image": "/assets/placeholder.png",
+        "description": "Optimized for Varjo XR-3 and compatible with HTC Vive, Oculus and others."
+    },
+    {
+        "index": 2,
+        "name": "CE Certification",
+        "image": "/assets/placeholder.png",
+        "description": "Fully complient with Directive 2006/42/EC. Industrial-grade safety interlocks for corporate studio deployment."
+    },
+    {
+        "index": 3,
+        "name": "Unknown Item 2",
+        "image": "/assets/placeholder.png",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis nisi ut sem dignissim pretium. Ut non auctor risus. Nam porta commodo lorem sed tristique. Suspendisse potenti. Sed in dignissim arcu, id vehicula purus. Donec vestibulum mi a iaculis efficitur. Vivamus tempus iaculis ligula nec maximus."
+    },
+    {
+        "index": 4,
+        "name": "Unknown Item 3",
+        "image": "/assets/placeholder.png",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quis nisi ut sem dignissim pretium. Ut non auctor risus. Nam porta commodo lorem sed tristique. Suspendisse potenti. Sed in dignissim arcu, id vehicula purus. Donec vestibulum mi a iaculis efficitur. Vivamus tempus iaculis ligula nec maximus."
+    }
+]
