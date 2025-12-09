@@ -8,7 +8,7 @@
 
 .horizontal_scroll--container {
   width: 100%;
-  height: 400vh;
+  height: 500vh;
   background: linear-gradient(180deg, #000 0%, #1a1a2e 100%);
 }
 
@@ -33,4 +33,8 @@
   text-transform: uppercase;
   pointer-events: none;
   user-select: none;
+}
+
+h1 {
+  color: white;
 }
