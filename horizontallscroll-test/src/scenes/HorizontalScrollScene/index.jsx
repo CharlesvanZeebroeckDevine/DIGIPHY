@@ -19,17 +19,16 @@ const HorizontalScrollScene = () => {
     const sectionsRef = useRef(null)
 
     useEffect(() => {
-        const sections = gsap.utils.toArray('.horiz_scroll--scene')
+        const sections = sectionsRef.current
         
         gsap.to(sections, {
-            xPercent: -100 * (sections.length - 1),
+            x: () => -(sections.scrollWidth - window.innerWidth),
             ease: 'none',
             scrollTrigger: {
                 trigger: containerRef.current,
                 pin: true,
                 scrub: 1,
-                snap: 1 / (sections.length - 1),
-                end: () => `+=${sectionsRef.current.offsetWidth - window.innerWidth}`
+                end: () => `+=${sections.scrollWidth - window.innerWidth}`
             }
         })
 

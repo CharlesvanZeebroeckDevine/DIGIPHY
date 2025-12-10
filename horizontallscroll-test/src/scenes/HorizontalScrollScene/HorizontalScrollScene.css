@@ -18,19 +18,23 @@
   flex-wrap: nowrap;
   width: fit-content;
   height: 100vh;
+  gap: 0;
 }
 
 .horiz_scroll--scene {
-  min-width: 100vw;
+  width: 100vw;
   height: 100vh;
+  flex-shrink: 0;
 }
 
 h1 {
   font-size: var(--fz-5);
+  line-height: 125%;
 }
 
 h2 {
   font-size: var(--fz-4);
+  line-height: 112.5%;
 }
 
 p, li {
@@ -43,13 +47,14 @@ p, li {
 /* auto alignment */
 
 .auto_alignment--container {
-  width: 100vw;
+  width: 150vw !important;
   height: 100vh;
   display: grid;
-  grid-template-rows: repeat(10, 1fr);
-  grid-template-columns: repeat(10, 1fr);
-  grid-gap: var(--sp-xs);
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(6, 1fr);
+  grid-gap: var(--sp-m);
   align-items: center;
+  padding: 0 var(--sp-2xl);
 }
 
 .auto_alignment--title {
@@ -63,17 +68,19 @@ p, li {
   pointer-events: none;
   user-select: none;
   grid-column: 2;
-  grid-row: 5;
+  grid-row: 2;
 }
 
 .auto_alignment--text {
-  grid-column: 3 / span 3;
-  grid-row: 5;
+  grid-column: 4;
+  grid-row: 2;
+  align-self: end;
 }
 
 .auto_alignment--text--2 {
-  grid-column: 7 / span 2;
-  grid-row: 2;
+  grid-column: 6;
+  grid-row: 1;
+  align-self: end;
 }
 
 /* tangible truth */
