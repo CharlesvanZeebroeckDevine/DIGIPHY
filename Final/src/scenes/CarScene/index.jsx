@@ -18,7 +18,7 @@ const carModels = [
   'car-models/FordTransit.glb'
 ]
 
-function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch, uiVisible = true, cameraProgress = 0 }) {
+function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch, uiVisible = true, cameraProgress = 0, isEnabled = true, zoomLevel = 0, interactionStrength = 1 }) {
   const animationFrameRef = useRef(null)
 
   const activeModelPath = carModels[activeModelIndex]
@@ -42,6 +42,7 @@ function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch, uiVisibl
     >
       <PreloadModels />
       <Canvas
+        frameloop={isEnabled ? 'always' : 'never'}
         shadows
         dpr={[1, 1.5]}
         gl={{
@@ -58,6 +59,8 @@ function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch, uiVisibl
           activeModelPath={activeModelPath}
           transitionOpacity={transitionOpacity}
           cameraProgress={cameraProgress}
+          zoomLevel={zoomLevel}
+          interactionStrength={interactionStrength}
         />
       </Canvas>
 

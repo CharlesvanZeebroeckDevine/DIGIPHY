@@ -18,6 +18,9 @@ function App() {
   const [transitionOpacity, setTransitionOpacity] = useState(1.0)
   const [uiVisible, setUiVisible] = useState(true)
   const [cameraProgress, setCameraProgress] = useState(0)
+  const [carSceneEnabled, setCarSceneEnabled] = useState(true) // Performance optimization
+  const [zoomLevel, setZoomLevel] = useState(0) // Camera interpolation level (0-1)
+  const [interactionStrength, setInteractionStrength] = useState(1) // Mouse parallax strength (1-0)
 
   const handleModelSwitch = (newIndex) => {
     if (newIndex === activeModelIndex) return
@@ -91,6 +94,38 @@ function App() {
       onLeaveBack: () => setUiVisible(true)
     })
 
+    // Performance Optimization: Pause CarScene when HorizontalScrollScene covers viewport
+    ScrollTrigger.create({
+      trigger: '.section_horizontal--scroll',
+      start: 'top top',
+      end: 'bottom bottom',
+      onEnter: () => setCarSceneEnabled(false),
+      onLeaveBack: () => setCarSceneEnabled(true),
+      onEnterBack: () => setCarSceneEnabled(false),
+      onLeave: () => setCarSceneEnabled(true)
+    })
+
+    // Camera Interpolation: Zoom OUT when entering HorizontalScrollScene
+    ScrollTrigger.create({
+      trigger: '.section_horizontal--scroll',
+      start: 'top bottom', // When top of horizontal section hits bottom of viewport
+      end: 'top top',      // When top of horizontal section hits top of viewport
+      scrub: true,
+      onUpdate: (self) => {
+        setZoomLevel(self.progress)
+        setInteractionStrength(1 - self.progress) // Fade out mouse interaction
+      }
+    })
+
+    // Camera Interpolation: Zoom IN when leaving HorizontalScrollScene
+    ScrollTrigger.create({
+      trigger: '.section_horizontal--scroll',
+      start: 'bottom bottom', // When bottom of horizontal section hits bottom of viewport
+      end: 'bottom top',      // When bottom of horizontal section hits top of viewport
+      scrub: true,
+      onUpdate: (self) => setZoomLevel(1 - self.progress)
+    })
+
     // Camera Sequence Trigger (Pin & Drive)
     ScrollTrigger.create({
       trigger: '#car-usecases',
@@ -124,6 +159,9 @@ function App() {
           onModelSwitch={handleModelSwitch}
           uiVisible={uiVisible}
           cameraProgress={cameraProgress}
+          isEnabled={carSceneEnabled}
+          zoomLevel={zoomLevel}
+          interactionStrength={interactionStrength}
         />
       </div>
       <div data-scroll-container className="scroll_container">

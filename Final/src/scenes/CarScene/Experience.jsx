@@ -27,12 +27,16 @@ function getCubicBezierPoint(t, p0, p1, p2, p3) {
     return new THREE.Vector3(x, y, z)
 }
 
-function CameraRig({ scrollProgress }) {
+function CameraRig({ scrollProgress, zoomLevel = 0, interactionStrength = 1 }) {
     const { camera, pointer } = useThree()
+
+    // Zoom Logic: Interpolate base Z position from -25 (default) to -35 (zoomed out)
+    const baseZ = THREE.MathUtils.lerp(CAMERA_CONFIG.initialPosition.z, -35, zoomLevel)
+
     const initialCameraPosition = new THREE.Vector3(
         CAMERA_CONFIG.initialPosition.x,
         CAMERA_CONFIG.initialPosition.y,
-        CAMERA_CONFIG.initialPosition.z
+        baseZ
     )
     const lookAtTarget = new THREE.Vector3(
         CAMERA_CONFIG.lookAtTarget.x,
@@ -50,6 +54,15 @@ function CameraRig({ scrollProgress }) {
             // BEZIER PATH MODE
             // Interpolate position based on scrollProgress
             const points = USECASE_CAMERA_CONFIG.path
+
+            // Ensure smoothness from the current zoomed-out state (-35) if needed, 
+            // but the Bezier curve starts at a fixed point. 
+            // Ideally, P0 of Bezier should match the exit position of the Zoom.
+            // P0 is { x: 0, y: 7, z: -25 }. 
+            // If we are fully zoomed out at z: -35, and then jump to Bezier P0 z: -25, there is a jump.
+            // However, the Exit Trigger zooms us BACK to -25 (zoomLevel 1->0) during the exit phase.
+            // So by the time scrollProgress > 0 (CarUsecases start), zoomLevel should be 0 (back at -25).
+
             const newPos = getCubicBezierPoint(
                 scrollProgress,
                 points[0],
@@ -68,9 +81,10 @@ function CameraRig({ scrollProgress }) {
             camera.lookAt(currentLookAt)
 
         } else {
-            // MOUSE INTERACTION MODE (Existing Logic)
-            targetRotation.current.y = pointer.x * Math.PI * 0.10
-            targetRotation.current.x = pointer.y * Math.PI * 0.02
+            // MOUSE INTERACTION MODE + ZOOM
+            // Apply interaction strength to fade out influence
+            targetRotation.current.y = (pointer.x * Math.PI * 0.10) * interactionStrength
+            targetRotation.current.x = (pointer.y * Math.PI * 0.02) * interactionStrength
 
             rotation.current.x += (targetRotation.current.x - rotation.current.x) * rotationSpeed
             rotation.current.y += (targetRotation.current.y - rotation.current.y) * rotationSpeed
@@ -78,6 +92,7 @@ function CameraRig({ scrollProgress }) {
             const quaternion = new THREE.Quaternion()
             quaternion.setFromEuler(new THREE.Euler(rotation.current.x, rotation.current.y, 0, 'YXZ'))
 
+            // Re-calculate offset based on the DYNAMIC initialCameraPosition (with zoom)
             const offset = initialCameraPosition.clone().sub(lookAtTarget)
             offset.applyQuaternion(quaternion)
 
@@ -246,7 +261,7 @@ function WindowGlowModel({ intensity = 10 }) {
     return <primitive object={scene} />
 }
 
-export default function Experience({ activeModelPath, transitionOpacity, cameraProgress }) {
+export default function Experience({ activeModelPath, transitionOpacity, cameraProgress, zoomLevel, interactionStrength }) {
     const { scene } = useThree()
     const [carsGroup, setCarsGroup] = useState(null)
 
@@ -264,7 +279,7 @@ export default function Experience({ activeModelPath, transitionOpacity, cameraP
 
     return (
         <>
-            <CameraRig scrollProgress={cameraProgress} />
+            <CameraRig scrollProgress={cameraProgress} zoomLevel={zoomLevel} interactionStrength={interactionStrength} />
 
             {/* Realistic Lighting Setup */}
             <Environment
