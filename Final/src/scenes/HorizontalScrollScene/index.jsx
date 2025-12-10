@@ -2,6 +2,7 @@ import { Canvas } from '@react-three/fiber'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import AutoAlignmentScene from './AutoAlignmentScene'
+
 import './HorizontalScrollScene.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -20,7 +21,7 @@ function ScrollContent() {
             {/* === SCENE COMPONENTS === */}
             {/* AutoAlignment Scene - spheres converge, transform to dot, slide left */}
             <AutoAlignmentScene />
-            
+
             {/* Add more scenes here as separate components */}
             {/* <NextScene /> */}
             {/* <AnotherScene /> */}
@@ -30,7 +31,7 @@ function ScrollContent() {
 
 
 // === MAIN COMPONENT: Horizontal scroll scene container ===
-function HorizontalScrollScene() {
+export default function HorizontalScrollScene() {
     return (
         // 400vh container provides scroll distance (defined in CSS)
         <div className="horizontal_scroll--container">
@@ -38,14 +39,10 @@ function HorizontalScrollScene() {
             <div className="horizontal_scroll--sticky">
                 <Canvas
                     gl={{ antialias: true }} // Enable antialiasing
-                    dpr={[1, 2]} // Pixel ratio for retina displays
-                    camera={{ position: [0, 0, 12], fov: 50 }} // Camera at z:12, 50° FOV
                 >
-                    <ScrollContent /> {/* 3D scene content */}
+                    <ScrollContent />
                 </Canvas>
             </div>
         </div>
     )
-}
-
-export default HorizontalScrollScene
+};

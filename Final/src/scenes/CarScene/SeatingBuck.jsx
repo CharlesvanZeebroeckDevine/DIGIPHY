@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import * as THREE from 'three'
-import { LED_CONFIG, FLIP_MODELS_X } from './config'
+import { LED_CONFIG, FLIP_MODELS_X, TRANSITION_CONFIG } from './config'
 
 export default function SeatingBuck({ activeModelIndex }) {
     const { scene, animations } = useGLTF('/SB.glb')
@@ -43,19 +43,50 @@ export default function SeatingBuck({ activeModelIndex }) {
         if (action) {
             console.log(`[SeatingBuck] Playing animation: ${clipName}`)
 
-            // Set LEDs to Active Color ("Working" state)
-            console.log(`[SeatingBuck] Setting LEDs to ACTIVE: ${LED_CONFIG.activeColor}`)
-            ledMaterialsRef.current.forEach(mat => {
-                mat.emissive.set(LED_CONFIG.activeColor)
-            })
+            // Start Blink Sequence: OFF -> IDLE -> OFF -> IDLE -> ACTIVE
+            // Total blink time: ~400ms (fast)
+            const blinkDuration = 100
+
+            const blinkSequence = async () => {
+                const setLeds = (colorHex) => {
+                    ledMaterialsRef.current.forEach(mat => mat.emissive.set(colorHex))
+                }
+
+                // Blink 1 (Purple)
+                setLeds('#000000') // OFF
+                await new Promise(r => setTimeout(r, blinkDuration))
+                setLeds(LED_CONFIG.color) // ON (Purple)
+                await new Promise(r => setTimeout(r, blinkDuration))
+
+                // Blink 2 (Purple)
+                setLeds('#000000') // OFF
+                await new Promise(r => setTimeout(r, blinkDuration))
+                setLeds(LED_CONFIG.color) // ON (Purple)
+                await new Promise(r => setTimeout(r, blinkDuration))
+
+                // Switch to Active (Green)
+                setLeds(LED_CONFIG.activeColor)
+            }
+
+            console.log(`[SeatingBuck] Starting LED Blink Sequence (Purple -> Green)`)
+            blinkSequence()
 
             // Stop other animations to avoid conflicts
             Object.values(actions).forEach(act => {
                 if (act !== action) act.stop()
             })
 
+            // Calculate timeScale so animation fits exactly in waitDuration
+            // buffer: Wait 90% of the duration to be safe, or 100% if precise
+            const targetDurationSeconds = TRANSITION_CONFIG.waitDuration / 1000
+            const clipDuration = action.getClip().duration
+            const timeScale = clipDuration / targetDurationSeconds
+
+            console.log(`[SeatingBuck] Syncing speed: Clip=${clipDuration}s Target=${targetDurationSeconds}s Scale=${timeScale}`)
+
             // Play new animation
             action.reset()
+            action.setEffectiveTimeScale(timeScale)
             action.setLoop(THREE.LoopOnce)
             action.clampWhenFinished = true
             action.play()

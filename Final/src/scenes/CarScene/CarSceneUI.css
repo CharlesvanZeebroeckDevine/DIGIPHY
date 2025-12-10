@@ -1,0 +1,65 @@
+/* Font Definition reuse if not already global */
+@font-face {
+    font-family: 'GT Ultra';
+    src: url('/fonts/GT-Ultra-Trial-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: oblique 0deg 20deg;
+    font-display: swap;
+}
+
+.car_scene_overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* Let clicks pass through to canvas/scroll sections by default */
+    z-index: 100;
+    font-family: 'GT Ultra', sans-serif;
+    font-size: 5rem;
+    /* wght: weight, slnt: slant, c3tr: contrast */
+    color: white;
+}
+
+/* Logo - Top Left */
+.overlay_logo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1rem;
+    font-variation-settings: 'wght' 200;
+    color: white;
+    pointer-events: auto;
+}
+
+/* Title - Top Center */
+.overlay_title {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 5.5rem;
+    line-height: 5rem;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.purple {
+    color: #583BFB;
+    font-variation-settings: 'wght' 600;
+}
+
+/* Controls - Bottom Center */
+/* Controls - Bottom Center */
+.overlay_controls {
+    position: absolute;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 120px;
+    pointer-events: auto;
+}

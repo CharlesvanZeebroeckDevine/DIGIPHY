@@ -1,0 +1,141 @@
+
+import React, { useRef, useEffect, useLayoutEffect } from 'react'
+import { gsap } from 'gsap'
+import { mapRange } from 'gsap/all'
+
+export default function VariableText({
+    children,
+    className = '',
+    baseSettings = { wght: 300, slnt: 100, CNTR: 100 },
+    hoverSettings = { wght: 700, slnt: 0, CNTR: 0 },
+    radius = 400,
+    fullEffectRadius = 250
+}) {
+    const containerRef = useRef(null)
+    const charsRef = useRef([])
+    const mouseRef = useRef({ x: 0, y: 0 })
+    const rectsRef = useRef([]) // Cache positions to avoid layout thrashing
+
+    // 1. Mouse Tracking (Passive listener)
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            mouseRef.current.x = e.clientX
+            mouseRef.current.y = e.clientY
+        }
+        window.addEventListener('mousemove', handleMouseMove)
+        return () => window.removeEventListener('mousemove', handleMouseMove)
+    }, [])
+
+    // 2. Cache Layout Positions
+    const calculatePositions = () => {
+        rectsRef.current = charsRef.current.map(char => {
+            if (!char) return null
+            const rect = char.getBoundingClientRect()
+            return {
+                cx: rect.left + rect.width / 2,
+                cy: rect.top + rect.height / 2
+            }
+        })
+    }
+
+    useLayoutEffect(() => {
+        calculatePositions()
+        window.addEventListener('resize', calculatePositions)
+        return () => window.removeEventListener('resize', calculatePositions)
+    }, [children])
+
+    // 3. Animation Loop (GSAP Ticker)
+    useEffect(() => {
+        const update = () => {
+            const { x, y } = mouseRef.current
+
+            charsRef.current.forEach((char, i) => {
+                if (!char || !rectsRef.current[i]) return
+
+                const { cx, cy } = rectsRef.current[i]
+                const dx = x - cx
+                const dy = y - cy
+                const dist = Math.sqrt(dx * dx + dy * dy)
+
+                // Calculate factor with a plateau
+                // If dist < fullEffectRadius, factor is 1
+                // If dist > radius, factor is 0
+                const rawFactor = 1 - ((dist - fullEffectRadius) / (radius - fullEffectRadius))
+                const factor = Math.max(0, Math.min(1, rawFactor))
+
+                // "Early" factor for things that should react sooner (Slant/Contrast)
+                // easeOutQuad / sqrt curve: starts fast, slows down
+                const earlyFactor = Math.pow(factor, 0.9)
+
+                // Interpolate
+                // Weight uses linear (standard feel)
+                const wght = gsap.utils.mapRange(0, 1, baseSettings.wght, hoverSettings.wght, factor)
+                // Slant and Contrast use earlyFactor to start morphing further away
+                const slnt = gsap.utils.mapRange(0, 1, baseSettings.slnt, hoverSettings.slnt, earlyFactor)
+                const CNTR = gsap.utils.mapRange(0, 1, baseSettings.CNTR, hoverSettings.CNTR, earlyFactor)
+
+                // Letter Spacing (Optional)
+                if (baseSettings.letterSpacing !== undefined && hoverSettings.letterSpacing !== undefined) {
+                    const tracking = gsap.utils.mapRange(0, 1, baseSettings.letterSpacing, hoverSettings.letterSpacing, factor)
+                    // Use 'em' or 'px' depending on preference. Usually 'em' is good for relative tracking. 
+                    // But if user passes integers like '10', they probably mean pixels? 
+                    // Let's assume pixels if number, or pass string if provided. 
+                    // Actually mapRange returns numbers. Let's assume the user passes a number representing 'em' value or 'px'. 
+                    // Standard tracking is often 0.05em. 
+                    // If user passed `letterSpacing: 10`, it's likely pixels.
+                    char.style.letterSpacing = `${tracking}px`
+                }
+
+                // Apply efficiently
+                char.style.fontVariationSettings = `'wght' ${wght}, 'slnt' ${slnt}, 'CNTR' ${CNTR}`
+            })
+        }
+
+        gsap.ticker.add(update)
+        return () => gsap.ticker.remove(update)
+    }, [baseSettings, hoverSettings, radius, fullEffectRadius])
+
+
+    // 4. Recursive Child Processor to build span tree
+    const processChildren = (node, i) => {
+        if (!node) return null
+
+        if (typeof node === 'string') {
+            return node.split('').map((char, charIndex) => (
+                <span
+                    key={`${i}-${charIndex}`}
+                    ref={el => { if (el) charsRef.current.push(el) }}
+                    style={{
+                        display: 'inline-block',
+                        whiteSpace: 'pre' // Preserve spacing
+                    }}
+                >
+                    {char}
+                </span>
+            ))
+        }
+
+        if (React.isValidElement(node)) {
+            // Passthrough for breaks
+            if (node.type === 'br') return <br key={i} />
+
+            // Recurse
+            return React.cloneElement(node, { key: i },
+                React.Children.map(node.props.children, (child, childIndex) =>
+                    processChildren(child, `${i}-${childIndex}`)
+                )
+            )
+        }
+
+        return node
+    }
+
+    // Reset refs on render
+    charsRef.current = []
+
+    return (
+        <div ref={containerRef} className={className}>
+            {React.Children.map(children, (child, i) => processChildren(child, i))}
+        </div>
+    )
+}

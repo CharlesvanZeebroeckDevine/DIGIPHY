@@ -18,25 +18,23 @@
   flex-wrap: nowrap;
   width: fit-content;
   height: 100vh;
+  gap: 0;
 }
 
 .horiz_scroll--scene {
-  min-width: 100vw;
-  height: 100vh;
-}
-
-.horiz_scroll--auto_alignment {
   width: 100vw;
   height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  grid-gap: 1rem;
-  align-items: center;
+  flex-shrink: 0;
+}
+
+h1 {
+  font-size: var(--fz-5);
+  line-height: 125%;
 }
 
 h2 {
-  font-size: var(--fz-5);
+  font-size: var(--fz-4);
+  line-height: 112.5%;
 }
 
 p, li {
@@ -47,6 +45,17 @@ p, li {
 }
 
 /* auto alignment */
+
+.auto_alignment--container {
+  width: 150vw !important;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(6, 1fr);
+  grid-gap: var(--sp-m);
+  align-items: center;
+  padding: 0 var(--sp-2xl);
+}
 
 .auto_alignment--title {
   font-family: 'GT Ultra', sans-serif;
@@ -63,12 +72,83 @@ p, li {
 }
 
 .auto_alignment--text {
-  grid-column: 3;
-  grid-row: 2
+  grid-column: 4;
+  grid-row: 2;
+  align-self: end;
+}
+
+.auto_alignment--text--2 {
+  grid-column: 6;
+  grid-row: 1;
+  align-self: end;
 }
 
 /* tangible truth */
 
+.tangible_truth--container {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 1fr repeat(2, 2fr) 1fr;
+  align-items: center;
+  grid-gap: var(--sp-xl);
+}
+
+.tangible_truth--image {
+  max-height: 60vh;
+  grid-row: 2;
+  grid-column: 2;
+}
+
+.tangible_truth--text {
+  grid-row: 2;
+  grid-column: 3;
+}
 /* why digiphy */
 
+.why_digiphy--container {
+  display: grid;
+  grid-template-rows: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  grid-gap: var(--sp-m);
+}
+
+.why_digiphy--1 {
+  grid-row: 2;
+  grid-column: 2;
+}
+
+.why_digiphy--2 {
+  grid-row: 4;
+  grid-column: 4;
+}
+
 /* plug and play */
+
+.plug_and_play--container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  grid-gap: var(--sp-m);
+}
+
+.plug_and_play--text {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* end section */
+
+.end_section--container {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+}
+
+.end_section--container h2 {
+  grid-column: 2;
+  grid-row: 2;
+  text-align: center;
+}

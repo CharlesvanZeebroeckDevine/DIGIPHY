@@ -1,13 +1,15 @@
-import { forwardRef } from 'react'
+import { forwardRef, useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
 
 const WireframeSphere = forwardRef(({ position, opacity = 1 }, ref) => {
     const { scene } = useGLTF('/side-scroll/sphere-2.glb')
 
+    const clone = useMemo(() => scene.clone(), [scene])
+
     return (
         <group ref={ref} position={position}>
-            <primitive 
-                object={scene.clone()} 
+            <primitive
+                object={clone}
                 scale={8}
             />
         </group>
