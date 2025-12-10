@@ -5,8 +5,8 @@ const AutoAlignmentScene2 = () => {
         <>
             <div className="horiz_scroll--scene auto_alignment--container">
                 <div className="auto_alignment--title">
-                    <h2>Auto</h2>
-                    <h2>Alignment</h2>
+                    <h1>Auto</h1>
+                    <h1>Alignment</h1>
                 </div>
                 <div className="auto_alignment--text">
                     <p>Accuracy is a metric measured in millimeters. DigiPHY uses 10 precision tracking cameras and proprietary algorithms to fuse the physical and virtual worlds instantly, keeping models perfectly aligned no matter how you move.</p>

@@ -6,6 +6,7 @@ import AutoAlignmentScene2 from './autoAlignmentScene2'
 import TangibleTruth from './TangibleTruth'
 import WhyDigiphy from './WhyDigiphy'
 import PlugAndPlay from './PlugAndPlay'
+import EndSection from './EndSection'
 
 import '../../DefaultStyles.css'
 import './HorizontalScrollScene.css'
@@ -44,6 +45,7 @@ const HorizontalScrollScene = () => {
                 <TangibleTruth />
                 <WhyDigiphy />
                 <PlugAndPlay />
+                <EndSection />
             </div>
         </div>
     )
