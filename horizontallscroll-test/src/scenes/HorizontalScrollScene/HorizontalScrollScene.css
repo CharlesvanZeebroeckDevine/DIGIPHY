@@ -1,0 +1,74 @@
+@font-face {
+  font-family: 'GT Ultra';
+  src: url('/fonts/GT-Ultra-Trial-VF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: oblique 0deg 20deg;
+  font-display: swap;
+}
+
+.horizontal_scroll--container {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--smoky-umber) 0%, var(--smoky-umber) 100%);
+}
+
+.horizontal_scroll--sections {
+  display: flex;
+  flex-wrap: nowrap;
+  width: fit-content;
+  height: 100vh;
+}
+
+.horiz_scroll--scene {
+  min-width: 100vw;
+  height: 100vh;
+}
+
+.horiz_scroll--auto_alignment {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-gap: 1rem;
+  align-items: center;
+}
+
+h2 {
+  font-size: var(--fz-5);
+}
+
+p, li {
+  font-family: 'Montserrat', sans-serif;
+  font-size: var(--fz-0);
+  line-height: 150%;
+  font-weight: 400;
+}
+
+/* auto alignment */
+
+.auto_alignment--title {
+  font-family: 'GT Ultra', sans-serif;
+  font-variation-settings: 'wght' 700, 'slnt' 100, 'CNTR' 100;
+  font-weight: 300;
+  color: var(--doctor);
+  text-align: center;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.auto_alignment--text {
+  grid-column: 3;
+  grid-row: 2
+}
+
+/* tangible truth */
+
+/* why digiphy */
+
+/* plug and play */
