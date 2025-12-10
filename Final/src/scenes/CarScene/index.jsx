@@ -3,7 +3,7 @@ import { useGLTF, Stats, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
 import * as THREE from 'three'
 import { useEffect, useRef } from 'react'
 import Experience from './Experience'
-import NavigationDots from './NavigationDots'
+import CarSceneOverlay from './CarSceneOverlay'
 
 function PreloadModels() {
   useGLTF.preload('car-models/BmwSUV.glb')
@@ -18,7 +18,7 @@ const carModels = [
   'car-models/FordTransit.glb'
 ]
 
-function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch }) {
+function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch, uiVisible = true, cameraProgress = 0 }) {
   const animationFrameRef = useRef(null)
 
   const activeModelPath = carModels[activeModelIndex]
@@ -46,8 +46,8 @@ function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch }) {
         dpr={[1, 1.5]}
         gl={{
           antialias: true,
-          toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1,
+          toneMapping: THREE.NoToneMapping,
+          toneMappingExposure: 2,
           outputColorSpace: THREE.SRGBColorSpace
         }}
       >
@@ -57,12 +57,14 @@ function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch }) {
         <Experience
           activeModelPath={activeModelPath}
           transitionOpacity={transitionOpacity}
+          cameraProgress={cameraProgress}
         />
       </Canvas>
 
-      <NavigationDots
-        activeIndex={activeModelIndex}
-        onDotClick={onModelSwitch}
+      <CarSceneOverlay
+        activeModelIndex={activeModelIndex}
+        onModelSwitch={onModelSwitch}
+        visible={uiVisible}
       />
     </div>
   )

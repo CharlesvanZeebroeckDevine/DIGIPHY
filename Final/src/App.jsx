@@ -16,6 +16,8 @@ function App() {
   const animationFrameRef = useRef(null)
   const [activeModelIndex, setActiveModelIndex] = useState(0)
   const [transitionOpacity, setTransitionOpacity] = useState(1.0)
+  const [uiVisible, setUiVisible] = useState(true)
+  const [cameraProgress, setCameraProgress] = useState(0)
 
   const handleModelSwitch = (newIndex) => {
     if (newIndex === activeModelIndex) return
@@ -81,6 +83,26 @@ function App() {
       lenis.raf(time * 1000)
     })
 
+    // UI Visibility Trigger
+    ScrollTrigger.create({
+      trigger: '.section_horizontal--scroll',
+      start: 'bottom bottom',
+      onEnter: () => setUiVisible(false),
+      onLeaveBack: () => setUiVisible(true)
+    })
+
+    // Camera Sequence Trigger (Pin & Drive)
+    ScrollTrigger.create({
+      trigger: '#car-usecases',
+      start: 'top top',
+      end: '+=3000', // Scroll distance for the animation
+      pin: true,
+      scrub: true,
+      onUpdate: (self) => {
+        setCameraProgress(self.progress)
+      }
+    })
+
     gsap.ticker.lagSmoothing(0)
 
     return () => {
@@ -100,6 +122,8 @@ function App() {
           activeModelIndex={activeModelIndex}
           transitionOpacity={transitionOpacity}
           onModelSwitch={handleModelSwitch}
+          uiVisible={uiVisible}
+          cameraProgress={cameraProgress}
         />
       </div>
       <div data-scroll-container className="scroll_container">

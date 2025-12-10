@@ -1,15 +1,33 @@
-import { useFrame, useThree } from '@react-three/fiber'
+import { useFrame, useThree, useLoader } from '@react-three/fiber'
 import { useGLTF, PerspectiveCamera, Environment, MeshReflectorMaterial, ContactShadows, Html } from '@react-three/drei'
 import { useEffect, useRef, useMemo, useState } from 'react'
-import { EffectComposer, Bloom, Vignette, N8AO, ToneMapping } from '@react-three/postprocessing'
+import { EffectComposer, Bloom, Vignette, N8AO, ToneMapping, LUT } from '@react-three/postprocessing'
+import { LUTCubeLoader } from 'three/examples/jsm/loaders/LUTCubeLoader'
 import * as THREE from 'three'
 import { useRevealMask } from './useRevealMask'
 import { patchSolidMaterial, patchWireframeMaterial, updateRevealUniforms, createRevealUniforms } from './RevealMaterials'
 
-import { CAMERA_CONFIG, FLIP_MODELS_X, LED_CONFIG, HDRI_CONFIG, POST_PROCESSING_CONFIG, WINDOW_CONFIG } from './config'
-import SeatingBuck from './SeatingBuck'
+import { CAMERA_CONFIG, USECASE_CAMERA_CONFIG, FLIP_MODELS_X, LED_CONFIG, HDRI_CONFIG, POST_PROCESSING_CONFIG, WINDOW_CONFIG } from './config'
 
-function CameraRig() {
+import SeatingBuck from './SeatingBuck'
+import Poster from './Poster'
+
+// Cubic Bezier interpolation helper
+function getCubicBezierPoint(t, p0, p1, p2, p3) {
+    const oneMinusT = 1 - t
+    const oneMinusT2 = oneMinusT * oneMinusT
+    const oneMinusT3 = oneMinusT2 * oneMinusT
+    const t2 = t * t
+    const t3 = t2 * t
+
+    const x = oneMinusT3 * p0.x + 3 * oneMinusT2 * t * p1.x + 3 * oneMinusT * t2 * p2.x + t3 * p3.x
+    const y = oneMinusT3 * p0.y + 3 * oneMinusT2 * t * p1.y + 3 * oneMinusT * t2 * p2.y + t3 * p3.y
+    const z = oneMinusT3 * p0.z + 3 * oneMinusT2 * t * p1.z + 3 * oneMinusT * t2 * p2.z + t3 * p3.z
+
+    return new THREE.Vector3(x, y, z)
+}
+
+function CameraRig({ scrollProgress }) {
     const { camera, pointer } = useThree()
     const initialCameraPosition = new THREE.Vector3(
         CAMERA_CONFIG.initialPosition.x,
@@ -28,21 +46,45 @@ function CameraRig() {
     const rotationSpeed = CAMERA_CONFIG.rotationSpeed
 
     useFrame(() => {
-        targetRotation.current.y = pointer.x * Math.PI * 0.15
-        targetRotation.current.x = pointer.y * Math.PI * 0.05
+        if (scrollProgress > 0) {
+            // BEZIER PATH MODE
+            // Interpolate position based on scrollProgress
+            const points = USECASE_CAMERA_CONFIG.path
+            const newPos = getCubicBezierPoint(
+                scrollProgress,
+                points[0],
+                points[1],
+                points[2],
+                points[3]
+            )
 
-        rotation.current.x += (targetRotation.current.x - rotation.current.x) * rotationSpeed
-        rotation.current.y += (targetRotation.current.y - rotation.current.y) * rotationSpeed
+            // Interpolate LookAt 
+            // From Default Target -> Usecase Target
+            const defaultTarget = new THREE.Vector3(CAMERA_CONFIG.lookAtTarget.x, CAMERA_CONFIG.lookAtTarget.y, CAMERA_CONFIG.lookAtTarget.z)
+            const endTarget = new THREE.Vector3(USECASE_CAMERA_CONFIG.lookAtTarget.x, USECASE_CAMERA_CONFIG.lookAtTarget.y, USECASE_CAMERA_CONFIG.lookAtTarget.z)
+            const currentLookAt = new THREE.Vector3().lerpVectors(defaultTarget, endTarget, scrollProgress)
 
-        const quaternion = new THREE.Quaternion()
-        quaternion.setFromEuler(new THREE.Euler(rotation.current.x, rotation.current.y, 0, 'YXZ'))
+            camera.position.copy(newPos)
+            camera.lookAt(currentLookAt)
 
-        const offset = initialCameraPosition.clone().sub(lookAtTarget)
-        offset.applyQuaternion(quaternion)
+        } else {
+            // MOUSE INTERACTION MODE (Existing Logic)
+            targetRotation.current.y = pointer.x * Math.PI * 0.10
+            targetRotation.current.x = pointer.y * Math.PI * 0.02
 
-        // Ensure camera world matrix is updated for raycasting
-        camera.position.copy(lookAtTarget).add(offset)
-        camera.lookAt(lookAtTarget)
+            rotation.current.x += (targetRotation.current.x - rotation.current.x) * rotationSpeed
+            rotation.current.y += (targetRotation.current.y - rotation.current.y) * rotationSpeed
+
+            const quaternion = new THREE.Quaternion()
+            quaternion.setFromEuler(new THREE.Euler(rotation.current.x, rotation.current.y, 0, 'YXZ'))
+
+            const offset = initialCameraPosition.clone().sub(lookAtTarget)
+            offset.applyQuaternion(quaternion)
+
+            // Ensure camera world matrix is updated for raycasting
+            camera.position.copy(lookAtTarget).add(offset)
+            camera.lookAt(lookAtTarget)
+        }
         camera.updateMatrixWorld()
     })
 
@@ -204,7 +246,7 @@ function WindowGlowModel({ intensity = 10 }) {
     return <primitive object={scene} />
 }
 
-export default function Experience({ activeModelPath, transitionOpacity }) {
+export default function Experience({ activeModelPath, transitionOpacity, cameraProgress }) {
     const { scene } = useThree()
     const [carsGroup, setCarsGroup] = useState(null)
 
@@ -216,11 +258,13 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
         scene.background = new THREE.Color('#ffffff')
     }, [scene])
 
+    const texture = useLoader(LUTCubeLoader, POST_PROCESSING_CONFIG.lut.lut)
+
     const modelScale = FLIP_MODELS_X ? [-1, 1, 1] : [1, 1, 1]
 
     return (
         <>
-            <CameraRig />
+            <CameraRig scrollProgress={cameraProgress} />
 
             {/* Realistic Lighting Setup */}
             <Environment
@@ -249,6 +293,13 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
             {/* Window */}
             {/* Window Glow - Using the provided model for perfect alignment */}
             <WindowGlowModel intensity={WINDOW_CONFIG.intensity} />
+
+            {/* Posters - Experimental Placement */}
+            <group position={[8, 5, 14.5]}>
+                <Poster url="/posters/4.webp" position={[0, 0, 0]} />
+                <Poster url="/posters/5.webp" position={[-4, 0, 0]} />
+                <Poster url="/posters/6.webp" position={[-8, 0, 0]} />
+            </group>
 
 
             {/* Seating Buck Environment - Rendered directly at native scale */}
@@ -303,6 +354,10 @@ export default function Experience({ activeModelPath, transitionOpacity }) {
                 />
                 <ToneMapping
                     mode={THREE.ACESFilmicToneMapping}
+                />
+                <LUT
+                    lut={texture.texture3D}
+                    opacity={POST_PROCESSING_CONFIG.lut.intensity}
                 />
             </EffectComposer>
         </>

@@ -9,16 +9,16 @@ export const REVEAL_CONFIG = {
 // Configuration for model transition animations
 export const TRANSITION_CONFIG = {
   fadeOutDuration: 300,  // ms
-  waitDuration: 2400,    // ms (Wait for 20 frame animation @ ~24fps + safety buffer)
+  waitDuration: 2400,    // ms Controls the duration of the transition animation
   fadeInDuration: 300,   // ms
 }
 
 // Configuration for camera behavior
 export const CAMERA_CONFIG = {
-  initialPosition: { x: 0, y: 8, z: -25 },
-  lookAtTarget: { x: 0, y: 5, z: 0 },
+  initialPosition: { x: 0, y: 7, z: -25 },
+  lookAtTarget: { x: 0, y: 4, z: 0 },
   rotationSpeed: 0.1,
-  fov: 35,
+  fov: 30,
 }
 
 // Car models available
@@ -28,14 +28,25 @@ export const CAR_MODELS = [
   'car-models/FordTransit.glb'
 ]
 
+// Configuration for Camera Usecase Path (Cubic Bezier)
+export const USECASE_CAMERA_CONFIG = {
+  path: [
+    { x: 0, y: 7, z: -25 },    // P0: Start
+    { x: -30, y: 9, z: -25 },   // P1: Wide out
+    { x: 20, y: 5, z: -10 },   // P2: Swoop in
+    { x: 8, y: 4.7, z: 0 }      // P3: Target 
+  ],
+  lookAtTarget: { x: 7, y: 5, z: 4 } // Where camera looks at end of sequence
+}
+
 
 // Flip models on the X axis
 export const FLIP_MODELS_X = false
 
 // Configuration for the LED material on the Seating Buck
 export const LED_CONFIG = {
-  color: '#913bfb',
-  activeColor: '#00ff00', // Green when animating
+  color: '#583BFB',
+  activeColor: '#00FF1E', // Green when animating
   intensity: 200
 }
 
@@ -47,7 +58,7 @@ export const WINDOW_CONFIG = {
 // Configuration for the HDRI Environment
 export const HDRI_CONFIG = {
   rotation: { x: 5, y: -0.4, z: 2 },
-  intensity: 3
+  intensity: 1.5
 }
 
 // Configuration for Post-Processing Effects
@@ -59,8 +70,8 @@ export const POST_PROCESSING_CONFIG = {
     mipmapBlur: true
   },
   vignette: {
-    offset: 0.2,
-    darkness: 0.6
+    offset: 0.5,
+    darkness: 0.3
   },
   ssao: {
     intensity: 5,
@@ -68,6 +79,11 @@ export const POST_PROCESSING_CONFIG = {
     luminanceInfluence: 0.2,
     color: 'black'
   },
+  lut: {
+    enabled: true,
+    lut: 'luts/Lut4.CUBE',
+    intensity: 1
+  }
 }
 
 
