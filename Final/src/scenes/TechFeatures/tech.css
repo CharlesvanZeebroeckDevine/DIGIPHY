@@ -52,7 +52,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* gap: 1rem; */
+    width: 20rem;
 }
 
 .feature__button {
@@ -60,7 +60,8 @@ body {
     border-width: 0px 1px 0px 0px;
     border-style: solid;
     border-color: white;
-    padding: 1rem 1rem;
+    padding-block: 2.5rem;
+    padding-inline: 1rem;
     color: white;
     cursor: pointer;
     transition: 0.2s;
