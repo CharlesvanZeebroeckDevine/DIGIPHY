@@ -32,8 +32,8 @@ export const CAR_MODELS = [
 export const USECASE_CAMERA_CONFIG = {
   path: [
     { x: 0, y: 7, z: -25 },    // P0: Start
-    { x: -30, y: 9, z: -25 },   // P1: Wide out
-    { x: 20, y: 5, z: -10 },   // P2: Swoop in
+    { x: -5, y: 9, z: -20 },   // P1: Wide out
+    { x: 20, y: 5, z: -15 },   // P2: Swoop in
     { x: 8, y: 4.7, z: 0 }      // P3: Target 
   ],
   lookAtTarget: { x: 7, y: 5, z: 4 } // Where camera looks at end of sequence
