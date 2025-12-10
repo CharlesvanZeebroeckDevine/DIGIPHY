@@ -7,7 +7,7 @@
     --fz-2: clamp(1.7578rem, 1.642rem + 0.4633vw, 2.2211rem);
     --fz-3: clamp(2.1973rem, 2.0064rem + 0.7635vw, 2.9607rem);
     --fz-4: clamp(2.7466rem, 2.4466rem + 1.2001vw, 3.9467rem);
-    --fz-5: clamp(3.4332rem, 2.9763rem + 1.8277vw, 5.2609rem);  
+    --fz-5: clamp(3.4332rem, 2.9763rem + 1.8277vw, 5.2609rem);
 
     /* spacing */
     --space-3xs: clamp(0.3125rem, 0.3125rem + 0vw, 0.3125rem);
