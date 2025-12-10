@@ -3,36 +3,36 @@
         "index": 0,
         "name": "HMI integration",
         "image": "/assets/placeholder.png",
-        "description": "Test your HMI in real time using the VR integration."
+        "description": "Test your HMI in real time using the VR integration. Quickly evaluate interaction flows, visibility, and usability without waiting for physical prototypes."
     },
     {
         "index": 1,
         "name": "HMD Compatibility",
         "image": "/assets/placeholder.png",
-        "description": "Optimized for Varjo XR-3 and compatible with HTC Vive, Oculus and others."
+        "description": "Optimized for Varjo XR-3 and compatible with HTC Vive, Oculus and others. This ensures high-fidelity visualisation across different headsets and studio setups."
     },
     {
         "index": 2,
         "name": "CE Certification",
         "image": "/assets/placeholder.png",
-        "description": "Fully complient with Directive 2006/42/EC. Industrial-grade safety interlocks for corporate studio deployment."
+        "description": "Fully compliant with Directive 2006/42/EC, featuring industrial-grade safety interlocks for corporate studio deployment. This guarantees it meets the safety standards required for daily professional use."
     },
     {
         "index": 3,
         "name": "Customizable",
         "image": "/assets/placeholder.png",
-        "description": "Easy to add physical properties to customize it how you want."
+        "description": "Easy to add physical properties to customize it how you want. Adapt hardware inputs, dimensions, and materials so the setup mirrors your unique design environment."
     },
     {
         "index": 4,
         "name": "Mobile",
         "image": "/assets/placeholder.png",
-        "description": "Designed to be easily moved, for example to a presentation room or next to a full-scale mockup"
+        "description": "Designed to be easily moved, for example to a presentation room or next to a full-scale mockup. This mobility allows teams to seamlessly integrate DigiPHY into different stages of the design workflow."
     },
     {
         "index": 5,
         "name": "IPAD",
         "image": "/assets/placeholder.png",
-        "description": "Save and switch instantly between layouts."
+        "description": "Save and switch instantly between layouts. Quickly compare design variations or present alternative setups directly from the tablet interface."
     }
 ]
