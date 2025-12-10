@@ -2,8 +2,6 @@ import { useRef, useEffect, useState } from 'react'
 import { Html } from '@react-three/drei'
 import gsap from 'gsap'
 import WireframeSphere from './ScrollItem'
-import DotWithTrail from './DotWithTrail'
-
 // === AUTO ALIGNMENT SCENE ===
 // This scene shows the convergence of spheres, transformation to dot, and slide-left effect
 // Takes up the first portion of the horizontal scroll (currently 100% of timeline)
@@ -78,7 +76,7 @@ function AutoAlignmentScene() {
 
         // ========== PHASE 1: CONVERGENCE (0% - 25% scroll) ==========
         // Timeline position 0 to 0.25 - all animations run simultaneously
-        
+
         // Left sphere moves from x:-12 to center (x:0)
         tl.to(leftSphereRef.current.position, {
             x: 0, // From x:-12 to x:0
@@ -121,7 +119,7 @@ function AutoAlignmentScene() {
 
         // ========== PHASE 2: TRANSFORMATION (25% - 50% scroll) ==========
         // Timeline position 0.25 to 0.5 - spheres shrink, dot appears, text splits
-        
+
         // Left sphere shrinks to nearly invisible (scale from 1 to 0.01)
         tl.to(leftSphereRef.current.scale, {
             x: 0.01,
@@ -168,7 +166,7 @@ function AutoAlignmentScene() {
         // ========== PHASE 3: MOVE TO LEFT (50% - 100% scroll) ==========
         // Timeline position 0.5 to 1.0 - everything moves left, clearing space for new content
         // This is MUCH simpler than camera panning and makes adding new elements easy
-        
+
         // Dot moves left off-center (from x:0 to x:-8)
         tl.to(dotRef.current.position, {
             x: -8, // Moves left, leaving center/right area clear
@@ -227,8 +225,6 @@ function AutoAlignmentScene() {
             <WireframeSphere ref={leftSphereRef} position={[-12, 0, 0]} /> {/* Left sphere */}
             <WireframeSphere ref={rightSphereRef} position={[12, 0, 0]} /> {/* Right sphere */}
 
-            {/* Dot with trail - starts at origin */}
-            <DotWithTrail ref={dotRef} position={[0, 0, 0]} color="#00ff88" scale={0} />
 
             {/* === HTML TEXT OVERLAYS (wrapped in groups for 3D positioning) === */}
             {/* "Auto" text - positioned 1 unit above origin */}
@@ -247,7 +243,7 @@ function AutoAlignmentScene() {
 
             {/* Body text that appears after titles leave */}
             <group ref={AutoAlignmentBodyGroupRef} position={[0, -4, 0]}>
-                <Html 
+                <Html
                     ref={AutoAlignmentBodyRef}
                     style={{ opacity: 0 }} // Start invisible, will fade in during Phase 3
                 >
