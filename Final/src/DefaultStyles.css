@@ -1,13 +1,13 @@
 :root {
     /* font size */
-    --fz--2: clamp(0.6252rem, 0.7437rem + -0.0948vw, 0.72rem);
-    --fz--1: clamp(0.884rem, 0.904rem + -0.016vw, 0.9rem);
+    --fz--2: clamp(0.7035rem, 0.7241rem + -0.0165vw, 0.72rem);
+    --fz--1: clamp(0.9rem, 0.8906rem + 0.0377vw, 0.9377rem);
     --fz-0: clamp(1.125rem, 1.0938rem + 0.125vw, 1.25rem);
-    --fz-1: clamp(1.4063rem, 1.3159rem + 0.3613vw, 1.7675rem);
-    --fz-2: clamp(1.7578rem, 1.5725rem + 0.7414vw, 2.4992rem);
-    --fz-3: clamp(2.1973rem, 1.8631rem + 1.3367vw, 3.5339rem);
-    --fz-4: clamp(2.7466rem, 2.184rem + 2.2504vw, 4.997rem);
-    --fz-5: clamp(3.4332rem, 2.5251rem + 3.6325vw, 7.0657rem);
+    --fz-1: clamp(1.4063rem, 1.3413rem + 0.26vw, 1.6663rem);
+    --fz-2: clamp(1.7578rem, 1.642rem + 0.4633vw, 2.2211rem);
+    --fz-3: clamp(2.1973rem, 2.0064rem + 0.7635vw, 2.9607rem);
+    --fz-4: clamp(2.7466rem, 2.4466rem + 1.2001vw, 3.9467rem);
+    --fz-5: clamp(3.4332rem, 2.9763rem + 1.8277vw, 5.2609rem);  
 
     /* spacing */
     --space-3xs: clamp(0.3125rem, 0.3125rem + 0vw, 0.3125rem);

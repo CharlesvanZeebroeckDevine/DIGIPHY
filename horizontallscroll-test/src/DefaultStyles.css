@@ -1,6 +1,6 @@
 :root {
     /* font size */
---fz--2: clamp(0.7035rem, 0.7241rem + -0.0165vw, 0.72rem);
+    --fz--2: clamp(0.7035rem, 0.7241rem + -0.0165vw, 0.72rem);
     --fz--1: clamp(0.9rem, 0.8906rem + 0.0377vw, 0.9377rem);
     --fz-0: clamp(1.125rem, 1.0938rem + 0.125vw, 1.25rem);
     --fz-1: clamp(1.4063rem, 1.3413rem + 0.26vw, 1.6663rem);
