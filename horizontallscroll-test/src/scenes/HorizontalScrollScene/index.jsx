@@ -7,6 +7,7 @@ import TangibleTruth from './TangibleTruth'
 import WhyDigiphy from './WhyDigiphy'
 import PlugAndPlay from './PlugAndPlay'
 
+import '../../DefaultStyles.css'
 import './HorizontalScrollScene.css'
 
 gsap.registerPlugin(ScrollTrigger)
