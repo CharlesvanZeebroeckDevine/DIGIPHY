@@ -23,6 +23,7 @@
 
 .horiz_scroll--scene {
   width: 100vw;
+  min-width: 100vw;
   height: 100vh;
   flex-shrink: 0;
 }
@@ -37,7 +38,8 @@ h2 {
   line-height: 112.5%;
 }
 
-p, li {
+p,
+li {
   font-family: 'Montserrat', sans-serif;
   font-size: var(--fz-0);
   line-height: 150%;
@@ -48,13 +50,14 @@ p, li {
 
 .auto_alignment--container {
   width: 150vw !important;
+  min-width: 150vw !important;
   height: 100vh;
   display: grid;
   grid-template-rows: repeat(3, 1fr);
-  grid-template-columns: repeat(6, 1fr);
-  grid-gap: var(--sp-m);
+  grid-template-columns: 100vw 25vw 25vw;
+  grid-gap: 0;
   align-items: center;
-  padding: 0 var(--sp-2xl);
+  position: relative;
 }
 
 .auto_alignment--title {
@@ -67,20 +70,22 @@ p, li {
   text-transform: uppercase;
   pointer-events: none;
   user-select: none;
-  grid-column: 2;
+  grid-column: 1;
   grid-row: 2;
 }
 
 .auto_alignment--text {
-  grid-column: 4;
+  grid-column: 2;
   grid-row: 2;
   align-self: end;
+  padding: 0 var(--sp-m);
 }
 
 .auto_alignment--text--2 {
-  grid-column: 6;
+  grid-column: 3;
   grid-row: 1;
   align-self: end;
+  padding: 0 var(--sp-m);
 }
 
 /* tangible truth */
@@ -103,6 +108,7 @@ p, li {
   grid-row: 2;
   grid-column: 3;
 }
+
 /* why digiphy */
 
 .why_digiphy--container {
