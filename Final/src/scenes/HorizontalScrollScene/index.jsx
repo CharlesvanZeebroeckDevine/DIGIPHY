@@ -13,11 +13,6 @@ gsap.registerPlugin(ScrollTrigger)
 function ScrollContent() {
     return (
         <>
-            {/* === LIGHTING SETUP === */}
-            <ambientLight intensity={0.5} /> {/* Soft ambient light */}
-            <directionalLight position={[10, 10, 5]} intensity={1} /> {/* Key light (top-right) */}
-            <directionalLight position={[-10, -10, -5]} intensity={0.5} /> {/* Fill light (bottom-left) */}
-
             {/* === SCENE COMPONENTS === */}
             {/* AutoAlignment Scene - spheres converge, transform to dot, slide left */}
             <AutoAlignmentScene />

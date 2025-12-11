@@ -309,11 +309,11 @@ export default function Experience({ activeModelPath, transitionOpacity, cameraP
             {/* Window Glow - Using the provided model for perfect alignment */}
             <WindowGlowModel intensity={WINDOW_CONFIG.intensity} />
 
-            {/* Posters - Experimental Placement */}
+            {/* Posters */}
             <group position={[8, 5, 14.5]}>
-                <Poster url="/posters/4.webp" position={[0, 0, 0]} />
-                <Poster url="/posters/5.webp" position={[-4, 0, 0]} />
-                <Poster url="/posters/6.webp" position={[-8, 0, 0]} />
+                <Poster name="poster1" url="/posters/4.webp" position={[0, 0, 0]} isInteractable={cameraProgress > 0.5} />
+                <Poster name="poster2" url="/posters/5.webp" position={[-4, 0, 0]} isInteractable={cameraProgress > 0.5} />
+                <Poster name="poster3" url="/posters/6.webp" position={[-8, 0, 0]} isInteractable={cameraProgress > 0.5} />
             </group>
 
 
