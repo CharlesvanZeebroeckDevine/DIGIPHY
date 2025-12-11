@@ -1,261 +1,97 @@
-import { useRef, useEffect, useState } from 'react'
-import { Html } from '@react-three/drei'
-import gsap from 'gsap'
-import WireframeSphere from './ScrollItem'
-import DotWithTrail from './DotWithTrail'
+import { Canvas, useThree } from '@react-three/fiber'
+import { useGLTF, Environment } from '@react-three/drei'
+import { useMemo, useEffect } from 'react'
+import { SkeletonUtils } from 'three-stdlib'
+import { ChromaticAberration } from '@react-three/postprocessing'
+import { BlendFunction } from 'postprocessing'
 
-// === AUTO ALIGNMENT SCENE ===
-// This scene shows the convergence of spheres, transformation to dot, and slide-left effect
-// Takes up the first portion of the horizontal scroll (currently 100% of timeline)
-function AutoAlignmentScene() {
-    // === REFS: Store references to 3D objects for GSAP animations ===
-    const leftSphereRef = useRef(null) // Left wireframe sphere (starts at x: -12)
-    const rightSphereRef = useRef(null) // Right wireframe sphere (starts at x: 12)
-    const dotRef = useRef(null) // Center dot with trail effect
-    const autoTextRef = useRef(null) // "Auto" text element (upper)
-    const alignmentTextRef = useRef(null) // "Alignment" text element (lower)
-    const autoGroupRef = useRef(null) // Group wrapper for Auto text (for 3D positioning)
-    const alignmentGroupRef = useRef(null) // Group wrapper for Alignment text (for 3D positioning)
-    const AutoAlignmentBodyRef = useRef(null) // Body text that appears after titles leave
-    const AutoAlignmentBodyGroupRef = useRef(null) // Group wrapper for body text
-    const [refsReady, setRefsReady] = useState(false) // True when all refs exist
+const SphereModel = ({ sphereRefs, position, isLeft }) => {
+    const { scene } = useGLTF('/side-scroll/sphere-2.glb')
+    const clone = useMemo(() => SkeletonUtils.clone(scene), [scene])
 
-    // === REF VALIDATION: Ensure all objects exist before animation setup ===
-    // React Three Fiber objects take time to mount - this prevents animation errors
+    return (
+        <primitive
+            object={clone}
+            position={position}
+            ref={(el) => {
+                if (sphereRefs && sphereRefs.current) {
+                    if (isLeft) sphereRefs.current.left = el
+                    else sphereRefs.current.right = el
+                }
+            }}
+            scale={2.2}
+        />
+    )
+}
+
+const SceneContent = ({ sphereRefs, onReady }) => {
+    const { viewport } = useThree()
+    const targetX = -viewport.width / 6
+
+    const screenLeftEdge = -viewport.width / 2
+    const screenRightEdge = -viewport.width / 2 + viewport.width * (2 / 3)
+
+    const startLeftX = screenLeftEdge - 10
+    const startRightX = screenRightEdge + 10
+
     useEffect(() => {
-        const checkRefs = () => {
-            if (leftSphereRef.current && rightSphereRef.current &&
-                dotRef.current && autoTextRef.current && alignmentTextRef.current &&
-                autoGroupRef.current && alignmentGroupRef.current &&
-                AutoAlignmentBodyRef.current && AutoAlignmentBodyGroupRef.current) {
-                console.log('AutoAlignment scene refs ready!')
-                setRefsReady(true) // Triggers animation timeline creation
-            } else {
-                console.log('AutoAlignment refs status:', { // Debug: shows which refs are missing
-                    left: !!leftSphereRef.current,
-                    right: !!rightSphereRef.current,
-                    dot: !!dotRef.current,
-                    auto: !!autoTextRef.current,
-                    alignment: !!alignmentTextRef.current,
-                    autoGroup: !!autoGroupRef.current,
-                    alignmentGroup: !!alignmentGroupRef.current,
-                    autoAlignmentBody: !!AutoAlignmentBodyRef.current,
-                    autoAlignmentBodyGroup: !!AutoAlignmentBodyGroupRef.current
-                })
+        if (sphereRefs.current) {
+            sphereRefs.current.data = {
+                targetX,
+                startLeftX,
+                startRightX
             }
         }
-
-        checkRefs() // Immediate check
-        const timeout = setTimeout(checkRefs, 100) // Delayed check (100ms)
-
-        return () => clearTimeout(timeout)
-    }, [])
-
-    // === ANIMATION TIMELINE: Main scroll-linked animation setup ===
-    useEffect(() => {
-        if (!refsReady) return // Wait for refs to be ready
-
-        console.log('Setting up AutoAlignment animation', leftSphereRef.current.position)
-
-        // Create GSAP timeline that responds to scroll position
-        const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: '.horizontal_scroll--container', // Main scroll container
-                start: 'top top', // Start when container enters viewport
-                end: 'bottom bottom', // End when container exits viewport
-                scrub: 1, // 1 second smooth lag on scroll
-                markers: { // Visual debug markers
-                    startColor: 'green',
-                    endColor: 'red',
-                    fontSize: '8px',
-                    fontWeight: 'bold',
-                    indent: 20
-                },
-                id: 'auto-alignment-scene',
-                invalidateOnRefresh: true // Recalc on window resize
-            }
-        })
-
-        // ========== PHASE 1: CONVERGENCE (0% - 25% scroll) ==========
-        // Timeline position 0 to 0.25 - all animations run simultaneously
-        
-        // Left sphere moves from x:-12 to center (x:0)
-        tl.to(leftSphereRef.current.position, {
-            x: 0, // From x:-12 to x:0
-            ease: 'power2.inOut',
-            duration: 0.25 // 25% of total timeline
-        }, 0) // Start at timeline position 0
-
-        // Right sphere moves from x:12 to center (x:0)
-        tl.to(rightSphereRef.current.position, {
-            x: 0, // From x:12 to x:0
-            ease: 'power2.inOut',
-            duration: 0.25
-        }, 0) // Runs parallel with left sphere
-
-        // "Auto" text fades in and moves up to center
-        tl.fromTo(autoTextRef.current,
-            {
-                opacity: 0.3,
-                y: 50 // Starts below center
-            },
-            {
-                opacity: 1,
-                y: 0, // Ends at center position
-                ease: 'power2.inOut',
-                duration: 0.25
-            }, 0) // Runs parallel with spheres
-
-        // "Alignment" text fades in and moves down to center
-        tl.fromTo(alignmentTextRef.current,
-            {
-                opacity: 0.3,
-                y: -50 // Starts above center
-            },
-            {
-                opacity: 1,
-                y: 0, // Ends at center position
-                ease: 'power2.inOut',
-                duration: 0.25
-            }, 0) // All Phase 1 animations together
-
-        // ========== PHASE 2: TRANSFORMATION (25% - 50% scroll) ==========
-        // Timeline position 0.25 to 0.5 - spheres shrink, dot appears, text splits
-        
-        // Left sphere shrinks to nearly invisible (scale from 1 to 0.01)
-        tl.to(leftSphereRef.current.scale, {
-            x: 0.01,
-            y: 0.01,
-            z: 0.01,
-            ease: 'power2.inOut',
-            duration: 0.25
-        }, 0.25) // Starts at 25% of timeline
-
-        // Right sphere shrinks to nearly invisible
-        tl.to(rightSphereRef.current.scale, {
-            x: 0.01,
-            y: 0.01,
-            z: 0.01,
-            ease: 'power2.inOut',
-            duration: 0.25
-        }, 0.25) // Runs parallel with left sphere
-
-        // Dot appears in center (scales from 0 to 1)
-        tl.fromTo(dotRef.current.scale,
-            { x: 0, y: 0, z: 0 }, // Starts invisible
-            {
-                x: 1,
-                y: 1,
-                z: 1, // Scales up to full size
-                ease: 'power2.out',
-                duration: 0.15
-            }, 0.35) // Starts at 35% (delayed for visual effect)
-
-        // "Auto" text moves up out of center (y:0 to y:-80)
-        tl.to(autoTextRef.current, {
-            y: -80,
-            ease: 'power2.inOut',
-            duration: 0.25
-        }, 0.25) // Starts with sphere scaling
-
-        // "Alignment" text moves down out of center (y:0 to y:80)
-        tl.to(alignmentTextRef.current, {
-            y: 80, // Texts split apart vertically
-            ease: 'power2.inOut',
-            duration: 0.25
-        }, 0.25) // Runs parallel with "Auto" text
-
-        // ========== PHASE 3: MOVE TO LEFT (50% - 100% scroll) ==========
-        // Timeline position 0.5 to 1.0 - everything moves left, clearing space for new content
-        // This is MUCH simpler than camera panning and makes adding new elements easy
-        
-        // Dot moves left off-center (from x:0 to x:-8)
-        tl.to(dotRef.current.position, {
-            x: -8, // Moves left, leaving center/right area clear
-            ease: 'power1.inOut',
-            duration: 0.5 // Last 50% of timeline
-        }, 0.5) // Starts at 50% of timeline
-
-        // "Auto" text moves further left off-screen
-        tl.to(autoGroupRef.current.position, {
-            x: -20, // Moves far off left edge (outside viewport)
-            ease: 'power1.inOut',
-            duration: 0.5
-        }, 0.5)
-
-        // "Alignment" text moves further left off-screen
-        tl.to(alignmentGroupRef.current.position, {
-            x: -20, // Moves far off left edge (outside viewport)
-            ease: 'power1.inOut',
-            duration: 0.5
-        }, 0.5)
-
-        // Spheres also move left (they're already tiny from Phase 2)
-        tl.to(leftSphereRef.current.position, {
-            x: -12,
-            ease: 'power1.inOut',
-            duration: 0.5
-        }, 0.5)
-
-        tl.to(rightSphereRef.current.position, {
-            x: -12,
-            ease: 'power1.inOut',
-            duration: 0.5
-        }, 0.5)
-
-        // Body text fades in when Auto/Alignment titles move off-screen
-        tl.fromTo(AutoAlignmentBodyRef.current,
-            {
-                opacity: 0, // Starts invisible
-            },
-            {
-                opacity: 1, // Fades in to full visibility
-                ease: 'power2.out',
-                duration: 0.3 // Smooth fade-in over 30% of Phase 3
-            }, 0.6) // Starts at 60% (slightly after titles start moving)
-
-        // === CLEANUP: Remove timeline and ScrollTrigger on unmount ===
-        return () => {
-            tl.scrollTrigger?.kill() // Remove scroll listener
-            tl.kill() // Kill timeline
+        if (onReady) {
+            onReady()
         }
-    }, [refsReady]) // Re-run only when refsReady changes
+    }, [onReady, targetX, startLeftX, startRightX, sphereRefs])
 
     return (
         <>
-            {/* === 3D OBJECTS === */}
-            <WireframeSphere ref={leftSphereRef} position={[-12, 0, 0]} /> {/* Left sphere */}
-            <WireframeSphere ref={rightSphereRef} position={[12, 0, 0]} /> {/* Right sphere */}
+            <ambientLight intensity={2} />
+            <Environment preset="warehouse" />
 
-            {/* Dot with trail - starts at origin */}
-            <DotWithTrail ref={dotRef} position={[0, 0, 0]} color="#00ff88" scale={0} />
+            <SphereModel
+                sphereRefs={sphereRefs}
+                position={[startLeftX, 0, 0]}
+                isLeft={true}
+            />
 
-            {/* === HTML TEXT OVERLAYS (wrapped in groups for 3D positioning) === */}
-            {/* "Auto" text - positioned 1 unit above origin */}
-            <group ref={autoGroupRef} position={[0, 1, 0]}>
-                <Html ref={autoTextRef} center>
-                    <h2 className="auto_alignment--title">Auto</h2>
-                </Html>
-            </group>
-
-            {/* "Alignment" text - positioned 1 unit below origin */}
-            <group ref={alignmentGroupRef} position={[0, -1, 0]}>
-                <Html ref={alignmentTextRef} center>
-                    <h2 className="auto_alignment--title">Alignment</h2>
-                </Html>
-            </group>
-
-            {/* Body text that appears after titles leave */}
-            <group ref={AutoAlignmentBodyGroupRef} position={[0, -4, 0]}>
-                <Html 
-                    ref={AutoAlignmentBodyRef}
-                    style={{ opacity: 0 }} // Start invisible, will fade in during Phase 3
-                >
-                    <h1>Horizontal Scroll Scene</h1>
-                </Html>
-            </group>
+            <SphereModel
+                sphereRefs={sphereRefs}
+                position={[startRightX, 0, 0]}
+                isLeft={false}
+            />
         </>
     )
 }
 
-export default AutoAlignmentScene
+const AutoAlignmentScene2 = ({ sphereRefs, onReady }) => {
+    return (
+        <div className="horiz_scroll--scene auto_alignment--container">
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, pointerEvents: 'none' }}>
+                <Canvas events={null} camera={{ position: [0, 0, 10], fov: 35 }}>
+                    <ChromaticAberration
+                        blendFunction={BlendFunction.NORMAL}
+                        offset={[0.5, 0.5]}
+                    />
+                    <SceneContent sphereRefs={sphereRefs} onReady={onReady} />
+                </Canvas>
+            </div>
+
+            <div className="auto_alignment--title" style={{ zIndex: 2 }}>
+                <h1>Auto</h1>
+                <h1>Alignment</h1>
+            </div>
+            <div className="auto_alignment--text" style={{ zIndex: 2 }}>
+                <p>Accuracy is a metric measured in millimeters. DigiPHY uses 10 precision tracking cameras and proprietary algorithms to fuse the physical and virtual worlds instantly, keeping models perfectly aligned no matter how you move.</p>
+            </div>
+            <div className="auto_alignment--text--2" style={{ zIndex: 2 }}>
+                <p>Instant physical feedback makes ideas easier to evaluate, mistakes easier to catch, and decisions easier to make.</p>
+            </div>
+        </div>
+    )
+}
+
+export default AutoAlignmentScene2
