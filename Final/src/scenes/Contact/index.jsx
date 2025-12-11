@@ -4,7 +4,7 @@ const Contact = () => {
     return (
         <>
             <div className="contact__container">
-                <div className="contact__intro">
+                <div className="contact__intro o">
                     <h2 className="visibility-hidden">Contact</h2>
                     <p className="contact__intro-title">You’ve seen what <br /> <span className="contact__span">DigiPHY</span> can do...</p>
                     <p className="contact__intro-subtitle">Want to know more about how DigiPHY can support your work? <br /> Get in touch and let’s explore the possibilities together.</p>
