@@ -37,7 +37,7 @@ const Contact = () => {
                             <input type="radio" id="buy" name="buy__option" value="buy" />
                             <label htmlFor="buy">Buy the DigiPHY model</label><br />
                         </div>
-                        <input type="submit" value="Submit" className="contact__submit"/>
+                        <input type="submit" value="Submit" className="contact__submit" />
                     </form>
                 </div>
             </div>
