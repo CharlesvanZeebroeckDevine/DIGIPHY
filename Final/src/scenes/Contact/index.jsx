@@ -23,8 +23,8 @@ const Contact = () => {
                             <p className="contact__form-label">I work at:</p>
                             <input type="text" placeholder="Bacobit enterprise" className="contact__form-input" />
                         </div>
-                        <div>
-                            <p>i would like to:</p>
+                        <div className="contact__form-item">
+                            <p className="contact__form-label">i would like to:</p>
                             <input type="radio" id="sub" name="sub__option" value="sub" />
                             <label htmlFor="sub">Subscribe to the newsletter</label><br />
 
@@ -37,7 +37,7 @@ const Contact = () => {
                             <input type="radio" id="buy" name="buy__option" value="buy" />
                             <label htmlFor="buy">Buy the DigiPHY model</label><br />
                         </div>
-                        <input type="submit" value="Submit" />
+                        <input type="submit" value="Submit" className="contact__submit"/>
                     </form>
                 </div>
             </div>

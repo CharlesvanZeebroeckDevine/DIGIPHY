@@ -1,22 +1,46 @@
+@font-face {
+    font-family: 'GT Ultra';
+    src: url('/fonts/GT-Ultra-Trial-VF.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: oblique 0deg 20deg;
+    font-display: swap;
+}
+
 body {
     color: white;
 }
 
-.contact__container{
-margin-inline-start: 10rem;
+.contact__intro{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contact__container {
+    margin-inline: 5rem;
+    margin-inline-end: 7rem;
+    padding-block-end: 3rem;
+    display: flex;
+    gap: 10rem;
+    justify-content: center;
+    align-items: center;
+
 }
 
 .contact__intro-title {
+    font-family: 'GT Ultra', sans-serif;
+    font-variation-settings: 'wght' 100, 'slnt' 0, 'CNTR' 50;
     font-size: 4.375rem;
     text-transform: uppercase;
     font-weight: 100;
 }
 
 .contact__span {
-    font-weight: 400;
+    font-variation-settings: 'wght' 400, 'slnt' 0, 'CNTR' 50;
 }
 
 .contact__intro-subtitle {
+    font-family: 'GT Ultra', sans-serif;
     font-size: 1.5rem;
     font-weight: 300;
     line-height: 150%;
@@ -24,18 +48,18 @@ margin-inline-start: 10rem;
 }
 
 .contact__form-wrapper {
-    width: 40vw;
+    width: 30vw;
 }
 
-.contact__form{
+.contact__form {
     display: flex;
     flex-direction: column;
-    gap: 3rem;
+    gap: 2rem;
 }
 
 .contact__form-label {
     color: #FFF;
-    font-family: Montserrat;
+    font-family: 'Montserrat', 'inter';
     font-size: 2rem;
     font-style: normal;
     font-weight: 100;
@@ -49,17 +73,21 @@ margin-inline-start: 10rem;
     padding: 0.9rem 1rem;
     background: none;
     border: 1px solid rgba(255, 255, 255, 0.4);
-    color: white;
-    font-size: 1rem;
-    font-weight: 300;
     outline: none;
     border-radius: 0;
     transition: border-color 0.2s ease;
 }
 
+.contact__form-input::placeholder {
+    font-family: 'Montserrat', 'inter';
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1rem;
+    font-weight: 100;
+}
+
 .radio__label {
     color: #FFF;
-    font-family: Montserrat;
+    font-family: 'montserrat', 'inter';
     font-size: 1.25rem;
     font-style: normal;
     font-weight: 300;
@@ -67,7 +95,7 @@ margin-inline-start: 10rem;
     letter-spacing: -0.05rem;
 }
 
-.contact__submit{
+.contact__submit {
     margin-top: 2rem;
     background: none;
     border: 1px solid white;
@@ -80,6 +108,7 @@ margin-inline-start: 10rem;
 }
 
 .contact__submit:hover {
-    background: white;
-    color: black;
+    background: #583BFB;
+    color: white;
+    border: 1px solid #583BFB;
 }
