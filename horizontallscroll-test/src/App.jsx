@@ -7,6 +7,7 @@ import CarScene from './scenes/CarScene'
 import HorizontalScrollScene from './scenes/HorizontalScrollScene'
 import TechFeatures from './scenes/TechFeatures'
 import Contact from './scenes/Contact'
+import Intro from './scenes/HorizontalScrollScene/Intro'
 import { TRANSITION_CONFIG } from './scenes/CarScene/config'
 
 gsap.registerPlugin(ScrollTrigger)
