@@ -10,10 +10,10 @@ const Contact = () => {
                     <p className="contact__intro-subtitle">Want to know more about how DigiPHY can support your work? <br /> Get in touch and let’s explore the possibilities together.</p>
                 </div>
                 <div className="contact__form-wrapper">
-                    <form action="POST">
-                        <div>
-                            <p>Hi, my name is:</p>
-                            <input type="text" placeholder="Bami Schijf" />
+                    <form action="POST" className="contact__form">
+                        <div className="contact__form-item">
+                            <p className="contact__form-label">Hi, my name is:</p>
+                            <input type="text" placeholder="Bami Schijf" className="contact__form-input" />
                         </div>
                         <div className="contact__form-item">
                             <p className="contact__form-label">my email is:</p>
@@ -23,8 +23,8 @@ const Contact = () => {
                             <p className="contact__form-label">I work at:</p>
                             <input type="text" placeholder="Bacobit enterprise" className="contact__form-input" />
                         </div>
-                        <div>
-                            <p>i would like to:</p>
+                        <div className="contact__form-item">
+                            <p className="contact__form-label">i would like to:</p>
                             <input type="radio" id="sub" name="sub__option" value="sub" />
                             <label htmlFor="sub">Subscribe to the newsletter</label><br />
 
@@ -37,7 +37,7 @@ const Contact = () => {
                             <input type="radio" id="buy" name="buy__option" value="buy" />
                             <label htmlFor="buy">Buy the DigiPHY model</label><br />
                         </div>
-                        <input type="submit" value="Submit" />
+                        <input type="submit" value="Submit" className="contact__submit"/>
                     </form>
                 </div>
             </div>
