@@ -10,10 +10,10 @@ const Contact = () => {
                     <p className="contact__intro-subtitle">Want to know more about how DigiPHY can support your work? <br /> Get in touch and let’s explore the possibilities together.</p>
                 </div>
                 <div className="contact__form-wrapper">
-                    <form action="POST">
-                        <div>
-                            <p>Hi, my name is:</p>
-                            <input type="text" placeholder="Bami Schijf" />
+                    <form action="POST" className="contact__form">
+                        <div className="contact__form-item">
+                            <p className="contact__form-label">Hi, my name is:</p>
+                            <input type="text" placeholder="Bami Schijf" className="contact__form-input" />
                         </div>
                         <div className="contact__form-item">
                             <p className="contact__form-label">my email is:</p>
