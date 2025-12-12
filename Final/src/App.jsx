@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -15,6 +15,7 @@ gsap.registerPlugin(ScrollTrigger)
 function App() {
   const lenisRef = useRef(null)
   const animationFrameRef = useRef(null)
+  const horizontalSectionRef = useRef(null)
   const [activeModelIndex, setActiveModelIndex] = useState(0)
   const [transitionOpacity, setTransitionOpacity] = useState(1.0)
   const [uiVisible, setUiVisible] = useState(true)
@@ -71,82 +72,98 @@ function App() {
     animationFrameRef.current = requestAnimationFrame(animate)
   }
 
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smooth: true,
-      smoothTouch: false,
-    })
+  useLayoutEffect(() => {
+    // Reset scroll to top on reload
+    window.history.scrollRestoration = 'manual'
+    window.scrollTo(0, 0)
 
-    lenisRef.current = lenis
+    const ctx = gsap.context(() => {
 
-    lenis.on('scroll', ScrollTrigger.update)
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smooth: true,
+        smoothTouch: false,
+      })
 
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000)
-    })
+      lenisRef.current = lenis
 
-    // UI Visibility Trigger
-    ScrollTrigger.create({
-      trigger: '.section_horizontal--scroll',
-      start: 'bottom bottom',
-      onEnter: () => setUiVisible(false),
-      onLeaveBack: () => setUiVisible(true)
-    })
+      lenis.on('scroll', ScrollTrigger.update)
 
-    // Performance Optimization: Pause CarScene when HorizontalScrollScene covers viewport
-    ScrollTrigger.create({
-      trigger: '.section_horizontal--scroll',
-      start: 'top top',
-      end: 'bottom bottom',
-      onEnter: () => setCarSceneEnabled(false),
-      onLeaveBack: () => setCarSceneEnabled(true),
-      onEnterBack: () => setCarSceneEnabled(false),
-      onLeave: () => setCarSceneEnabled(true)
-    })
-
-    // Camera Interpolation: Zoom OUT when entering HorizontalScrollScene
-    ScrollTrigger.create({
-      trigger: '.section_horizontal--scroll',
-      start: 'top bottom', // When top of horizontal section hits bottom of viewport
-      end: 'top top',      // When top of horizontal section hits top of viewport
-      scrub: true,
-      onUpdate: (self) => {
-        setZoomLevel(self.progress)
-        setInteractionStrength(1 - self.progress) // Fade out mouse interaction
+      // Add ticker and store reference for cleanup
+      const tickerFunc = (time) => {
+        lenis.raf(time * 1000)
       }
+      gsap.ticker.add(tickerFunc)
+
+      // Store ticker in ref for cleanup outside context if needed (though context handles most)
+      // Actually gsap.context doesn't remove ticker listeners automatically usually, so we do it in cleanup
+
+      // UI Visibility Trigger
+      ScrollTrigger.create({
+        trigger: horizontalSectionRef.current,
+        start: 'bottom bottom',
+        onEnter: () => setUiVisible(false),
+        onLeaveBack: () => setUiVisible(true)
+      })
+
+      // Camera Interpolation: Zoom OUT (0 -> 1) when entering HorizontalScrollScene
+      ScrollTrigger.create({
+        trigger: horizontalSectionRef.current,
+        start: 'top 90%',
+        end: 'top 20%',
+        scrub: true,
+        onUpdate: (self) => {
+          setZoomLevel(self.progress)
+          setInteractionStrength(1 - self.progress)
+        }
+      })
+
+      // Camera Sequence Trigger (Pin & Drive)
+      ScrollTrigger.create({
+        trigger: '#car-usecases',
+        start: 'top top', // CHANGED: "top center" might be too early if pin release is distinct. "top top" is safer for a pinned logic sequence.
+        end: '+=3000',
+        pin: true,
+        scrub: true,
+        refreshPriority: 0, // Wait for upstream pins (priority 1) to resolve
+        onUpdate: (self) => {
+          setCameraProgress(self.progress)
+        }
+      })
+
+      // Force a refresh after a frame to ensure all pins (especially from child components) are calculated
+      requestAnimationFrame(() => ScrollTrigger.refresh())
+
+    }) // End gsap.context
+
+    // === ROBUST TIMING FIX ===
+    // 1. Monitor the scroll container for size changes (e.g. valid when 3D scenes hydrate/resize)
+    const resizeObserver = new ResizeObserver(() => {
+      ScrollTrigger.refresh()
     })
 
-    // Camera Interpolation: Zoom IN when leaving HorizontalScrollScene
-    ScrollTrigger.create({
-      trigger: '.section_horizontal--scroll',
-      start: 'bottom bottom', // When bottom of horizontal section hits bottom of viewport
-      end: 'bottom top',      // When bottom of horizontal section hits top of viewport
-      scrub: true,
-      onUpdate: (self) => setZoomLevel(1 - self.progress)
-    })
+    const scrollContainer = document.querySelector('.scroll_container')
+    if (scrollContainer) {
+      resizeObserver.observe(scrollContainer)
+    }
 
-    // Camera Sequence Trigger (Pin & Drive)
-    ScrollTrigger.create({
-      trigger: '#car-usecases',
-      start: 'top top',
-      end: '+=3000', // Scroll distance for the animation
-      pin: true,
-      scrub: true,
-      onUpdate: (self) => {
-        setCameraProgress(self.progress)
-      }
-    })
+    // 2. Force refresh on full window load (assets/fonts)
+    const handleLoad = () => ScrollTrigger.refresh()
+    window.addEventListener('load', handleLoad)
 
-    gsap.ticker.lagSmoothing(0)
+    gsap.ticker.lagSmoothing(0) // Good for smooth scroll
 
     return () => {
-      lenis.destroy()
-      gsap.ticker.remove(() => { })
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
+      ctx.revert() // Cleanup all triggers and animations created in context
+      if (lenisRef.current) {
+        lenisRef.current.destroy()
+        lenisRef.current = null
       }
+
+      // Cleanup observers
+      resizeObserver.disconnect()
+      window.removeEventListener('load', handleLoad)
     }
   }, [])
 
@@ -170,7 +187,7 @@ function App() {
         <section id="car-selection" data-scroll-section className="section_car--selection">
           {/* This section is transparent so CarScene shows through and can be interacted with */}
         </section>
-        <section data-scroll-section className="section_horizontal--scroll">
+        <section ref={horizontalSectionRef} data-scroll-section className="section_horizontal--scroll">
           <HorizontalScrollScene />
         </section>
         <section id="car-usecases" data-scroll-section className="section_car--usecases">

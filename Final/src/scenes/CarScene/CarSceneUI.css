@@ -34,17 +34,13 @@
 }
 
 /* Title - Top Center */
-.overlay_title {
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    transform: translateX(-50%);
+/* Title - Top Center */
+/* .overlay_title removed/refactored to inline style in JS for animation */
+.overlay_title_text {
     font-size: 5.5rem;
     line-height: 5rem;
     text-transform: uppercase;
-    text-align: center;
     white-space: nowrap;
-    pointer-events: none;
 }
 
 .purple {

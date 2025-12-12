@@ -26,33 +26,31 @@ export default function VariableText({
         return () => window.removeEventListener('mousemove', handleMouseMove)
     }, [])
 
-    // 2. Cache Layout Positions
-    const calculatePositions = () => {
-        rectsRef.current = charsRef.current.map(char => {
-            if (!char) return null
-            const rect = char.getBoundingClientRect()
-            return {
-                cx: rect.left + rect.width / 2,
-                cy: rect.top + rect.height / 2
-            }
-        })
-    }
-
-    useLayoutEffect(() => {
-        calculatePositions()
-        window.addEventListener('resize', calculatePositions)
-        return () => window.removeEventListener('resize', calculatePositions)
-    }, [children])
+    // 2. Remove static caching - Read layout in loop for scroll support
+    // (We removed the resize listener/layout effect because we check every frame now)
 
     // 3. Animation Loop (GSAP Ticker)
     useEffect(() => {
         const update = () => {
             const { x, y } = mouseRef.current
 
-            charsRef.current.forEach((char, i) => {
-                if (!char || !rectsRef.current[i]) return
+            // READ STEP: Get all positions first to avoid layout thrashing
+            // This is necessary because the element moves during scroll
+            const charRects = charsRef.current.map(char => {
+                if (!char) return null
+                const rect = char.getBoundingClientRect()
+                return {
+                    char,
+                    cx: rect.left + rect.width / 2,
+                    cy: rect.top + rect.height / 2
+                }
+            })
 
-                const { cx, cy } = rectsRef.current[i]
+            // WRITE STEP: Apply styles
+            charRects.forEach((item) => {
+                if (!item) return
+                const { char, cx, cy } = item
+
                 const dx = x - cx
                 const dy = y - cy
                 const dist = Math.sqrt(dx * dx + dy * dy)
@@ -77,12 +75,6 @@ export default function VariableText({
                 // Letter Spacing (Optional)
                 if (baseSettings.letterSpacing !== undefined && hoverSettings.letterSpacing !== undefined) {
                     const tracking = gsap.utils.mapRange(0, 1, baseSettings.letterSpacing, hoverSettings.letterSpacing, factor)
-                    // Use 'em' or 'px' depending on preference. Usually 'em' is good for relative tracking. 
-                    // But if user passes integers like '10', they probably mean pixels? 
-                    // Let's assume pixels if number, or pass string if provided. 
-                    // Actually mapRange returns numbers. Let's assume the user passes a number representing 'em' value or 'px'. 
-                    // Standard tracking is often 0.05em. 
-                    // If user passed `letterSpacing: 10`, it's likely pixels.
                     char.style.letterSpacing = `${tracking}px`
                 }
 

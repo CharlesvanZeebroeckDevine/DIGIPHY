@@ -1,40 +1,88 @@
-@font-face {
-  font-family: 'GT Ultra';
-  src: url('/fonts/GT-Ultra-Trial-VF.woff2') format('woff2');
-  font-weight: 100 900;
-  font-style: oblique 0deg 20deg;
-  font-display: swap;
-}
+/* Font Definition reuse if not already global */
+/* Assuming GT Ultra is loaded globally or via @font-face above */
 
 .horizontal_scroll--container {
   width: 100%;
-  height: 800vh;
-  background: linear-gradient(180deg, #000 0%, #1a1a2e 100%);
+  height: 100vh;
+  /* GSAP handles scroll duration via pinning */
+  background: black;
+  position: relative;
 }
 
 .horizontal_scroll--sticky {
-  position: sticky;
-  top: 0;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
+  position: relative;
+  /* Needed for absolute positioning children */
 }
 
-.auto_alignment--title {
+/* Title Section BEFORE Scroll */
+.horizontal_scroll--title {
+  width: 100%;
+  height: 30vh;
+  background: black;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  color: white;
+  z-index: 10;
+  position: relative;
+  border-bottom: 1px solid white;
+}
+
+.horizontal_scroll--title .title-text {
+  margin: 10vh 5vw;
   font-family: 'GT Ultra', sans-serif;
-  font-size: 5rem;
-  /* wght: weight, slnt: slant, cntr: contrast */
-  font-variation-settings: 'wght' 700, 'slnt' 100, 'CNTR' 100;
-  font-weight: 300;
-  /* Fallback */
-  color: white;
-  text-align: center;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-  pointer-events: none;
-  user-select: none;
+  /* Fallback if variable font not loaded globally but should be */
+  font-size: 5vw;
+  /* Responsive huge size */
+  line-height: 1;
 }
 
-h1 {
+/* Overlay Text ON TOP of Scene */
+.horizontal_scroll--overlay-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   color: white;
+  font-family: 'GT Ultra', sans-serif;
+  font-size: 2rem;
+  font-weight: 300;
+  /* Adjust weight as needed */
+  overflow: hidden;
+  pointer-events: none;
+  /* Let clicks pass through to canvas */
+  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Center Dot */
+.horizontal_scroll--center-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+  /* Styling handled by SVG */
+}
+
+/* Final Text - Left of Center */
+.horizontal_scroll--final-text {
+  position: absolute;
+  top: 50%;
+  right: 50.5%;
+  /* Positioned to the left of the center (50% + slight gap) */
+  transform: translateY(-50%);
+  text-align: right;
+  color: white;
+  font-family: 'GT Ultra', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 100;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 10;
 }
