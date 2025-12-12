@@ -7,6 +7,7 @@ import CarScene from './scenes/CarScene'
 import HorizontalScrollScene from './scenes/HorizontalScrollScene'
 import TechFeatures from './scenes/TechFeatures'
 import Contact from './scenes/Contact'
+import Footer from './scenes/Footer'
 import LoadingScreen from './Components/LoadingScreen'
 import { TRANSITION_CONFIG } from './scenes/CarScene/config'
 
@@ -189,6 +190,9 @@ function App() {
         </section>
         <section id="contact" data-scroll-section className="section_contact">
           <Contact />
+        </section>
+        <section id="footer" data-scroll-section className="section_footer">
+          <Footer />
         </section>
       </div>
     </>
