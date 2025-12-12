@@ -65,19 +65,8 @@ function SceneContent({ containerRef }) {
                 const split = new SplitText(overlayText, { type: 'chars' })
                 splitChars = split.chars
 
-                // Initial Reveal (triggered by scroll position)
-                gsap.from(splitChars, {
-                    scrollTrigger: {
-                        trigger: containerRef.current,
-                        start: 'bottom 100%',
-                        toggleActions: 'play none play none'
-                    },
-                    opacity: 1,
-                    y: 50,
-                    stagger: 0.05,
-                    duration: 1,
-                    ease: 'power3.out'
-                })
+                // Initial state
+                gsap.set(splitChars, { opacity: 0, y: 50 })
             }
 
             // === MAIN ANIMATION ===
@@ -89,7 +78,7 @@ function SceneContent({ containerRef }) {
                     pin: true,
                     scrub: true,
                     markers: false,
-                    refreshPriority: 1 // CRITICAL: Calculate this pin BEFORE the next section
+                    refreshPriority: 1
                 }
             })
             // Ensure Pivots are aligned (One at 0 deg, one at 180 deg)
@@ -102,7 +91,22 @@ function SceneContent({ containerRef }) {
             // Reset intensity
             animState.current.intensity = 1
 
+            // === REVEAL TEXT (Phase 0) ===
+            // Fade in as the pin starts
+            if (splitChars.length) {
+                tl.to(splitChars, {
+                    opacity: 1,
+                    y: 0,
+                    stagger: 0.05,
+                    duration: 0.5, // Faster duration relative to scrub
+                    ease: 'power2.out'
+                }, 0)
+            }
+
             // === PHASE 1: The Spiral In ===
+            // Explicitly set phase1 start to 0 to overlap with text reveal
+            tl.addLabel("phase1", 0)
+
             // They orbit 1 full turn (360) + merge to center
             tl.to([leftPivot.rotation, rightPivot.rotation], {
                 y: "+=" + Math.PI * 2.5, // Rotate 270 degrees (spiral effect)
@@ -130,12 +134,12 @@ function SceneContent({ containerRef }) {
 
                 // HIDE TEXT HALFWAY THROUGH PHASE 1
                 .to(splitChars, {
-                    y: 50,
-                    opacity: 1,
-                    stagger: 0.05,
+                    y: -50, // Move UP to exit (follows flow)
+                    opacity: 0,
+                    stagger: 0.02, // Exit faster
                     duration: 0.5,
                     ease: 'power2.in'
-                }, "phase1+=1")
+                }, "phase1+=1.5") // Slightly later in phase 1 to keep it visible during the start of spiral
 
 
                 // === PHASE 2: The Merge & Pop ===
@@ -157,7 +161,7 @@ function SceneContent({ containerRef }) {
                     opacity: 1,
                     duration: 0.3,
                     ease: "back.out(2)"
-                }, ">") // Start AFTER the spheres have fully shrunk
+                }, "-=0.2") // Start AFTER the spheres have fully shrunk
 
                 // Final Text Reveal
                 const finalText = containerRef.current.querySelector('.horizontal_scroll--final-text')
@@ -171,15 +175,46 @@ function SceneContent({ containerRef }) {
                         stagger: 0.02,
                         duration: 0.5,
                         ease: "power2.out"
-                    }, ">") // Play sequentially after dot appears
+                    }, "-=0.3") // Play sequentially after dot appears
                 }
             }
 
-            // CRITICAL: Refresh triggers after setting up this pin to ensure downstream triggers (like UseCases) 
-            // know where they should actually start.
+            // === PHASE 3: Content Scroll & Line Reveal ===
+            // This happens after the final text has revealed.
+            // We want to simulate continuing to scroll right, so the content moves left.
+            const track = containerRef.current.querySelector('.horizontal_track')
+            const bezierPath = containerRef.current.querySelector('.horizontal_scroll--bezier-line path')
+
+            if (track && bezierPath) {
+                // Get path length for drawing animation
+                const length = bezierPath.getTotalLength()
+                gsap.set(bezierPath, { strokeDasharray: length, strokeDashoffset: length })
+
+                tl.addLabel("phase3")
+
+                // Move Track Left
+                // The track is 200vw wide. We want to move it 100vw to the left to show the second panel.
+                // xPercent: -50 of 200vw = -100vw.
+                tl.to(track, {
+                    xPercent: -50,
+                    duration: 3,
+                    ease: "none" // Linear movement for scroll feel
+                }, "phase3+=0.5")
+
+                // Reveal Line (Draw it)
+                // It should look like it's trailing out of the dot as the dot moves left.
+                // So we animate strokeDashoffset from length -> 0
+                tl.to(bezierPath, {
+                    strokeDashoffset: 0,
+                    duration: 2.5, // slightly faster than the move so it catches up? Or synced?
+                    ease: "power1.inOut"
+                }, "phase3+=0.5")
+            }
+
+            // Refresh triggers to update downstream pins
             ScrollTrigger.refresh()
 
-        }, containerRef) // Scope to container
+        }, containerRef)
 
         return () => ctx.revert()
     }, [containerRef])
@@ -307,18 +342,33 @@ export default function HorizontalScrollScene() {
                     <div className="horizontal_scroll--overlay-text">
                         1. Auto Alignment
                     </div>
-                    {/* Centered White Dot SVG */}
-                    <div className="horizontal_scroll--center-dot">
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="5" cy="5" r="2.5" fill="white" />
+                    {/* Phase 3 Content: Horizontal Track (200vw) */}
+                    <div className="horizontal_track">
+                        {/* Panel 1: Contains Dot and Text */}
+                        <div className="track_panel">
+                            <div className="horizontal_scroll--center-dot">
+                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="5" cy="5" r="2.5" fill="white" />
+                                </svg>
+                            </div>
+
+                            <div className="horizontal_scroll--final-text">
+                                using algorithms to combine the physical and virtual worlds instantly
+                            </div>
+                        </div>
+
+                        {/* SVG Line: Positioned absolute relative to Track, starting at center of Panel 1 */}
+                        <svg className="horizontal_scroll--bezier-line" width="100%" height="200" viewBox="0 0 1000 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                            <path
+                                d="M 0,100 C 300,100 400,180 700,100 S 1000,100 1000,100"
+                                stroke="white"
+                                strokeWidth="2"
+                                fill="none"
+                            />
                         </svg>
-                    </div>
-                    {/* Final Reveal Text */}
-                    <div className="horizontal_scroll--final-text">
-                        using algorithms to combine the physical and virtual worlds instantly.
                     </div>
                 </div>
             </div>
         </>
     )
-};
+}

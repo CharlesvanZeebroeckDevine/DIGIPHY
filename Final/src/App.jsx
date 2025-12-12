@@ -102,7 +102,8 @@ function App() {
       // UI Visibility Trigger
       ScrollTrigger.create({
         trigger: horizontalSectionRef.current,
-        start: 'bottom bottom',
+        start: 'top ',
+        end: 'top',
         onEnter: () => setUiVisible(false),
         onLeaveBack: () => setUiVisible(true)
       })
@@ -122,46 +123,36 @@ function App() {
       // Camera Sequence Trigger (Pin & Drive)
       ScrollTrigger.create({
         trigger: '#car-usecases',
-        start: 'top top', // CHANGED: "top center" might be too early if pin release is distinct. "top top" is safer for a pinned logic sequence.
-        end: '+=3000',
+        start: () => 'top top',
+        end: () => '+=3000',
         pin: true,
         scrub: true,
-        refreshPriority: 0, // Wait for upstream pins (priority 1) to resolve
-        onUpdate: (self) => {
-          setCameraProgress(self.progress)
-        }
+        refreshPriority: 0,
+        onUpdate: (self) => setCameraProgress(self.progress)
       })
 
-      // Force a refresh after a frame to ensure all pins (especially from child components) are calculated
+      // Initial Refresh
       requestAnimationFrame(() => ScrollTrigger.refresh())
 
-    }) // End gsap.context
-
-    // === ROBUST TIMING FIX ===
-    // 1. Monitor the scroll container for size changes (e.g. valid when 3D scenes hydrate/resize)
-    const resizeObserver = new ResizeObserver(() => {
-      ScrollTrigger.refresh()
     })
 
-    const scrollContainer = document.querySelector('.scroll_container')
-    if (scrollContainer) {
-      resizeObserver.observe(scrollContainer)
-    }
+    // === LAYOUT & RESIZE HANDLING ===
+    // 1. Monitor Body Resize: Ensures scroll triggers update on any layout shift/font load
+    const resizeObserver = new ResizeObserver(() => ScrollTrigger.refresh())
+    resizeObserver.observe(document.body)
 
-    // 2. Force refresh on full window load (assets/fonts)
+    // 2. Asset Load Safety
     const handleLoad = () => ScrollTrigger.refresh()
     window.addEventListener('load', handleLoad)
 
-    gsap.ticker.lagSmoothing(0) // Good for smooth scroll
+    gsap.ticker.lagSmoothing(0)
 
     return () => {
-      ctx.revert() // Cleanup all triggers and animations created in context
+      ctx.revert()
       if (lenisRef.current) {
         lenisRef.current.destroy()
         lenisRef.current = null
       }
-
-      // Cleanup observers
       resizeObserver.disconnect()
       window.removeEventListener('load', handleLoad)
     }
