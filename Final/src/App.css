@@ -39,6 +39,12 @@
   z-index: 2;
 }
 
+.section_footer {
+  background: #111;
+  position: relative;
+  z-index: 2;
+}
+
 .navigation_dots {
   display: flex;
   position: fixed;
