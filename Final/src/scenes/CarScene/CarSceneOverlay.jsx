@@ -1,19 +1,46 @@
 import './CarSceneUI.css'
 import StaggerButton from '../../Components/UI/StaggerButton'
 import VariableText from '../../Components/VariableText'
+import { useRef, useLayoutEffect } from 'react'
+import gsap from 'gsap'
 
-export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visible = true }) {
+export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visible = true, zoomLevel = 0 }) {
+    const titleRef = useRef(null)
+
+    useLayoutEffect(() => {
+        if (titleRef.current) {
+            gsap.set(titleRef.current, {
+                y: -zoomLevel * 500,
+                xPercent: -50,
+                x: 0
+            })
+        }
+    }, [zoomLevel])
+
     return (
         <div className="car_scene_overlay" style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease' }}>
             <div className="overlay_logo">DIGIPHY 2.0</div>
-            <VariableText
-                className="overlay_title"
-                baseSettings={{ wght: 300, slnt: 100, CNTR: 100, letterSpacing: -5 }}
-                hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
-                radius={700}
+
+            <div
+                ref={titleRef}
+                className="overlay_title_container"
+                style={{
+                    position: 'absolute',
+                    top: '40px',
+                    left: '50%',
+                    pointerEvents: 'none',
+                    textAlign: 'center'
+                }}
             >
-                The ULTIMATE <span className="purple">XR</span> <br /> SEATING BUCK
-            </VariableText>
+                <VariableText
+                    className="overlay_title_text"
+                    baseSettings={{ wght: 300, slnt: 100, CNTR: 100, letterSpacing: -5 }}
+                    hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
+                    radius={700}
+                >
+                    The ULTIMATE <span className="purple">XR</span> <br /> SEATING BUCK
+                </VariableText>
+            </div>
 
             <div className="overlay_controls">
                 <StaggerButton

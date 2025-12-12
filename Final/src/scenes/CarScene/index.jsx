@@ -68,6 +68,7 @@ function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch, uiVisibl
         activeModelIndex={activeModelIndex}
         onModelSwitch={onModelSwitch}
         visible={uiVisible}
+        zoomLevel={zoomLevel}
       />
     </div>
   )
