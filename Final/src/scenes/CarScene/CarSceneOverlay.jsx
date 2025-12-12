@@ -9,10 +9,12 @@ export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visib
 
     useLayoutEffect(() => {
         if (titleRef.current) {
+            // Simple, smooth exit through the top
+            // opacity: fades out by the time zoomLevel hits 0.5
+            // y: moves up 200px
             gsap.set(titleRef.current, {
-                y: -zoomLevel * 500,
-                xPercent: -50,
-                x: 0
+                y: -zoomLevel * 200,
+                opacity: Math.max(0, 1 - zoomLevel * 2)
             })
         }
     }, [zoomLevel])
@@ -25,11 +27,9 @@ export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visib
                 ref={titleRef}
                 className="overlay_title_container"
                 style={{
-                    position: 'absolute',
-                    top: '40px',
-                    left: '50%',
                     pointerEvents: 'none',
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    marginTop: '40px'
                 }}
             >
                 <VariableText
