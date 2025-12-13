@@ -1,114 +1,122 @@
-@font-face {
-    font-family: 'GT Ultra';
-    src: url('/fonts/GT-Ultra-Trial-VF.woff2') format('woff2');
-    font-weight: 100 900;
-    font-style: oblique 0deg 20deg;
-    font-display: swap;
-}
-
-body {
-    color: white;
-}
-
-.contact__intro{
+.contact_container {
+    background-color: var(--smoky-umber);
+    padding: var(--sp-xl);
     display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-.contact__container {
-    margin-inline: 5rem;
-    margin-inline-end: 7rem;
-    padding-block-end: 3rem;
-    display: flex;
-    gap: 10rem;
-    justify-content: center;
+    flex-direction: row;
     align-items: center;
-
+    justify-content: space-between;
+    height: 100vh;
 }
 
-.contact__intro-title {
-    font-family: 'GT Ultra', sans-serif;
-    font-variation-settings: 'wght' 100, 'slnt' 0, 'CNTR' 50;
-    font-size: 4.375rem;
-    text-transform: uppercase;
-    font-weight: 100;
-}
-
-.contact__span {
-    font-variation-settings: 'wght' 400, 'slnt' 0, 'CNTR' 50;
-}
-
-.contact__intro-subtitle {
-    font-family: 'GT Ultra', sans-serif;
-    font-size: 1.5rem;
+p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: var(--fz-0);
     font-weight: 300;
     line-height: 150%;
-    letter-spacing: -0.06rem;
 }
 
-.contact__form-wrapper {
+.contact_intro {
+    width: 50vw;
+}
+
+.contact_title {
+    font-family: 'GT Ultra', sans-serif;
+    font-size: var(--fz-4);
+    color: var(--doctor);
+    text-transform: uppercase;
+    line-height: normal;
+    pointer-events: auto;
+    margin-block-end: var(--sp-s);
+}
+
+form {
     width: 30vw;
 }
 
-.contact__form {
+.form_item {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: var(--sp-2xs);
+    margin-block-start: var(--sp-l);
 }
 
-.contact__form-label {
-    color: #FFF;
-    font-family: 'Montserrat', 'inter';
-    font-size: 2rem;
-    font-style: normal;
-    font-weight: 100;
-    line-height: 140%;
-    letter-spacing: -0.08rem;
-    text-transform: uppercase;
+.form_item--name,
+.form_item--email,
+.form_item--work {
+    border-block-end: .5px solid var(--doctor);
 }
 
-.contact__form-input {
-    width: 100%;
-    padding: 0.9rem 1rem;
-    background: none;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    outline: none;
-    border-radius: 0;
-    transition: border-color 0.2s ease;
+.form_item input {
+    background-color: transparent;
+    padding: var(--sp-xs) 0;
+    border: none;
+    color: var(--doctor);
 }
 
-.contact__form-input::placeholder {
-    font-family: 'Montserrat', 'inter';
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 1rem;
-    font-weight: 100;
+.form_item input:focus {
+    outline: 1px solid var(--doctor);
+    padding: var(--sp-xs) var(--sp-xs);
+    transition: .3s ease-in-out;
+    background-color: transparent;
 }
 
-.radio__label {
-    color: #FFF;
-    font-family: 'montserrat', 'inter';
-    font-size: 1.25rem;
-    font-style: normal;
+.form_item input:focus-within {
+    outline: 1px solid var(--meteor-shower);
+    background-color: transparent;
+}
+
+.form_item input::placeholder {
+    color: var(--lucky-grey);
+    font-family: 'Montserrat', sans-serif;
+    font-size: var(--fz--1);
+    background-color: transparent;
+}
+
+.form_item--label {
+    color: var(--doctor);
+    font-size: var(--fz-1);
+    font-family: 'Montserrat', sans-serif;
     font-weight: 300;
-    line-height: 140%;
-    letter-spacing: -0.05rem;
-}
-
-.contact__submit {
-    margin-top: 2rem;
-    background: none;
-    border: 1px solid white;
-    padding: 0.8rem 2rem;
-    color: white;
-    font-size: 1rem;
     text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.2s ease;
 }
 
-.contact__submit:hover {
-    background: #583BFB;
-    color: white;
-    border: 1px solid #583BFB;
+.radio_container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2xs);
+    margin-block-end: var(--sp-l);
+}
+
+.radio_container--item {
+    display: flex;
+    justify-content: space-between;
+    width: 50%;
+}
+
+.radio_container--item input[type="radio"] {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    background-color: transparent;
+    border: 0.5px solid var(--doctor);
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    display: grid;
+    place-content: center;
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.radio_container--item input[type="radio"]:checked {
+    background-color: var(--meteor-shower);
+    border-color: var(--meteor-shower);
+    transition: .3s ease-in-out;
+}
+
+.radio_container--item label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: var(--fz--1);
+    font-weight: 200;
 }
