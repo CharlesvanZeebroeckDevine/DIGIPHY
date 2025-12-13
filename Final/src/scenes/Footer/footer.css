@@ -3,6 +3,18 @@ a {
     text-decoration: none;
 }
 
+<<<<<<< HEAD
+=======
+.footer_subtitle {
+    font-size: var(--fz-0);
+}
+
+.footer_subtitle span {
+    font-weight: bold;
+    color: var(--meteor-shower);
+}
+
+>>>>>>> dev
 .footer_container--wrapper {
     height: 100vh;
     width: 100vw;
@@ -51,6 +63,8 @@ a {
 
 .footer_title a:hover {
     color: var(--meteor-shower);
+    cursor: pointer;
+    transition: all 0.3s ease-in;
 }
 
 .footer_bottom {
@@ -82,4 +96,11 @@ a {
     border: 1px solid var(--doctor);
     padding: var(--sp-2xs);
     border-radius: 3px;
+<<<<<<< HEAD
+=======
+}
+
+.credentials {
+    font-size: var(--fz--1);
+>>>>>>> dev
 }
