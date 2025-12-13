@@ -1,92 +1,79 @@
-@font-face {
-    font-family: 'GT Ultra';
-    src: url('/fonts/GT-Ultra-Trial-VF.woff2') format('woff2');
-    font-weight: 100 900;
-    font-style: oblique 0deg 20deg;
-    font-display: swap;
-}
-
-body {
-    color: white;
-}
-
 .visibility-hidden {
     display: none;
 }
 
-.feature__container {
-    margin: 0 auto;
+.feature_container {
+    background-color: var(--smoky-umber);
+    max-width: 100vw;
+    max-height: 100vh;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sp-2xl);
 }
 
-.tech__container {
+.tech_container {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    padding-block: 5rem;
+    width: 100vw;
 }
 
-.feature__intro {
+.feature_intro {
     display: flex;
     flex-direction: column;
     text-align: center;
-    gap: 2rem;
-    padding-block: 2rem;
-
 }
 
-.feature__title {
-    font-size: 6.25em;
+.feature_title {
+    font-size: var(--fz-5);
+    color: var(--doctor);
     font-family: 'GT Ultra', sans-serif;
     line-height: normal;
     font-variation-settings: 'wght' 700, 'slnt' 0, 'CNTR' 50;
 }
 
-.feature__subtitle {
-    font-size: 3.4375em;
-    font-family: 'GT Ultra', sans-serif;
-    line-height: normal;
-    font-variation-settings: 'wght' 400, 'slnt' 0, 'CNTR' 0;
-}
-
-.feature__nav {
+.feature_nav {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 20rem;
+    width: 10vw;
 }
 
-.feature__button {
+.feature_button {
     background: none;
-    border-width: 0px 1px 0px 0px;
-    border-style: solid;
-    border-color: white;
     padding-block: 2.5rem;
     padding-inline: 1rem;
-    color: white;
+    color: var(--lucky-grey);
     cursor: pointer;
-    transition: 0.2s;
-    width: 10rem;
-    font-size: 1.25rem;
+    transition: 0.3s ease-in-out;
+    width: 100%;
+    font-size: var(--fz-0);
     text-align: left;
+    border-inline-end: 1px solid var(--doctor);
+    border-block: none;
+    border-inline-start: none;
 }
 
-.feature__button.active {
-    border-width: 0px 5px 0px 0px;
-    border-color: #149D7B;
+.feature_button.active {
+    color: var(--doctor);
 }
 
-.feature__button:hover {
-    border-width: 0px 5px 0px 0px;
+.feature_button:hover {
+    color: var(--meteor-shower);
 }
 
-.feature__image>img {
-    width: 24rem;
-    height: 31rem;
+.feature_image>img {
+    width: 20vw;
+    height: 25vw;
 }
 
-.feature__description {
-    width: 20rem;
-    font-size: 1.25rem;
-    font-weight: 400;
+.feature_description {
+    width: 15vw;
+    font-size: var(--fz-1);
     line-height: 150%;
+    color: var(--doctor);
 }
