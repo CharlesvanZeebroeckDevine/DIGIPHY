@@ -16,7 +16,7 @@ a {
     height: 100vh;
     width: 100vw;
     background-color: var(--smoky-umber);
-    margin: 0;
+    /* margin: var(--sp-3xl) 0 0 0; */
     padding: 0;
     display: flex;
     justify-content: center;

@@ -1,43 +1,66 @@
 import "./contact.css";
+import VariableText from '../../Components/VariableText'
+import FooterButton from "../../Components/UI/FooterButton";
 
 const Contact = () => {
     return (
         <>
-            <div className="contact__container">
-                <div className="contact__intro o">
+            <div className="contact_container">
+                <div className="contact_intro">
                     <h2 className="visibility-hidden">Contact</h2>
-                    <p className="contact__intro-title">You’ve seen what <br /> <span className="contact__span">DigiPHY</span> can do...</p>
-                    <p className="contact__intro-subtitle">Want to know more about how DigiPHY can support your work? <br /> Get in touch and let’s explore the possibilities together.</p>
+                    <VariableText
+                        className="contact_title"
+                        baseSettings={{ wght: 300, slnt: 100, CNTR: 100, letterSpacing: -5 }}
+                        hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
+                        radius={400}>
+                        Now you've seen what <br /> DigiPHY can do...
+                    </VariableText>
+                    <p>Want to know more about how DigiPHY can support your work? Get in touch and let’s explore the possibilities together.</p>
                 </div>
-                <div className="contact__form-wrapper">
-                    <form action="POST" className="contact__form">
-                        <div className="contact__form-item">
-                            <p className="contact__form-label">Hi, my name is:</p>
-                            <input type="text" placeholder="Bami Schijf" className="contact__form-input" />
+                <div className="form_container">
+                    <form action="POST">
+                        <div className="form_item form_item--name">
+                            <label className="form_item--label" htmlFor="name">Hi, my name is:</label>
+                            <input type="text" id="name" placeholder="Bami Schijf" required />
                         </div>
-                        <div className="contact__form-item">
-                            <p className="contact__form-label">my email is:</p>
-                            <input type="email" placeholder="john.deere@outlook.com" className="contact__form-input" />
+                        <div className="form_item form_item--email">
+                            <label className="form_item--label" htmlFor="email">my email is:</label>
+                            <input type="email" id="email" placeholder="john.deere@outlook.com" required />
                         </div>
-                        <div className="contact__form-item">
-                            <p className="contact__form-label">I work at:</p>
-                            <input type="text" placeholder="Bacobit enterprise" className="contact__form-input" />
+                        <div className="form_item form_item--work">
+                            <label className="form_item--label" htmlFor="work">I work at:</label>
+                            <input type="text" id="work" placeholder="Bacobit enterprise" required />
                         </div>
-                        <div className="contact__form-item">
-                            <p className="contact__form-label">i would like to:</p>
-                            <input type="radio" id="sub" name="sub__option" value="sub" />
-                            <label htmlFor="sub">Subscribe to the newsletter</label><br />
+                        <div className="form_item form_item--workoption">
+                            <label className="form_item--label" htmlFor="workoption">i would like to:</label>
+                            <div className="radio_container">
+                                <div className="radio_container--item">
+                                    <label htmlFor="sub">Subscribe to the newsletter</label>
+                                    <input type="radio" id="sub" name="sub__option" value="sub" />
+                                </div>
 
-                            <input type="radio" id="book" name="book__option" value="book" />
-                            <label htmlFor="book">Book a workshop</label><br />
+                                <div className="radio_container--item">
+                                    <label htmlFor="book">Book a workshop</label>
+                                    <input type="radio" id="book" name="book__option" value="book" />
+                                </div>
 
-                            <input type="radio" id="rent" name="rent__option" value="rent" />
-                            <label htmlFor="rent">Rent the DigiPHY model</label><br />
+                                <div className="radio_container--item">
+                                    <label htmlFor="rent">Rent the DigiPHY model</label>
+                                    <input type="radio" id="rent" name="rent__option" value="rent" />
+                                </div>
 
-                            <input type="radio" id="buy" name="buy__option" value="buy" />
-                            <label htmlFor="buy">Buy the DigiPHY model</label><br />
+                                <div className="radio_container--item">
+                                    <label htmlFor="buy">Buy the DigiPHY model</label>
+                                    <input type="radio" id="buy" name="buy__option" value="buy" />
+                                </div>
+
+                                <div className="radio_container--item">
+                                    <label htmlFor="other">Other</label>
+                                    <input type="radio" id="other" name="buy__option" value="other" />
+                                </div>
+                            </div>
                         </div>
-                        <input type="submit" value="Submit" className="contact__submit" />
+                        <FooterButton text="Submit" value="Submit" onClick={() => console.log('Submit')} />
                     </form>
                 </div>
             </div>
