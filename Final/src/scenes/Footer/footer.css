@@ -60,6 +60,8 @@ a {
 
 .footer_title a:hover {
     color: var(--meteor-shower);
+    cursor: pointer;
+    transition: all 0.3s ease-in;
 }
 
 .footer_bottom {
