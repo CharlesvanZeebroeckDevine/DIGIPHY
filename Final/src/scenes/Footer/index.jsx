@@ -1,7 +1,7 @@
 import './footer.css'
 import VariableText from '../../Components/VariableText'
 import { LiquidFooterLine } from './LiquidFooterLine'
-import FooterButton from '../../Components/UI/FooterButton'
+import PrimaryButton from '../../Components/UI/PrimaryButton'
 import FooterSocialButton from '../../Components/UI/FooterSocialButton'
 
 const Footer = () => {
@@ -51,10 +51,10 @@ const Footer = () => {
                         <p>© 2025 DigiPHY. Project made by Wander, Febe and Charles</p>
                     </div>
                     <div className="links">
-                        <FooterButton
+                        <PrimaryButton
                             text="Use Cases"
                         />
-                        <FooterButton
+                        <PrimaryButton
                             text="Contact"
                         />
                     </div>

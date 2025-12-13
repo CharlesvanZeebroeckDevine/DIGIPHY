@@ -1,6 +1,6 @@
 import "./contact.css";
 import VariableText from '../../Components/VariableText'
-import FooterButton from "../../Components/UI/FooterButton";
+import PrimaryButton from '../../Components/UI/PrimaryButton'
 
 const Contact = () => {
     return (
@@ -60,7 +60,7 @@ const Contact = () => {
                                 </div>
                             </div>
                         </div>
-                        <FooterButton text="Submit" value="Submit" onClick={() => console.log('Submit')} />
+                        <PrimaryButton text="Submit" value="Submit" onClick={() => console.log('Submit')} />
                     </form>
                 </div>
             </div>

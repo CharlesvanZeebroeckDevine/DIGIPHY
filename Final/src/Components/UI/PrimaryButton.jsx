@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react'
 import gsap from 'gsap'
-import './FooterButton.css'
+import './PrimaryButton.css'
 
-export default function FooterButton({
+export default function PrimaryButton({
     text,
     onClick,
     className = '',
