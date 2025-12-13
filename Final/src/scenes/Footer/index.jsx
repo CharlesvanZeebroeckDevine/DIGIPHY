@@ -30,7 +30,7 @@ const Footer = () => {
                             </a>
                         </VariableText>
                     </div>
-                    <p>The ultimate XR seating buck.</p>
+                    <p className="footer_subtitle">The ultimate <span>XR</span> seating buck.</p>
                 </div>
                 <div className="footer_bottom">
                     <div className="socials">
