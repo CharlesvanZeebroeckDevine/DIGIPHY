@@ -10,15 +10,15 @@
     --fz-5: clamp(3.4332rem, 2.9763rem + 1.8277vw, 5.2609rem);
 
     /* spacing */
-    --space-3xs: clamp(0.3125rem, 0.3125rem + 0vw, 0.3125rem);
-    --space-2xs: clamp(0.5625rem, 0.5469rem + 0.0625vw, 0.625rem);
-    --space-xs: clamp(0.875rem, 0.8594rem + 0.0625vw, 0.9375rem);
-    --space-s: clamp(1.125rem, 1.0938rem + 0.125vw, 1.25rem);
-    --space-m: clamp(1.6875rem, 1.6406rem + 0.1875vw, 1.875rem);
-    --space-l: clamp(2.25rem, 2.1875rem + 0.25vw, 2.5rem);
-    --space-xl: clamp(3.375rem, 3.2813rem + 0.375vw, 3.75rem);
-    --space-2xl: clamp(4.5rem, 4.375rem + 0.5vw, 5rem);
-    --space-3xl: clamp(6.75rem, 6.5625rem + 0.75vw, 7.5rem);
+    --sp-3xs: clamp(0.3125rem, 0.3125rem + 0vw, 0.3125rem);
+    --sp-2xs: clamp(0.5625rem, 0.5469rem + 0.0625vw, 0.625rem);
+    --sp-xs: clamp(0.875rem, 0.8594rem + 0.0625vw, 0.9375rem);
+    --sp-s: clamp(1.125rem, 1.0938rem + 0.125vw, 1.25rem);
+    --sp-m: clamp(1.6875rem, 1.6406rem + 0.1875vw, 1.875rem);
+    --sp-l: clamp(2.25rem, 2.1875rem + 0.25vw, 2.5rem);
+    --sp-xl: clamp(3.375rem, 3.2813rem + 0.375vw, 3.75rem);
+    --sp-2xl: clamp(4.5rem, 4.375rem + 0.5vw, 5rem);
+    --sp-3xl: clamp(6.75rem, 6.5625rem + 0.75vw, 7.5rem);
 
     /* colors */
     --lucky-grey: #787779;

@@ -9,9 +9,6 @@ export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visib
 
     useLayoutEffect(() => {
         if (titleRef.current) {
-            // Simple, smooth exit through the top
-            // opacity: fades out by the time zoomLevel hits 0.5
-            // y: moves up 200px
             gsap.set(titleRef.current, {
                 y: -zoomLevel * 200,
                 opacity: Math.max(0, 1 - zoomLevel * 2)
