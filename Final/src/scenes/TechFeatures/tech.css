@@ -1,6 +1,4 @@
-.visibility-hidden {
-    display: none;
-}
+
 
 .feature_container {
     background-color: var(--smoky-umber);
@@ -28,14 +26,6 @@
     text-align: center;
 }
 
-.feature_title {
-    font-size: var(--fz-5);
-    color: var(--doctor);
-    font-family: 'GT Ultra', sans-serif;
-    line-height: normal;
-    font-variation-settings: 'wght' 700, 'slnt' 0, 'CNTR' 50;
-}
-
 .feature_nav {
     display: flex;
     flex-direction: column;
@@ -53,9 +43,9 @@
     width: 100%;
     font-size: var(--fz-0);
     text-align: left;
-    border-inline-end: 1px solid var(--doctor);
     border-block: none;
     border-inline-start: none;
+    border-inline-end: 1px solid var(--doctor);
 }
 
 .feature_button.active {
@@ -64,6 +54,7 @@
 
 .feature_button:hover {
     color: var(--meteor-shower);
+    transition: 0.3s ease-in-out;
 }
 
 .feature_image>img {
@@ -73,7 +64,4 @@
 
 .feature_description {
     width: 15vw;
-    font-size: var(--fz-1);
-    line-height: 150%;
-    color: var(--doctor);
 }

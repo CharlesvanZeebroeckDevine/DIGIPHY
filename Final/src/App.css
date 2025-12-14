@@ -1,3 +1,52 @@
+@font-face {
+  font-family: 'GT Ultra';
+  src: url('/fonts/GT-Ultra-Trial-VF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: oblique 0deg 20deg;
+  font-display: swap;
+}
+
+h1, h2, h3, h4, h5, h6, p, li, a, label {
+  color: var(--doctor);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'GT Ultra', sans-serif;
+  line-height: normal;
+  font-variation-settings: 'wght' 700, 'slnt' 0, 'CNTR' 50;
+}
+
+h1 {
+  font-size: var(--fz-5);
+}
+
+h2 {
+  font-size: var(--fz-4);
+}
+
+h3 {
+  font-size: var(--fz-3);
+}
+
+p {
+  font-size: var(--fz-1);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  line-height: 150%;
+}
+
+li {
+  font-size: var(--fz-1);
+}
+
+a {
+  text-decoration: none;
+}
+
+.visibility-hidden {
+  display: none;
+}
+
 .car_scene--container {
   position: fixed;
   top: 0;
@@ -7,67 +56,23 @@
   z-index: 1;
 }
 
-.scroll_container {
+.scroll_container, 
+.section_car--selection,
+.section_horizontal--scroll,
+.section_car--usecases,
+.section_tech--features,
+.section_contact,
+.section_footer {
   position: relative;
+}
+
+.section_horizontal--scroll,
+.section_tech--features,
+.section_contact,
+.section_footer {
+  z-index: 2;
 }
 
 .section_car--selection {
   height: 100vh;
-  position: relative;
-}
-
-.section_horizontal--scroll {
-  position: relative;
-  z-index: 2;
-  background: transparent;
-}
-
-.section_car--usecases {
-  height: 100vh;
-  position: relative;
-}
-
-.section_tech--features {
-  position: relative;
-  z-index: 2;
-}
-
-.section_contact {
-  position: relative;
-  z-index: 2;
-}
-
-.section_footer {
-  position: relative;
-  z-index: 2;
-}
-
-.navigation_dots {
-  display: flex;
-  position: fixed;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  gap: 100px;
-  z-index: 1000;
-  pointer-events: auto;
-}
-
-.nav_dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: white;
-  cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.nav_dot:hover {
-  opacity: 0.7;
-  transform: scale(1.2);
-}
-
-.nav_dot.active {
-  opacity: 1;
-  transform: scale(1.5);
 }

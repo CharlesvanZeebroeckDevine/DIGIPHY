@@ -319,7 +319,7 @@ export default function HorizontalScrollScene() {
                     radius={700}
                     fullEffectRadius={200}
                 >
-                    Inside DIGIPHY 2.0
+                   <h1>Inside DIGIPHY 2.0</h1>
                 </VariableText>
             </div>
 
@@ -335,7 +335,7 @@ export default function HorizontalScrollScene() {
                         style={{ width: '100%', height: '100%' }}
                     >
                         <Suspense fallback={null}>
-                            <color attach="background" args={['#000000']} />
+                            <color attach="background" args={['#191411']} />
                             <SceneContent containerRef={containerRef} />
                         </Suspense>
                     </Canvas>
@@ -361,7 +361,7 @@ export default function HorizontalScrollScene() {
                         <svg className="horizontal_scroll--bezier-line" width="100%" height="200" viewBox="0 0 1000 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
                             <path
                                 d="M 0,100 C 300,100 400,180 700,100 S 1000,100 1000,100"
-                                stroke="white"
+                                stroke="var(--doctor)"
                                 strokeWidth="2"
                                 fill="none"
                             />

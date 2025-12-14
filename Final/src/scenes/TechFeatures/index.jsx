@@ -20,7 +20,7 @@ const TechFeatures = () => {
                         hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
                         radius={400}
                     >
-                        The Hidden Layer Inside DigiPHY
+                        <h2>The Hidden Layer Inside DigiPHY</h2> 
                     </VariableText>
                 </div>
 
