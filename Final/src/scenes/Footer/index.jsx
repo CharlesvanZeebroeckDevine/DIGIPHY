@@ -4,7 +4,7 @@ import { LiquidFooterLine } from './LiquidFooterLine'
 import PrimaryButton from '../../Components/UI/PrimaryButton'
 import FooterSocialButton from '../../Components/UI/FooterSocialButton'
 
-const Footer = () => {
+const Footer = ({ scrollToSection }) => {
     return (
         <div className="footer_container--wrapper">
             <LiquidFooterLine />
@@ -53,9 +53,11 @@ const Footer = () => {
                     <div className="links">
                         <PrimaryButton
                             text="Use Cases"
+                            onClick={() => scrollToSection('car-usecases', '-100vh')}
                         />
                         <PrimaryButton
                             text="Contact"
+                            onClick={() => scrollToSection('contact')}
                         />
                     </div>
                 </div>

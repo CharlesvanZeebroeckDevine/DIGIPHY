@@ -9,6 +9,7 @@ import TechFeatures from './scenes/TechFeatures'
 import Contact from './scenes/Contact'
 import Footer from './scenes/Footer'
 import LoadingScreen from './Components/LoadingScreen'
+import Nav from './Components/Nav'
 import { TRANSITION_CONFIG } from './scenes/CarScene/config'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -159,10 +160,27 @@ function App() {
     }
   }, [])
 
+  const handleScrollToSection = (id, offset = 0) => {
+    if (lenisRef.current) {
+      let calculatedOffset = offset
+      if (typeof offset === 'string' && offset.includes('vh')) {
+        const vh = parseFloat(offset)
+        calculatedOffset = (vh * window.innerHeight) / 100
+      }
+
+      lenisRef.current.scrollTo(`#${id}`, {
+        duration: 2.0,
+        offset: calculatedOffset
+      })
+    }
+  }
+
   return (
     <>
       <LoadingScreen />
-      {/* Fixed CarScene - always in background */}
+      <div className="nav_container">
+        <Nav scrollToSection={handleScrollToSection} />
+      </div>
       <div className="car_scene--container">
         <CarScene
           activeModelIndex={activeModelIndex}
@@ -192,7 +210,7 @@ function App() {
           <Contact />
         </section>
         <section id="footer" data-scroll-section className="section_footer">
-          <Footer />
+          <Footer scrollToSection={handleScrollToSection} />
         </section>
       </div>
     </>
