@@ -113,8 +113,6 @@
   top: 50%;
   left: 50vw;
   transform: translateY(-50%);
-  /* Length of the line visual */
-  width: 80vw;
   height: 200px;
   pointer-events: none;
   overflow: visible;
@@ -129,9 +127,17 @@
 /* === GENERIC TRACK ITEM === */
 .track_item {
   position: absolute;
-  /* User will set top/left inline or via specific class */
   z-index: 5;
   pointer-events: none;
+}
+
+/* CMF Text Position (2. CMF Testing) */
+.cmf-text-pos {
+  position: absolute;
+  top: 10%;
+  /* Center vertically in track */
+  left: 125vw;
+  /* Positioned after the image (75vw + ~40vw width + gap) */
 }
 
 .track_item--reveal-mask {
@@ -168,11 +174,11 @@
 /* Steering Wheel Scene Container */
 .steering-wheel-container {
   position: absolute;
-  left: 170vw;
+  left: 100vw;
   /* End of track */
   top: 50%;
   transform: translateY(-50%);
-  width: 30vw;
-  height: 50vh;
+  width: 100vw;
+  height: 100vh;
   z-index: 10;
 }
