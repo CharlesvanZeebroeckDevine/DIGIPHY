@@ -7,8 +7,6 @@ const FeatureDisplay = ({ selectedFeature }) => {
 
     useEffect(() => {
         if (!imageRef.current) return;
-
-        // Animate image transition
         const tl = gsap.timeline();
 
         tl.fromTo(imageRef.current,
@@ -21,7 +19,7 @@ const FeatureDisplay = ({ selectedFeature }) => {
     return (
         <div className="feature_image" ref={containerRef}>
             <img
-                key={selectedFeature.image} // Key change triggers re-mount/animation
+                key={selectedFeature.image} 
                 ref={imageRef}
                 src={selectedFeature.image}
                 alt={selectedFeature.name}
