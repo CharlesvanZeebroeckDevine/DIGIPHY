@@ -1,7 +1,8 @@
 import './HorizontalScrollScene.css'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Stats } from '@react-three/drei'
+import { OrbitControls, Stats, Environment } from '@react-three/drei'
 import { Sphere } from './Sphere'
+import { SteeringWheel } from './SteeringWheel'
 import { Suspense, useRef, useLayoutEffect } from 'react'
 import VariableText from '../../Components/VariableText'
 import gsap from 'gsap'
@@ -149,6 +150,7 @@ function SceneContent({ containerRef }) {
                     duration: 0.5,
                     ease: "back.in(2)" // Slight anticipation pop before shrinking
                 })
+                .set([leftSphere, rightSphere], { visible: false })
 
             // === CENTER DOT ANIMATION ===
             const centerDot = containerRef.current.querySelector('.horizontal_scroll--center-dot')
@@ -209,6 +211,67 @@ function SceneContent({ containerRef }) {
                     duration: 2.5, // slightly faster than the move so it catches up? Or synced?
                     ease: "power1.inOut"
                 }, "phase3+=0.5")
+
+                // === PARALLAX ITEMS ===
+                const trackItems = containerRef.current.querySelectorAll('.track_item')
+                trackItems.forEach((item, i) => {
+                    const mask = item.querySelector('.track_item--reveal-mask')
+                    const img = item.querySelector('.track_item--img')
+
+                    if (mask && img) {
+                        // 1. REVEAL (Clip Path)
+                        // Animate from inset(0 0 0 100%) -> inset(0 0 0 0%)
+                        // Start slightly after the line starts passing this area.
+                        // Since it's at 110vw, and we move 100vw over 3s, it enters around 33-50% mark?
+                        // Let's offset it based on index or position.
+                        tl.to(mask, {
+                            clipPath: 'inset(0% 0% 0% 0%)',
+                            duration: 1.5,
+                            ease: 'power2.out'
+                        }, "phase3+=0.5") // Earlier entry
+
+                        // 2. PARALLAX (Inner Image Movement)
+                        // As the container moves LEFT, move the image slightly RIGHT (or slower left)
+                        // creating depth.
+                        // We run this concurrent with the track movement.
+                        // Since track moves for 3s, let's span that.
+                        tl.to(img, {
+                            xPercent: 15, // Move image 15% to the right inside its container
+                            ease: "none",
+                            duration: 3
+                        }, "phase3+=0.5")
+
+                        // 3. TEXT REVEAL
+                        const text = item.querySelector('.track_item--text')
+                        if (text) {
+                            const split = new SplitText(text, { type: 'chars, words' })
+                            gsap.set(split.chars, { opacity: 0, x: -10 })
+
+                            tl.to(split.chars, {
+                                opacity: 1,
+                                x: 0,
+                                stagger: 0.01, // Faster stagger for smaller text
+                                duration: 0.5,
+                                ease: "power2.out"
+                            }, "phase3+=1") // Sync with mask reveal start
+                        }
+                    }
+                })
+
+                // === CMF TEXT REVEAL ===
+                const cmfText = containerRef.current.querySelector('.cmf-text-pos')
+                if (cmfText) {
+                    const splitCmf = new SplitText(cmfText, { type: 'chars' })
+                    gsap.set(splitCmf.chars, { opacity: 0, y: 50 }) // Same initial state as Auto Alignment
+
+                    tl.to(splitCmf.chars, {
+                        opacity: 1,
+                        y: 0,
+                        stagger: 0.05,
+                        duration: 0.5,
+                        ease: "power2.out"
+                    }, "phase3+=2") // Triggers later in the scroll (adjust based on position)
+                }
             }
 
             // Refresh triggers to update downstream pins
@@ -264,13 +327,6 @@ function SceneContent({ containerRef }) {
                 if (ring) {
                     const stagger = i * 0.2
                     const wave = Math.sin(currentPhase + stagger)
-
-                    // Fixed amplitude now, or maybe slightly responsive?
-                    // "Set a base pulsating speed" -> Implies base pulsing is always happening.
-                    // Let's keep amplitude constant so the SPEED is the hero.
-                    // Scale oscillates between 2 (base) +/- amplitude
-                    // Current scale prop was: scale = 2 + (wave * mouseFactor * intensity * 0.5)
-                    // New scale: Base 2, Amplitude 0.5 (scaled by intensity decay)
                     const amplitude = 0.5 * intensity
                     const scale = 1 + (wave * amplitude)
 
@@ -319,7 +375,7 @@ export default function HorizontalScrollScene() {
                     radius={700}
                     fullEffectRadius={200}
                 >
-                   <h1>Inside DIGIPHY 2.0</h1>
+                    <h1>Inside DIGIPHY 2.0</h1>
                 </VariableText>
             </div>
 
@@ -339,7 +395,7 @@ export default function HorizontalScrollScene() {
                             <SceneContent containerRef={containerRef} />
                         </Suspense>
                     </Canvas>
-                    <div className="horizontal_scroll--overlay-text">
+                    <div className="horizontal_section_category horizontal_scroll--overlay-text">
                         1. Auto Alignment
                     </div>
                     {/* Phase 3 Content: Horizontal Track (200vw) */}
@@ -358,7 +414,7 @@ export default function HorizontalScrollScene() {
                         </div>
 
                         {/* SVG Line: Positioned absolute relative to Track, starting at center of Panel 1 */}
-                        <svg className="horizontal_scroll--bezier-line" width="100%" height="200" viewBox="0 0 1000 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                        <svg className="horizontal_scroll--bezier-line" width="100%" height="200" viewBox="0 0 1500 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
                             <path
                                 d="M 0,100 C 300,100 400,180 700,100 S 1000,100 1000,100"
                                 stroke="var(--doctor)"
@@ -366,6 +422,37 @@ export default function HorizontalScrollScene() {
                                 fill="none"
                             />
                         </svg>
+
+                        {/* TRACK ITEM 1: Parallax Image */}
+                        {/* Positioned in Panel 2 range but closer to start (75vw) */}
+                        <div className="track_item" style={{ left: '75vw', top: '25vh' }}>
+                            <div className="track_item--reveal-mask">
+                                <img
+                                    className="track_item--img"
+                                    src="/pictures/1.webp"
+                                    alt="Process"
+                                />
+                            </div>
+                            <div className="track_item--text">
+                                for seamless integration of physical properties.
+                            </div>
+                        </div>
+
+                        {/* CMF Testing Text */}
+                        <div className="horizontal_section_category cmf-text-pos">
+                            2. CMF Testing
+                        </div>
+
+                        {/* SEPARATE STEERING WHEEL SCENE */}
+                        <div className="steering-wheel-container">
+                            <Canvas camera={{ position: [0, 0, 5], fov: 45 }} style={{ width: '100%', height: '100%' }}>
+                                <Suspense fallback={null}>
+                                    <Environment files="/studio_small_09_1k.hdr" />
+                                    <SteeringWheel />
+                                    <OrbitControls enableZoom={false} />
+                                </Suspense>
+                            </Canvas>
+                        </div>
                     </div>
                 </div>
             </div>
