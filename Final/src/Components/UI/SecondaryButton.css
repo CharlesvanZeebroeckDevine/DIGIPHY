@@ -1,4 +1,4 @@
-.footer_btn {
+.sec_btn {
     position: relative;
     overflow: hidden;
     cursor: pointer;
@@ -7,7 +7,7 @@
     height: 50px;
     background-color: transparent;
     border-radius: 4px;
-    border: 1px solid var(--doctor);
+    background-color: var(--smoky-umber);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,7 +23,7 @@
     transition: all 0.3s cubic-bezier(0.145, 0.045, 0.355, 1);
 }
 
-.footer_btn_fill {
+.sec_btn_fill {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -35,24 +35,23 @@
     border-radius: 50% 50% 0 0;
 }
 
-.footer_char_wrapper {
+.sec_btn_wrapper {
     display: inline-block;
     position: relative;
     overflow: hidden;
     z-index: 1;
 }
 
-.footer_btn:hover {
-    border-color: var(--meteor-shower);
+.sec_btn:hover {
     transform: scale(1.02);
 }
 
-.footer_char {
+.sec_btn_char {
     display: inline-block;
     position: relative;
 }
 
-.footer_char::after {
+.sec_btn_char::after {
     content: attr(data-letter);
     position: absolute;
     top: 100%;
@@ -60,11 +59,11 @@
     color: var(--doctor);
 }
 
-.footer_char::after {
+.sec_btn_char::after {
     color: var(--doctor);
 }
 
-.footer_char_space {
+.sec_btn_space {
     width: 0.3em;
     display: inline-block;
 }

@@ -1,5 +1,6 @@
 import './CarSceneUI.css'
 import StaggerButton from '../../Components/UI/StaggerButton'
+import SecondaryButton from '../../Components/UI/SecondaryButton'
 import VariableText from '../../Components/VariableText'
 import { useRef, useLayoutEffect } from 'react'
 import gsap from 'gsap'
@@ -40,17 +41,17 @@ export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visib
             </div>
 
             <div className="overlay_controls">
-                <StaggerButton
+                <SecondaryButton
                     text="SUV"
                     active={activeModelIndex === 0}
                     onClick={() => onModelSwitch(0)}
                 />
-                <StaggerButton
+                <SecondaryButton
                     text="SPORT"
                     active={activeModelIndex === 1}
                     onClick={() => onModelSwitch(1)}
                 />
-                <StaggerButton
+                <SecondaryButton
                     text="VAN"
                     active={activeModelIndex === 2}
                     onClick={() => onModelSwitch(2)}
