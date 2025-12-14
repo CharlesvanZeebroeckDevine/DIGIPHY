@@ -1,11 +1,7 @@
-/* Font Definition reuse if not already global */
-/* Assuming GT Ultra is loaded globally or via @font-face above */
-
 .horizontal_scroll--container {
   width: 100%;
   height: 100vh;
-  /* GSAP handles scroll duration via pinning */
-  background: black;
+  background: var(--smoky-umber);
   position: relative;
 }
 
@@ -14,29 +10,25 @@
   height: 100%;
   overflow: hidden;
   position: relative;
-  /* Needed for absolute positioning children */
 }
 
 /* Title Section BEFORE Scroll */
 .horizontal_scroll--title {
   width: 100%;
   height: 15vh;
-  background: black;
+  background: var(--smoky-umber);
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  color: white;
+  color: var(--doctor);
   z-index: 10;
   position: relative;
-  border-bottom: 1px solid white;
+  border-bottom: 1px solid var(--doctor);
 }
 
 .horizontal_scroll--title .title-text {
   margin: 10vh 2vw;
   font-family: 'GT Ultra', sans-serif;
-  /* Fallback if variable font not loaded globally but should be */
-  font-size: 5vw;
-  /* Responsive huge size */
   line-height: 1;
 }
 
@@ -46,14 +38,12 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: white;
+  color: var(--doctor);
   font-family: 'GT Ultra', sans-serif;
-  font-size: 2rem;
+  font-size: var(--fz-2);
   font-weight: 300;
-  /* Adjust weight as needed */
   overflow: hidden;
   pointer-events: none;
-  /* Let clicks pass through to canvas */
   z-index: 10;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -64,13 +54,11 @@
   display: flex;
   width: 200vw;
   height: 100vh;
-  /* Force full height */
   position: absolute;
   top: 0;
   left: 0;
   will-change: transform;
   pointer-events: none;
-  /* Let clicks pass through to canvas if needed, or enable for children */
 }
 
 /* Track Panel - Each 'screen' */
@@ -97,9 +85,9 @@
   top: 48%;
   right: 50.5%;
   text-align: right;
-  color: white;
+  color: var(--doctor);
   font-family: 'GT Ultra', sans-serif;
-  font-size: 1.4rem;
+  font-size: var(--fz-1);
   font-weight: 100;
   line-height: 1;
   pointer-events: none;
@@ -112,20 +100,15 @@
   position: absolute;
   top: 50%;
   left: 50vw;
-  /* Starts at center of first panel */
   transform: translateY(-50%);
   width: 80vw;
-  /* Length of the line visual */
   height: 200px;
-  /* Height to accommodate curve */
   pointer-events: none;
   overflow: visible;
   z-index: 5;
 }
 
 .horizontal_scroll--bezier-line path {
-  /* Set up for drawing animation */
   stroke-dasharray: 2000;
-  /* Arbitrary large number covering length */
   stroke-dashoffset: 2000;
 }

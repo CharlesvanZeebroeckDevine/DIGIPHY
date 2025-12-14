@@ -13,7 +13,8 @@ const Contact = () => {
                         baseSettings={{ wght: 300, slnt: 100, CNTR: 100, letterSpacing: -5 }}
                         hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
                         radius={400}>
-                        Now you've seen what <br /> DigiPHY can do...
+                        Now you've seen what <br /> 
+                        DigiPHY can do...
                     </VariableText>
                     <p>Want to know more about how DigiPHY can support your work? Get in touch and let’s explore the possibilities together.</p>
                 </div>
