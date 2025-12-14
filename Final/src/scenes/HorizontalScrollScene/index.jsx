@@ -416,7 +416,7 @@ export default function HorizontalScrollScene() {
                         {/* SVG Line: Positioned absolute relative to Track, starting at center of Panel 1 */}
                         <svg className="horizontal_scroll--bezier-line" width="100%" height="200" viewBox="0 0 1500 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
                             <path
-                                d="M 0,100 C 300,100 400,180 700,100 S 1000,100 1000,100"
+                                d="M 0,100 C 300,100 400,180 700,100 S 1200,100 1500,100"
                                 stroke="var(--doctor)"
                                 strokeWidth="2"
                                 fill="none"
@@ -445,7 +445,7 @@ export default function HorizontalScrollScene() {
 
                         {/* SEPARATE STEERING WHEEL SCENE */}
                         <div className="steering-wheel-container">
-                            <Canvas camera={{ position: [0, 0, 5], fov: 45 }} style={{ width: '100%', height: '100%' }}>
+                            <Canvas camera={{ position: [0, 0, 2], fov: 45 }} style={{ width: '100%', height: '100%' }}>
                                 <Suspense fallback={null}>
                                     <Environment files="/studio_small_09_1k.hdr" />
                                     <SteeringWheel />
