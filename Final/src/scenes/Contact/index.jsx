@@ -3,6 +3,9 @@ import VariableText from '../../Components/VariableText'
 import PrimaryButton from '../../Components/UI/PrimaryButton'
 
 const Contact = () => {
+    const submitForm = () => {
+        console.log('submitted');
+    }
     return (
         <>
             <div className="contact_container">
@@ -62,7 +65,7 @@ const Contact = () => {
                                 </div>
                             </div>
                         </div>
-                        <PrimaryButton text="Submit" value="Submit" onClick={() => console.log('Submit')} />
+                        <PrimaryButton text="Submit" value="Submit" onClick={() => submitForm()} />
                     </form>
                 </div>
             </div>
