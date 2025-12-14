@@ -32,7 +32,19 @@
   line-height: 1;
 }
 
-/* Overlay Text ON TOP of Scene */
+/* Shared Section Category Style */
+.horizontal_section_category {
+  color: white;
+  font-family: 'GT Ultra', sans-serif;
+  font-size: 3rem;
+  font-variation-settings: 'wght' 300, 'slnt' 100, 'CNTR' 100;
+  text-transform: uppercase;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Overlay Text Position (1. Auto Alignment) */
 .horizontal_scroll--overlay-text {
   position: absolute;
   top: 50%;
@@ -101,6 +113,7 @@
   top: 50%;
   left: 50vw;
   transform: translateY(-50%);
+  /* Length of the line visual */
   width: 80vw;
   height: 200px;
   pointer-events: none;
@@ -111,4 +124,55 @@
 .horizontal_scroll--bezier-line path {
   stroke-dasharray: 2000;
   stroke-dashoffset: 2000;
+}
+
+/* === GENERIC TRACK ITEM === */
+.track_item {
+  position: absolute;
+  /* User will set top/left inline or via specific class */
+  z-index: 5;
+  pointer-events: none;
+}
+
+.track_item--reveal-mask {
+  overflow: hidden;
+  position: relative;
+  /* Initial state for reveal from right: clip from left edge to 100% */
+  /* actually, usually we want to animate width or clip-path. 
+       Let's use clip-path for performance. */
+  clip-path: inset(0 0 0 100%);
+}
+
+.track_item--img {
+  display: block;
+  width: 30vw;
+  /* Base size, can be overridden */
+  height: auto;
+  /* Scale up for parallax room */
+  transform: scale(1.3);
+  will-change: transform;
+}
+
+.track_item--text {
+  margin-top: 1rem;
+  color: white;
+  font-family: 'GT Ultra', sans-serif;
+  /* Same font as final text */
+  font-size: 1rem;
+  font-weight: 100;
+  line-height: 1.2;
+  max-width: 30vw;
+  /* Match image width base */
+}
+
+/* Steering Wheel Scene Container */
+.steering-wheel-container {
+  position: absolute;
+  left: 170vw;
+  /* End of track */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30vw;
+  height: 50vh;
+  z-index: 10;
 }
