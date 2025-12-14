@@ -11,16 +11,6 @@
     color: var(--doctor);
 }
 
-/* Logo - Top Left */
-.overlay_logo {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 1rem;
-    font-variation-settings: 'wght' 200;
-    color: var(--doctor);
-    pointer-events: auto;
-}
 
 /* Title - Top Center */
 .overlay_title_text {

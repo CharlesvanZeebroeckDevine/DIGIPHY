@@ -1,0 +1,31 @@
+span {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+}
+
+.nav_container {
+    width: 100vw;
+    padding: var(--sp-m);
+    position: absolute;
+    z-index: 10000;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav_buttons {
+    display: flex;
+    gap: var(--sp-m);
+}
+
+.logo span {
+    color: var(--doctor);
+    font-size: var(--fz-2);
+}
+
+.bold {
+    font-weight: 700;
+    color: var(--meteor-shower);
+}
