@@ -1,4 +1,4 @@
-import './loadingScreen.css'
+import './LoadingScreen.css'
 import VariableTextAnimation from '../Components/VariableTextAnimation'
 import { useProgress } from '@react-three/drei'
 import { useEffect, useState } from 'react'
