@@ -19,9 +19,9 @@ const TechFeatures = () => {
     useLayoutEffect(() => {
         const ctx = gsap.context(() => {
             gsap.fromTo(containerRef.current,
-                { width: '80vw' },
+                { width: '80%' },
                 {
-                    width: '100vw',
+                    width: '100%',
                     ease: 'none',
                     scrollTrigger: {
                         trigger: wrapperRef.current,
@@ -67,7 +67,6 @@ const TechFeatures = () => {
                         selectedFeature={selectedFeature}
                         onSelectFeature={setSelectedFeature}
                     />
-                    {/* <FeatureDisplay selectedFeature={selectedFeature} /> */}
                     <FeatureInfo selectedFeature={selectedFeature} />
                 </div>
             </div>
