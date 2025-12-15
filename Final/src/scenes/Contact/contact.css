@@ -88,8 +88,8 @@ form {
 
 .radio_container--item {
     display: flex;
-    justify-content: space-between;
-    width: 50%;
+    /* justify-content: space-between; */
+    gap: var(--sp-2xs);
 }
 
 .radio_container--item input[type="radio"] {

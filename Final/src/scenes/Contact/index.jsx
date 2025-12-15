@@ -40,28 +40,28 @@ const Contact = () => {
                             <label className="form_item--label" htmlFor="workoption">i would like to:</label>
                             <div className="radio_container">
                                 <div className="radio_container--item">
-                                    <label htmlFor="sub">Subscribe to the newsletter</label>
                                     <input type="radio" id="sub" name="sub__option" value="sub" />
+                                    <label htmlFor="sub">Subscribe to the newsletter</label>
                                 </div>
 
                                 <div className="radio_container--item">
-                                    <label htmlFor="book">Book a workshop</label>
                                     <input type="radio" id="book" name="book__option" value="book" />
+                                    <label htmlFor="book">Book a workshop</label>
                                 </div>
 
                                 <div className="radio_container--item">
-                                    <label htmlFor="rent">Rent the DigiPHY model</label>
                                     <input type="radio" id="rent" name="rent__option" value="rent" />
+                                    <label htmlFor="rent">Rent the DigiPHY model</label>
                                 </div>
 
                                 <div className="radio_container--item">
-                                    <label htmlFor="buy">Buy the DigiPHY model</label>
                                     <input type="radio" id="buy" name="buy__option" value="buy" />
+                                    <label htmlFor="buy">Buy the DigiPHY model</label>
                                 </div>
 
                                 <div className="radio_container--item">
-                                    <label htmlFor="other">Other</label>
                                     <input type="radio" id="other" name="buy__option" value="other" />
+                                    <label htmlFor="other">Other</label>
                                 </div>
                             </div>
                         </div>
