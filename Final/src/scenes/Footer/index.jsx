@@ -48,7 +48,7 @@ const Footer = ({ scrollToSection }) => {
                         </FooterSocialButton>
                     </div>
                     <div className="credentials">
-                        <p>© 2025 DigiPHY. Project made by Wander, Febe and Charles</p>
+                        <span>© 2025 DigiPHY. Project made by Wander, Febe and Charles</span>
                     </div>
                     <div className="links">
                         <PrimaryButton

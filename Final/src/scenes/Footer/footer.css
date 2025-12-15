@@ -96,4 +96,6 @@ a {
 
 .credentials {
     font-size: var(--fz--1);
+    font-family: 'Montserrat', sans-serif;
+    color: var(--lucky-grey);
 }
