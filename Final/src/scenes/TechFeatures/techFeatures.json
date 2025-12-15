@@ -18,12 +18,6 @@
         "description": "Fully compliant with Directive 2006/42/EC, featuring industrial-grade safety interlocks for corporate studio deployment. This guarantees it meets the safety standards required for daily professional use."
     },
     {
-        "index": 3,
-        "name": "Customizable",
-        "image": "/tech-features/VR_goggles.glb",
-        "description": "Easy to add physical properties to customize it how you want. Adapt hardware inputs, dimensions, and materials so the setup mirrors your unique design environment."
-    },
-    {
         "index": 4,
         "name": "Mobile",
         "image": "/tech-features/VR_goggles.glb",

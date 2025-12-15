@@ -10,7 +10,7 @@ const TechFeatures = () => {
     const [selectedFeature, setSelectedFeature] = useState(features[0]);
 
     return (
-        <>
+        <div className="feature_container--wrapper">
             <div className="feature_container">
                 <h2 className="visibility-hidden">Tech Features</h2>
                 <div style={{ pointerEvents: 'none' }}>
@@ -34,7 +34,7 @@ const TechFeatures = () => {
                     <FeatureInfo selectedFeature={selectedFeature} />
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 

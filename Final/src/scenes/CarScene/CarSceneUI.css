@@ -11,8 +11,6 @@
     color: var(--doctor);
 }
 
-
-/* Title - Top Center */
 .overlay_title_text {
     font-size: 5.5rem;
     line-height: 5rem;
@@ -29,13 +27,87 @@
     font-variation-settings: 'wght' 600;
 }
 
-/* Controls - Bottom Center */
 .overlay_controls {
     position: absolute;
-    bottom: var(--sp-xl);
+    bottom: var(--sp-3xs);
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: var(--sp-3xl);
+    flex-direction: column;
+    gap: var(--sp-m);
     pointer-events: auto;
+}
+
+.controls {
+    display: flex;
+    gap: var(--sp-xl);
+}
+
+.scroll-cta {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 3rem;
+    pointer-events: none;
+}
+
+.scroll-indicator {
+    width: 23px;
+    height: 35px;
+    border: 2px solid var(--smoky-umber);
+    border-radius: 16px;
+    position: relative;
+    animation: scrollPulse 2s infinite;
+}
+
+
+.scroll-arrow {
+    width: 4px;
+    height: 4px;
+    background: var(--smoky-umber);
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: scrollBounce 2s infinite;
+}
+
+@keyframes scrollPulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes scrollBounce {
+
+    0%,
+    100% {
+        top: 8px;
+    }
+
+    50% {
+        top: 20px;
+    }
+}
+
+
+@keyframes sound-wave {
+
+    0%,
+    100% {
+        transform: scaleY(2.5);
+    }
+
+    50% {
+        transform: scaleY(0.5);
+    }
 }

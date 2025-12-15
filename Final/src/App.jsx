@@ -24,10 +24,12 @@ function App() {
   const [activeModelIndex, setActiveModelIndex] = useState(0)
   const [transitionOpacity, setTransitionOpacity] = useState(1.0)
   const [uiVisible, setUiVisible] = useState(true)
+  const [muteVisible, setMuteVisible] = useState(true)
+  const [muteColor, setMuteColor] = useState('white')
   const [cameraProgress, setCameraProgress] = useState(0)
-  const [carSceneEnabled, setCarSceneEnabled] = useState(true) // Performance optimization
-  const [zoomLevel, setZoomLevel] = useState(0) // Camera interpolation level (0-1)
-  const [interactionStrength, setInteractionStrength] = useState(1) // Mouse parallax strength (1-0)
+  const [carSceneEnabled, setCarSceneEnabled] = useState(true) 
+  const [zoomLevel, setZoomLevel] = useState(0) 
+  const [interactionStrength, setInteractionStrength] = useState(1) 
 
   const handleModelSwitch = (newIndex) => {
     if (newIndex === activeModelIndex) return
@@ -113,13 +115,30 @@ function App() {
       // Store ticker in ref for cleanup outside context if needed (though context handles most)
       // Actually gsap.context doesn't remove ticker listeners automatically usually, so we do it in cleanup
 
-      // UI Visibility Trigger
+      // UI Visibility Trigger (Horizontal Section)
       ScrollTrigger.create({
         trigger: horizontalSectionRef.current,
         start: 'top top',
         end: 'bottom top',
         onEnter: () => setUiVisible(false),
         onLeaveBack: () => setUiVisible(true)
+      })
+
+      gsap.utils.toArray('[data-theme]').forEach(section => {
+        ScrollTrigger.create({
+          trigger: section,
+          start: 'top center', 
+          end: 'bottom center',
+          onEnter: () => setMuteColor(section.dataset.theme === 'light' ? 'black' : 'white'),
+          onEnterBack: () => setMuteColor(section.dataset.theme === 'light' ? 'black' : 'white')
+        })
+      })
+
+      ScrollTrigger.create({
+        trigger: '#footer',
+        start: 'top bottom-=50', 
+        onEnter: () => setMuteVisible(false),
+        onLeaveBack: () => setMuteVisible(true)
       })
 
       // Camera Interpolation: Zoom OUT (0 -> 1) when entering HorizontalScrollScene
@@ -190,6 +209,15 @@ function App() {
       <div className="nav_container">
         <Nav scrollToSection={handleScrollToSection} />
       </div>
+      <div className={`mute ${!muteVisible ? 'hidden' : ''} ${muteColor === 'black' ? 'on-light' : ''}`}>
+        {[...Array(10)].map((_, i) => (
+          <div
+            key={i}
+            className="bar"
+            style={{ '--dist': Math.abs(i - 7) }}
+          />
+        ))}
+      </div>
       <div className="car_scene--container">
         <CarScene
           activeModelIndex={activeModelIndex}
@@ -207,22 +235,22 @@ function App() {
           behaves like it's fixed to that ancestor (can get occluded / not appear). */}
       <UseCases setCameraProgress={setCameraProgress} />
       <div data-scroll-container className="scroll_container">
-        <section id="car-selection" data-scroll-section className="section_car--selection">
+        <section id="car-selection" data-scroll-section data-theme="light" className="section_car--selection">
           {/* This section is transparent so CarScene shows through and can be interacted with */}
         </section>
-        <section ref={horizontalSectionRef} data-scroll-section className="section_horizontal--scroll">
+        <section ref={horizontalSectionRef} data-scroll-section data-theme="dark" className="section_horizontal--scroll">
           <HorizontalScrollScene />
         </section>
-        <section id="car-usecases" data-scroll-section className="section_car--usecases">
+        <section id="car-usecases" data-scroll-section data-theme="light" className="section_car--usecases">
           {/* Transparent section - CarScene visible, camera will animate to wall */}
         </section>
-        <section id="tech-features" data-scroll-section className="section_tech--features">
+        <section id="tech-features" data-scroll-section data-theme="dark" className="section_tech--features">
           <TechFeatures />
         </section>
-        <section id="contact" data-scroll-section className="section_contact">
+        <section id="contact" data-scroll-section data-theme="dark" className="section_contact">
           <Contact />
         </section>
-        <section id="footer" data-scroll-section className="section_footer">
+        <section id="footer" data-scroll-section data-theme="dark" className="section_footer">
           <Footer scrollToSection={handleScrollToSection} />
         </section>
       </div>
