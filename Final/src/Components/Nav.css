@@ -6,7 +6,7 @@ span {
     width: 100vw;
     padding: var(--sp-m);
     position: absolute;
-    z-index: 10000;
+    z-index: 9998;
     top: 0;
     left: 0;
     display: flex;
