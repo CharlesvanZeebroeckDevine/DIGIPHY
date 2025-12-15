@@ -1,0 +1,45 @@
+/* UseCases end overlay (reveals after the camera finishes) */
+.section_car--usecases {
+  height: 100vh;
+  height: 100svh;
+  /* Keep it non-interactive so pointer events reach the fixed R3F CarScene canvas underneath. */
+  pointer-events: none;
+}
+
+.usecases_overlay {
+  position: fixed;
+  top: 8vh;
+  left: 6vw;
+  /* Must be above later sections (TechFeatures, etc.) */
+  z-index: 9999;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  color: #000;
+  background: none;
+  will-change: opacity, transform;
+}
+
+.usecases_overlay_titleWrap {
+  line-height: 1;
+}
+
+.usecases_overlay_title h2 {
+  margin: 0;
+  font-family: 'GT Ultra', sans-serif;
+  font-size: var(--fz-5);
+  font-variation-settings: 'wght' 300, 'slnt' 100, 'CNTR' 100;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #000;
+}
+
+.usecases_overlay_subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: var(--fz--1);
+  font-weight: 300;
+  color: #000;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

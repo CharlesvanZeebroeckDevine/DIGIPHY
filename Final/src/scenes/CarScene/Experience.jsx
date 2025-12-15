@@ -276,6 +276,7 @@ export default function Experience({ activeModelPath, transitionOpacity, cameraP
     const texture = useLoader(LUTCubeLoader, POST_PROCESSING_CONFIG.lut.lut)
 
     const modelScale = FLIP_MODELS_X ? [-1, 1, 1] : [1, 1, 1]
+    const showCars = cameraProgress <= 0.0001
 
     return (
         <>
@@ -310,10 +311,10 @@ export default function Experience({ activeModelPath, transitionOpacity, cameraP
             <WindowGlowModel intensity={WINDOW_CONFIG.intensity} />
 
             {/* Posters */}
-            <group position={[8, 5, 14.5]}>
-                <Poster name="poster1" url="/posters/4.webp" position={[0, 0, 0]} isInteractable={cameraProgress > 0.5} />
-                <Poster name="poster2" url="/posters/5.webp" position={[-4, 0, 0]} isInteractable={cameraProgress > 0.5} />
-                <Poster name="poster3" url="/posters/6.webp" position={[-8, 0, 0]} isInteractable={cameraProgress > 0.5} />
+            <group position={[7, 5, 14.5]}>
+                <Poster name="poster1" url="/posters/4.webp" position={[0, 0, 0]} isInteractable={cameraProgress > 0.7} />
+                <Poster name="poster2" url="/posters/5.webp" position={[-4.5, 0, 0]} isInteractable={cameraProgress > 0.7} />
+                <Poster name="poster3" url="/posters/6.webp" position={[-9, 0, 0]} isInteractable={cameraProgress > 0.7} />
             </group>
 
 
@@ -324,20 +325,20 @@ export default function Experience({ activeModelPath, transitionOpacity, cameraP
             <group ref={setCarsGroup}>
                 <CarModel
                     path="car-models/BmwSUV.glb"
-                    opacity={activeModelPath === 'car-models/BmwSUV.glb' ? transitionOpacity : 0}
-                    isActive={activeModelPath === 'car-models/BmwSUV.glb'}
+                    opacity={showCars && activeModelPath === 'car-models/BmwSUV.glb' ? transitionOpacity : 0}
+                    isActive={showCars && activeModelPath === 'car-models/BmwSUV.glb'}
                     scale={modelScale}
                 />
                 <CarModel
                     path="car-models/AudiSport.glb"
-                    opacity={activeModelPath === 'car-models/AudiSport.glb' ? transitionOpacity : 0}
-                    isActive={activeModelPath === 'car-models/AudiSport.glb'}
+                    opacity={showCars && activeModelPath === 'car-models/AudiSport.glb' ? transitionOpacity : 0}
+                    isActive={showCars && activeModelPath === 'car-models/AudiSport.glb'}
                     scale={modelScale}
                 />
                 <CarModel
                     path="car-models/FordTransit.glb"
-                    opacity={activeModelPath === 'car-models/FordTransit.glb' ? transitionOpacity : 0}
-                    isActive={activeModelPath === 'car-models/FordTransit.glb'}
+                    opacity={showCars && activeModelPath === 'car-models/FordTransit.glb' ? transitionOpacity : 0}
+                    isActive={showCars && activeModelPath === 'car-models/FordTransit.glb'}
                     scale={modelScale}
                 />
             </group>

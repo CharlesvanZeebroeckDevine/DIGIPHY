@@ -7,7 +7,7 @@ const CONFIG = {
     gridSize: 15,
     cubeSize: 1.0,  // Match test.html
     gap: 0.7,       // Match test.html
-    hoverRadiusPx: 250, // Match test.html
+    hoverRadiusPx: 450, // Match test.html
     maxRotation: Math.PI,
     lerpSpeed: 0.1,
     baseColor: 0x191411,

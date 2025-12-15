@@ -31,14 +31,13 @@ export const CAR_MODELS = [
 // Configuration for Camera Usecase Path (Cubic Bezier)
 export const USECASE_CAMERA_CONFIG = {
   path: [
-    { x: 0, y: 7, z: -35 },    // P0: Start (Matches Zoom Out position)
-    { x: 5, y: 6, z: -15 },   // P1: Wide out
-    { x: 10, y: 5, z: -5 },   // P2: Swoop in
-    { x: 8, y: 4.7, z: 0 }      // P3: Target 
+    { x: -8, y: 2, z: -20 },    // P0: Start (Matches Zoom Out position)
+    { x: 0, y: 6, z: -10 },   // P1: Wide out
+    { x: 2, y: 5, z: -10 },   // P2: Swoop in
+    { x: 2.5, y: 6, z: 0 }      // P3: Target 
   ],
-  lookAtTarget: { x: 7, y: 5, z: 4 } // Where camera looks at end of sequence
+  lookAtTarget: { x: 2.5, y: 6, z: 1 } // Where camera looks at end of sequence
 }
-
 
 // Flip models on the X axis
 export const FLIP_MODELS_X = false
