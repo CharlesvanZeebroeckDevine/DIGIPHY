@@ -13,7 +13,7 @@ export default function VariableTextAnimation({
         if (!node) return null
 
         if (typeof node === 'string') {
-            return node.split('').map((char, index) => {
+            return node.split('').map((char) => {
                 const currentGlobalIndex = globalCharIndex++
                 return (
                     <span
