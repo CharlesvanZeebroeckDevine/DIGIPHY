@@ -34,7 +34,7 @@ export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visib
                     hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
                     radius={700}
                 >
-                    The ULTIMATE <span className="purple">XR</span> <br /> SEATING BUCK
+                   <h1>The ULTIMATE <span className="purple">XR</span> <br /> SEATING BUCK</h1> 
                 </VariableText>
             </div>
 
