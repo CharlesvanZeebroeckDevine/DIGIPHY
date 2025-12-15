@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Cube Grid</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #111;
+            /* Slightly lighter than pure black to distinguish BG */
+            font-family: sans-serif;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #instructions {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="instructions">
+        <h2>Interactive Grid</h2>
+        <p>Hover over the grid to reveal depth.</p>
+    </div>
+
+    <!-- Import Three.js from CDN -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- Configuration ---
+        const CONFIG = {
+            gridSize: 15,          // Number of cubes per row/col (odd number keeps center)
+            cubeSize: 1.0,         // Physical size of the cube
+            gap: 0.2,              // Gap between cubes
+            hoverRadiusPx: 250,    // Mouse influence radius in Screen Pixels (increased for better feel)
+            maxRotation: Math.PI,  // 180 degrees rotation at max intensity
+            lerpSpeed: 0.1,        // Smoothness of animation (0.1 = slow, 1.0 = instant)
+            baseColor: 0x000000,   // Black faces
+            outlineColor: 0xffffff // White edges
+        };
+
+        // --- Scene Setup ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x111111); // Dark background
+
+        // Camera setup - High FOV logic or Orthographic could work, but Perspective 
+        // emphasizes the "3D reveal" better when they rotate.
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        // Position camera to look straight down (Top View)
+        camera.position.set(0, 25, 0);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        // --- Grid Generation ---
+        const cubes = [];
+        const geometry = new THREE.BoxGeometry(CONFIG.cubeSize, CONFIG.cubeSize, CONFIG.cubeSize);
+
+        // Material for the solid black face
+        // PolygonOffset allows the white lines to render on top without z-fighting
+        const material = new THREE.MeshBasicMaterial({
+            color: CONFIG.baseColor,
+            polygonOffset: true,
+            polygonOffsetFactor: 1,
+            polygonOffsetUnits: 1
+        });
+
+        // Edges Geometry for the white outline
+        const edgesGeometry = new THREE.EdgesGeometry(geometry);
+        const edgesMaterial = new THREE.LineBasicMaterial({ color: CONFIG.outlineColor });
+
+        // Calculate offset to center the grid
+        const totalGridWidth = (CONFIG.gridSize * CONFIG.cubeSize) + ((CONFIG.gridSize - 1) * CONFIG.gap);
+        const offset = totalGridWidth / 2 - CONFIG.cubeSize / 2;
+
+        const dummy = new THREE.Object3D();
+
+        for (let x = 0; x < CONFIG.gridSize; x++) {
+            for (let z = 0; z < CONFIG.gridSize; z++) {
+
+                // Group to hold both mesh and outline
+                const group = new THREE.Group();
+
+                const mesh = new THREE.Mesh(geometry, material);
+                const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+
+                group.add(mesh);
+                group.add(edges);
+
+                // Position in XZ plane
+                group.position.x = (x * (CONFIG.cubeSize + CONFIG.gap)) - offset;
+                group.position.z = (z * (CONFIG.cubeSize + CONFIG.gap)) - offset;
+                group.position.y = 0;
+
+                // Store initial data for animation
+                group.userData = {
+                    initialPos: group.position.clone(),
+                    targetRotation: new THREE.Vector3(),
+                    currentRotation: new THREE.Vector3()
+                };
+
+                scene.add(group);
+                cubes.push(group);
+            }
+        }
+
+        // --- Interaction ---
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2(9999, 9999); // Start off-screen
+        const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); // Ground plane for intersection
+        const worldMouse = new THREE.Vector3();
+
+        function onMouseMove(event) {
+            // Normalize mouse coordinates (-1 to +1)
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+
+        // --- Animation Loop ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 1. Find where the mouse is in the 3D world on the flat plane
+            raycaster.setFromCamera(mouse, camera);
+            raycaster.ray.intersectPlane(plane, worldMouse);
+
+            // 2. Calculate World Radius based on Screen Radius
+            // We project the vertical view size at grid depth (0) to get px-to-world ratio
+            // Visible height at distance D = 2 * D * tan(fov/2)
+            const distanceToGrid = camera.position.y;
+            const vFOV = THREE.MathUtils.degToRad(camera.fov);
+            const visibleHeight = 2 * Math.tan(vFOV / 2) * distanceToGrid;
+
+            // Convert px radius to world units
+            // worldRadius = (screenPixels / screenHeight) * visibleWorldHeight
+            const worldRadius = (CONFIG.hoverRadiusPx / window.innerHeight) * visibleHeight;
+
+            // 3. Update Cubes
+            cubes.forEach(cube => {
+                // Distance from mouse hit point to cube center (ignoring Y since it's flat)
+                const dx = worldMouse.x - cube.position.x;
+                const dz = worldMouse.z - cube.position.z;
+                const dist = Math.sqrt(dx * dx + dz * dz);
+
+                if (dist < worldRadius) {
+                    // Normalize distance (0 at center, 1 at edge)
+                    const influence = 1 - (dist / worldRadius);
+
+                    // Apply an easing function (e.g., cubic) to make the center influence much stronger
+                    // This makes it feel more "magnetic"
+                    const smoothInfluence = Math.pow(influence, 2);
+
+                    // Calculate rotation direction perpendicular to the mouse vector
+                    // This creates a "wave" or "rolling" effect away/towards the mouse
+                    // For a simple chaotic 3D reveal, we can rotate on X and Z based on position
+
+                    // Logic: Rotate the cube 'away' from the cursor
+                    const angle = smoothInfluence * CONFIG.maxRotation;
+
+                    // We rotate around axes perpendicular to the distance vector
+                    // If mouse is to the right (positive x), we rotate around Z axis
+                    cube.userData.targetRotation.x = (dz / dist) * angle;
+                    cube.userData.targetRotation.z = -(dx / dist) * angle;
+
+                    // Optional: Lift the cube slightly for a tactile button feel
+                    cube.position.y = THREE.MathUtils.lerp(cube.position.y, smoothInfluence * 0.5, CONFIG.lerpSpeed);
+
+                } else {
+                    // Reset
+                    cube.userData.targetRotation.x = 0;
+                    cube.userData.targetRotation.z = 0;
+                    cube.position.y = THREE.MathUtils.lerp(cube.position.y, 0, CONFIG.lerpSpeed);
+                }
+
+                // Smoothly interpolate current rotation to target
+                cube.rotation.x = THREE.MathUtils.lerp(cube.rotation.x, cube.userData.targetRotation.x, CONFIG.lerpSpeed);
+                cube.rotation.z = THREE.MathUtils.lerp(cube.rotation.z, cube.userData.targetRotation.z, CONFIG.lerpSpeed);
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        // --- Resize Handler ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+
+</html>

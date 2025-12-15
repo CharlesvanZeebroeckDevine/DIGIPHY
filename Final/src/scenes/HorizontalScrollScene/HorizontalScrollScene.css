@@ -1,3 +1,5 @@
+@import url('../../DefaultStyles.css');
+
 .horizontal_scroll--container {
   width: 100%;
   height: 100vh;
@@ -10,6 +12,12 @@
   height: 100%;
   overflow: hidden;
   position: relative;
+}
+
+/* Ensure the pinned scene always fills the viewport and overlays remain positioned correctly */
+.horizontal_scroll--sticky>canvas,
+.horizontal_scroll--sticky canvas {
+  display: block;
 }
 
 /* Title Section BEFORE Scroll */
@@ -64,13 +72,14 @@
 /* Track Container - 200vw for horizontal movement */
 .horizontal_track {
   display: flex;
-  width: 200vw;
+  width: 300vw;
   height: 100vh;
   position: absolute;
   top: 0;
   left: 0;
   will-change: transform;
   pointer-events: none;
+  z-index: 5;
 }
 
 /* Track Panel - Each 'screen' */
@@ -116,7 +125,7 @@
   height: 200px;
   pointer-events: none;
   overflow: visible;
-  z-index: 5;
+  z-index: 6;
 }
 
 .horizontal_scroll--bezier-line path {
@@ -127,25 +136,45 @@
 /* === GENERIC TRACK ITEM === */
 .track_item {
   position: absolute;
-  z-index: 5;
+  z-index: 7;
   pointer-events: none;
 }
 
-/* CMF Text Position (2. CMF Testing) */
+/* CMF Text Position (2. The tangible truth) */
 .cmf-text-pos {
   position: absolute;
-  top: 10%;
-  /* Center vertically in track */
-  left: 125vw;
-  /* Positioned after the image (75vw + ~40vw width + gap) */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Perfectly centered */
+  width: auto;
+  text-align: center;
+  pointer-events: none;
+  /* Let clicks pass through to canvas */
+  z-index: 20;
+  /* Above canvas */
+}
+
+.cmf-subtext {
+  position: absolute;
+  top: calc(50% + 3.25rem);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(680px, 80vw);
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.4;
+  color: rgba(249, 249, 249, 0.85);
+  pointer-events: none;
+  z-index: 20;
 }
 
 .track_item--reveal-mask {
   overflow: hidden;
   position: relative;
-  /* Initial state for reveal from right: clip from left edge to 100% */
-  /* actually, usually we want to animate width or clip-path. 
-       Let's use clip-path for performance. */
+  border: 1px solid rgb(255, 255, 255);
   clip-path: inset(0 0 0 100%);
 }
 
@@ -174,11 +203,107 @@
 /* Steering Wheel Scene Container */
 .steering-wheel-container {
   position: absolute;
-  left: 100vw;
+  left: 120vw;
   /* End of track */
   top: 50%;
   transform: translateY(-50%);
   width: 100vw;
   height: 100vh;
-  z-index: 10;
+  z-index: 8;
+  pointer-events: auto;
+}
+
+.steering-wheel-container canvas {
+  pointer-events: auto;
+}
+
+/* Post-grid panel (panel 3) */
+.post_grid_panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.post_grid_content {
+  width: min(1100px, 90vw);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.post_grid_text {
+  color: var(--doctor);
+  font-family: 'GT Ultra', sans-serif;
+  font-size: var(--fz-2);
+  font-weight: 200;
+  line-height: 1.1;
+}
+
+.post_grid_stack {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+.post_grid_item {
+  position: relative;
+  overflow: hidden;
+}
+
+.post_grid_mask {
+  overflow: hidden;
+  border: 1px solid rgb(255, 255, 255);
+
+}
+
+.post_grid_img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transform: scale(1.5);
+}
+
+.post_grid_item .track_item--img {
+  width: 100%;
+}
+
+.post_grid_item .track_item--text {
+  max-width: 100%;
+}
+
+.post_grid_label {
+  padding: 0.5rem 0.75rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(249, 249, 249, 0.8);
+}
+
+/* Invisible line2 target marker (for alignment) */
+.post_grid_line_target {
+  position: absolute;
+  top: 50%;
+  left: 40%;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.post_grid_author {
+  margin-top: var(--sp-s);
+
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(249, 249, 249, 0.8);
+}
+
+.post_grid_author_name {
+  font-weight: 600;
+}
+
+.post_grid_author_company {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(249, 249, 249, 0.8);
 }

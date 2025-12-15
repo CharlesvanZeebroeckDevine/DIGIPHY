@@ -18,6 +18,8 @@ function App() {
   const lenisRef = useRef(null)
   const animationFrameRef = useRef(null)
   const horizontalSectionRef = useRef(null)
+  const gsapTickerRef = useRef(null)
+  const refreshRafRef = useRef(0)
   const [activeModelIndex, setActiveModelIndex] = useState(0)
   const [transitionOpacity, setTransitionOpacity] = useState(1.0)
   const [uiVisible, setUiVisible] = useState(true)
@@ -79,6 +81,14 @@ function App() {
     window.history.scrollRestoration = 'manual'
     window.scrollTo(0, 0)
 
+    const scheduleScrollTriggerRefresh = () => {
+      if (refreshRafRef.current) return
+      refreshRafRef.current = requestAnimationFrame(() => {
+        refreshRafRef.current = 0
+        ScrollTrigger.refresh()
+      })
+    }
+
     const ctx = gsap.context(() => {
 
       const lenis = new Lenis({
@@ -97,6 +107,7 @@ function App() {
         lenis.raf(time * 1000)
       }
       gsap.ticker.add(tickerFunc)
+      gsapTickerRef.current = tickerFunc
 
       // Store ticker in ref for cleanup outside context if needed (though context handles most)
       // Actually gsap.context doesn't remove ticker listeners automatically usually, so we do it in cleanup
@@ -104,8 +115,8 @@ function App() {
       // UI Visibility Trigger
       ScrollTrigger.create({
         trigger: horizontalSectionRef.current,
-        start: 'top ',
-        end: 'top',
+        start: 'top top',
+        end: 'bottom top',
         onEnter: () => setUiVisible(false),
         onLeaveBack: () => setUiVisible(true)
       })
@@ -134,26 +145,34 @@ function App() {
       })
 
       // Initial Refresh
-      requestAnimationFrame(() => ScrollTrigger.refresh())
+      scheduleScrollTriggerRefresh()
 
     })
 
     // === LAYOUT & RESIZE HANDLING ===
     // 1. Monitor Body Resize: Ensures scroll triggers update on any layout shift/font load
-    const resizeObserver = new ResizeObserver(() => ScrollTrigger.refresh())
+    const resizeObserver = new ResizeObserver(scheduleScrollTriggerRefresh)
     resizeObserver.observe(document.body)
 
     // 2. Asset Load Safety
-    const handleLoad = () => ScrollTrigger.refresh()
+    const handleLoad = () => scheduleScrollTriggerRefresh()
     window.addEventListener('load', handleLoad)
 
     gsap.ticker.lagSmoothing(0)
 
     return () => {
       ctx.revert()
+      if (gsapTickerRef.current) {
+        gsap.ticker.remove(gsapTickerRef.current)
+        gsapTickerRef.current = null
+      }
       if (lenisRef.current) {
         lenisRef.current.destroy()
         lenisRef.current = null
+      }
+      if (refreshRafRef.current) {
+        cancelAnimationFrame(refreshRafRef.current)
+        refreshRafRef.current = 0
       }
       resizeObserver.disconnect()
       window.removeEventListener('load', handleLoad)
