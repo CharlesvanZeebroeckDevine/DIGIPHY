@@ -99,3 +99,14 @@ a {
     font-family: 'Montserrat', sans-serif;
     color: var(--lucky-grey);
 }
+
+.names {
+    color: var(--lucky-grey);
+    font-weight: 500;
+}
+
+.names:hover {
+    color: var(--doctor);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
