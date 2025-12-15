@@ -30,7 +30,7 @@ export const useCameraScroll = () => {
     // Animate camera to the right wall to show use case posters
     tl.to(camera.position, {
       x: 15,
-      y: 4,
+      y: 5,
       z: -10,
       duration: 1,
       ease: 'power2.inOut'

@@ -11,6 +11,7 @@ import Footer from './scenes/Footer'
 import LoadingScreen from './Components/LoadingScreen'
 import Nav from './Components/Nav'
 import { TRANSITION_CONFIG } from './scenes/CarScene/config'
+import UseCases from './scenes/UseCases'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -133,17 +134,6 @@ function App() {
         }
       })
 
-      // Camera Sequence Trigger (Pin & Drive)
-      ScrollTrigger.create({
-        trigger: '#car-usecases',
-        start: () => 'top top',
-        end: () => '+=3000',
-        pin: true,
-        scrub: true,
-        refreshPriority: 0,
-        onUpdate: (self) => setCameraProgress(self.progress)
-      })
-
       // Initial Refresh
       scheduleScrollTriggerRefresh()
 
@@ -212,6 +202,10 @@ function App() {
           interactionStrength={interactionStrength}
         />
       </div>
+      {/* IMPORTANT: This overlay must NOT live inside the pinned `#car-usecases` section.
+          ScrollTrigger pins via transforms, and `position: fixed` inside a transformed ancestor
+          behaves like it's fixed to that ancestor (can get occluded / not appear). */}
+      <UseCases setCameraProgress={setCameraProgress} />
       <div data-scroll-container className="scroll_container">
         <section id="car-selection" data-scroll-section className="section_car--selection">
           {/* This section is transparent so CarScene shows through and can be interacted with */}

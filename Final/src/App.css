@@ -6,11 +6,25 @@
   font-display: swap;
 }
 
-h1, h2, h3, h4, h5, h6, p, li, a, label {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+li,
+a,
+label {
   color: var(--doctor);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'GT Ultra', sans-serif;
   line-height: normal;
   font-variation-settings: 'wght' 700, 'slnt' 0, 'CNTR' 50;
@@ -56,7 +70,7 @@ a {
   z-index: 1;
 }
 
-.scroll_container, 
+.scroll_container,
 .section_car--selection,
 .section_horizontal--scroll,
 .section_car--usecases,
