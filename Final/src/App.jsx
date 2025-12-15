@@ -210,7 +210,7 @@ function App() {
         <Nav scrollToSection={handleScrollToSection} />
       </div>
       <div className={`mute ${!muteVisible ? 'hidden' : ''} ${muteColor === 'black' ? 'on-light' : ''}`}>
-        {[...Array(10)].map((_, i) => (
+        {[...Array(8)].map((_, i) => (
           <div
             key={i}
             className="bar"
