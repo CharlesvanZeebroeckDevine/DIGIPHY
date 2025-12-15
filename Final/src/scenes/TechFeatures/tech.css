@@ -1,36 +1,24 @@
-
-
 .feature_container {
-    background-color: var(--smoky-umber);
-    max-width: 100vw;
-    max-height: 100vh;
-    height: 100vh;
     width: 100vw;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: var(--sp-2xl);
-}
+    background-color: var(--smoky-umber);
+    padding: var(--sp-xl);
+ }
 
 .tech_container {
-    display: flex;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
     align-items: center;
-    justify-content: space-evenly;
-    width: 100vw;
 }
 
-.feature_intro {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-}
-
-.feature_nav {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 10vw;
+.feature_image {
+    width: 100%;
+    height: 100%;
 }
 
 .feature_button {
@@ -55,13 +43,4 @@
 .feature_button:hover {
     color: var(--meteor-shower);
     transition: 0.3s ease-in-out;
-}
-
-.feature_image>img {
-    width: 20vw;
-    height: 25vw;
-}
-
-.feature_description {
-    width: 15vw;
 }
