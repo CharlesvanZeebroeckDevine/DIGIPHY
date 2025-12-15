@@ -2,31 +2,31 @@
     {
         "index": 0,
         "name": "HMI integration",
-        "image": "/tech-features/VR_goggles.glb",
+        "image": "/tech-features/HMI_integration.webp",
         "description": "Test your HMI in real time using the VR integration. Quickly evaluate interaction flows, visibility, and usability without waiting for physical prototypes."
     },
     {
         "index": 1,
         "name": "HMD Compatibility",
-        "image": "/tech-features/VR_goggles.glb",
+        "image": "/tech-features/HMD_compatibility.webp",
         "description": "Optimized for Varjo XR-3 and compatible with HTC Vive, Oculus and others. This ensures high-fidelity visualisation across different headsets and studio setups."
     },
     {
         "index": 2,
         "name": "CE Certification",
-        "image": "/tech-features/CE_certification.glb",
+        "image": "/tech-features/CE_certification.webp",
         "description": "Fully compliant with Directive 2006/42/EC, featuring industrial-grade safety interlocks for corporate studio deployment. This guarantees it meets the safety standards required for daily professional use."
     },
     {
         "index": 4,
         "name": "Mobile",
-        "image": "/tech-features/VR_goggles.glb",
+        "image": "/tech-features/mobile.webp",
         "description": "Designed to be easily moved, for example to a presentation room or next to a full-scale mockup. This mobility allows teams to seamlessly integrate DigiPHY into different stages of the design workflow."
     },
     {
         "index": 5,
         "name": "IPAD",
-        "image": "/tech-features/VR_goggles.glb",
+        "image": "/tech-features/ipad.webp",
         "description": "Save and switch instantly between layouts. Quickly compare design variations or present alternative setups directly from the tablet interface."
     }
 ]

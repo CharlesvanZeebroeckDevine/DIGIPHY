@@ -1,26 +1,63 @@
-import { useState } from "react";
 import "./tech.css";
+
+import { useState, useLayoutEffect, useRef } from "react";
 import VariableText from '../../Components/VariableText'
 import features from "./techFeatures.json";
 import FeatureNavigation from "./FeatureNavigation";
-import FeatureDisplay from "./FeatureDisplay";
 import FeatureInfo from "./FeatureInfo";
+
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const TechFeatures = () => {
     const [selectedFeature, setSelectedFeature] = useState(features[0]);
+    const wrapperRef = useRef(null);
+    const containerRef = useRef(null);
+
+    useLayoutEffect(() => {
+        const ctx = gsap.context(() => {
+            gsap.fromTo(containerRef.current,
+                { width: '80vw' },
+                {
+                    width: '100vw',
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: wrapperRef.current,
+                        start: 'top bottom',
+                        end: 'top top',
+                        scrub: true
+                    }
+                }
+            );
+        }, wrapperRef);
+
+        return () => ctx.revert();
+    }, []);
 
     return (
-        <div className="feature_container--wrapper">
-            <div className="feature_container">
+        <div ref={wrapperRef} className="feature_container--wrapper">
+            <div ref={containerRef} className="feature_container">
+                <div className="feature_background">
+                    {features.map((feature, index) => (
+                        <img
+                            key={index}
+                            src={feature.image}
+                            alt={feature.name}
+                            className={selectedFeature.index === index ? 'active' : ''}
+                        />
+                    ))}
+                </div>
                 <h2 className="visibility-hidden">Tech Features</h2>
-                <div style={{ pointerEvents: 'none' }}>
+                <div style={{ pointerEvents: 'none', position: 'relative', zIndex: 1 }}>
                     <VariableText
                         className="feature_title"
                         baseSettings={{ wght: 300, slnt: 100, CNTR: 100, letterSpacing: -5 }}
                         hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
                         radius={400}
                     >
-                        <h2>The Hidden Layer Inside DigiPHY</h2> 
+                        <h2>The Hidden Layer Inside DigiPHY</h2>
                     </VariableText>
                 </div>
 
@@ -30,7 +67,7 @@ const TechFeatures = () => {
                         selectedFeature={selectedFeature}
                         onSelectFeature={setSelectedFeature}
                     />
-                    <FeatureDisplay selectedFeature={selectedFeature} />
+                    {/* <FeatureDisplay selectedFeature={selectedFeature} /> */}
                     <FeatureInfo selectedFeature={selectedFeature} />
                 </div>
             </div>
