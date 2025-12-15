@@ -90,3 +90,37 @@ a {
 .section_car--selection {
   height: 100vh;
 }
+
+.mute {
+  position: fixed;
+  bottom: var(--sp-xl);
+  right: var(--sp-xl);
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  height: 30px;
+  cursor: pointer;
+  z-index: 100;
+  pointer-events: auto;
+  transition: opacity 0.5s ease;
+  opacity: 1;
+}
+
+.mute.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bar {
+  width: 1px;
+  height: 8px;
+  background-color: var(--doctor);
+  border-radius: 10px;
+  animation: sound-wave 2s ease-in-out infinite;
+  animation-delay: calc(var(--dist) * -0.1s);
+  transition: background-color 0.5s ease;
+}
+
+.mute.on-light .bar {
+  background-color: var(--smoky-umber);
+}

@@ -64,6 +64,7 @@ export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visib
     }, [])
 
     return (
+
         <div className="car_scene_overlay" style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease' }}>
             <div
                 ref={titleRef}
@@ -80,26 +81,32 @@ export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visib
                     hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
                     radius={700}
                 >
-                   <h1>The ULTIMATE <span className="purple">XR</span> <br /> SEATING BUCK</h1> 
+                    <h1>The ULTIMATE <span className="purple">XR</span> <br /> SEATING BUCK</h1>
                 </VariableText>
             </div>
-
             <div className="overlay_controls">
-                <SecondaryButton
-                    text="SUV"
-                    active={activeModelIndex === 0}
-                    onClick={() => onModelSwitch(0)}
-                />
-                <SecondaryButton
-                    text="SPORT"
-                    active={activeModelIndex === 1}
-                    onClick={() => onModelSwitch(1)}
-                />
-                <SecondaryButton
-                    text="VAN"
-                    active={activeModelIndex === 2}
-                    onClick={() => onModelSwitch(2)}
-                />
+                <div className="controls">
+                    <SecondaryButton
+                        text="SUV"
+                        active={activeModelIndex === 0}
+                        onClick={() => onModelSwitch(0)}
+                    />
+                    <SecondaryButton
+                        text="SPORT"
+                        active={activeModelIndex === 1}
+                        onClick={() => onModelSwitch(1)}
+                    />
+                    <SecondaryButton
+                        text="VAN"
+                        active={activeModelIndex === 2}
+                        onClick={() => onModelSwitch(2)}
+                    />
+                </div>
+                <div class="scroll-cta">
+                    <div class="scroll-indicator">
+                        <div class="scroll-arrow"></div>
+                    </div>
+                </div>
             </div>
         </div>
     )

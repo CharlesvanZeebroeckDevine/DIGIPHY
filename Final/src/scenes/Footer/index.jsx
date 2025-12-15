@@ -48,7 +48,7 @@ const Footer = ({ scrollToSection }) => {
                         </FooterSocialButton>
                     </div>
                     <div className="credentials">
-                        <span>© 2025 DigiPHY. Project made by <a href="https://www.instagram.com/charles.vanz/" target="_blank" rel="noopener noreferrer" className="names">Charles</a>, <a href="#" target="_blank" rel="noopener noreferrer" className="names">Febe</a> and <a href="https://justwanderingaround.be/" target="_blank" rel="noopener noreferrer" className="names">Wander</a></span>
+                        <span>© 2025 DigiPHY. Project made by <a href="https://www.instagram.com/charles.vanz/" target="_blank" rel="noopener noreferrer" className="names">Charles</a>, <a href="https://www.behance.net/febeverelst" target="_blank" rel="noopener noreferrer" className="names">Febe</a> and <a href="https://justwanderingaround.be/" target="_blank" rel="noopener noreferrer" className="names">Wander</a></span>
                     </div>
                     <div className="links">
                         <PrimaryButton
