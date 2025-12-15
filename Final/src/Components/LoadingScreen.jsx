@@ -1,14 +1,14 @@
+import './loadingScreen.css'
+import VariableTextAnimation from '../Components/VariableTextAnimation'
 import { useProgress } from '@react-three/drei'
 import { useEffect, useState } from 'react'
 
 export default function LoadingScreen() {
     const { progress, active } = useProgress()
     const [finished, setFinished] = useState(false)
-
-    // Delay fading out to ensure everything is settled or to show 100% for a moment
+    
     useEffect(() => {
         if (progress === 100) {
-            // Small delay to prevent flickering if it loads instantly or to smooth the exit
             const timer = setTimeout(() => {
                 setFinished(true)
             }, 500)
@@ -19,35 +19,20 @@ export default function LoadingScreen() {
     }, [progress])
 
     return (
-        <div
-            style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100vw',
-                height: '100vh',
-                backgroundColor: '#000000',
-                color: '#ffffff',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 9999,
-                transition: 'opacity 1s ease-in-out',
-                opacity: finished ? 0 : 1,
-                pointerEvents: finished ? 'none' : 'auto',
-            }}
-        >
-            <div
-                style={{
-                    textAlign: 'center',
-                    fontFamily: 'monospace',
-                    textTransform: 'uppercase',
-                    letterSpacing: '2px'
-                }}
-            >
-                <div style={{ fontSize: '24px', marginBottom: '10px' }}>Loading</div>
-                <div style={{ fontSize: '14px', opacity: 0.5 }}>{Math.round(progress)}%</div>
+        <div className={`loading_screen ${finished ? 'loading_screen--hidden' : ''}`}>
+            <div className="loading_screen--title--container">
+                <VariableTextAnimation><h1>Digiphy 2.0</h1></VariableTextAnimation>
+            </div>
+            <div className="loading_screen--container">
+                <div className="loading_screen--ring loading_screen--ring_1"></div>
+                <div className="loading_screen--ring loading_screen--ring_2"></div>
+                <div className="loading_screen--ring loading_screen--ring_3"></div>
+
+                <div className="loading_screen--text_container">
+                    <div className="loading_screen--percentage">{Math.round(progress)}%</div>
+                </div>
             </div>
         </div>
     )
 }
+
