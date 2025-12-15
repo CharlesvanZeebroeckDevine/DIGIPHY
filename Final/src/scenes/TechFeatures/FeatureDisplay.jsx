@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, Suspense } from "react";
 import gsap from "gsap";
 import { Canvas } from "@react-three/fiber";
-import { useGLTF, Center, OrbitControls } from "@react-three/drei";
+import { useGLTF, Center, OrbitControls, useHelper } from "@react-three/drei";
 
 const Model = ({ path }) => {
     const { scene } = useGLTF(path);
@@ -11,6 +11,7 @@ const Model = ({ path }) => {
 const FeatureDisplay = ({ selectedFeature }) => {
     const imageRef = useRef(null);
     const containerRef = useRef(null);
+
 
     useEffect(() => {
         if (!imageRef.current) return;
@@ -23,17 +24,19 @@ const FeatureDisplay = ({ selectedFeature }) => {
 
     }, [selectedFeature]);
 
+    
+
     return (
         <div className="feature_image" ref={containerRef}>
             <div ref={imageRef} style={{ width: '100%', height: '100%' }}>
                 <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-                    <ambientLight intensity={0.6} />
-                    <directionalLight position={[10, 10, 5]} intensity={1} />
+                    <directionalLight position={[0, 20, 15]} intensity={10} />
                     <Suspense fallback={null}>
                         <Center>
                             <Model path={selectedFeature.image} key={selectedFeature.image} />
                         </Center>
-                        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={4} />
+                        <OrbitControls enableZoom={false} enablePan={false} autoRotate={true} autoRotateSpeed={2} minPolarAngle={Math.PI / 2} maxPolarAngle={Math.PI / 2} />
+                        <axesHelper args={[5]} />
                     </Suspense>
                 </Canvas>
             </div>
