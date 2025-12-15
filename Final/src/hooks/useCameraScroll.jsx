@@ -35,11 +35,11 @@ export const useCameraScroll = () => {
       duration: 1,
       ease: 'power2.inOut'
     })
-    .to(camera.rotation, {
-      y: Math.PI / 2,
-      duration: 1,
-      ease: 'power2.inOut'
-    }, '<')
+      .to(camera.rotation, {
+        y: Math.PI / 2,
+        duration: 1,
+        ease: 'power2.inOut'
+      }, '<')
 
     timelineRef.current = tl
 

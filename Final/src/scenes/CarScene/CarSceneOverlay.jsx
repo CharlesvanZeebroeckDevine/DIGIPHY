@@ -2,20 +2,66 @@ import './CarSceneUI.css'
 import SecondaryButton from '../../Components/UI/SecondaryButton'
 import VariableText from '../../Components/VariableText'
 import Nav from '../../Components/Nav'
-import { useRef, useLayoutEffect } from 'react'
+import { useRef, useLayoutEffect, useEffect } from 'react'
 import gsap from 'gsap'
 
-export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visible = true, zoomLevel = 0 }) {
+export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visible = true }) {
     const titleRef = useRef(null)
+    const titleTlRef = useRef(null)
+    const scrollRafRef = useRef(0)
 
     useLayoutEffect(() => {
-        if (titleRef.current) {
-            gsap.set(titleRef.current, {
-                y: -zoomLevel * 200,
-                opacity: Math.max(0, 1 - zoomLevel * 2)
+        if (!titleRef.current) return
+
+        const el = titleRef.current
+
+        const ctx = gsap.context(() => {
+            // Start visible
+            gsap.set(el, { y: 0, opacity: 1 })
+
+            // Fake the "scroll/zoom" transition: simple pan-up + fade-out
+            titleTlRef.current = gsap.timeline({ paused: true })
+                .to(el, {
+                    y: -200,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: 'power2.out',
+                    overwrite: true,
+                })
+        }, el)
+
+        return () => {
+            if (scrollRafRef.current) {
+                cancelAnimationFrame(scrollRafRef.current)
+                scrollRafRef.current = 0
+            }
+            titleTlRef.current?.kill?.()
+            titleTlRef.current = null
+            ctx.revert()
+        }
+    }, [])
+
+    useEffect(() => {
+        const onScroll = () => {
+            if (scrollRafRef.current) return
+            scrollRafRef.current = requestAnimationFrame(() => {
+                scrollRafRef.current = 0
+
+                const tl = titleTlRef.current
+                if (!tl) return
+
+                // Small threshold so a tiny scroll nudge still triggers the transition
+                const hasStartedScrolling = window.scrollY > 5
+                if (hasStartedScrolling) tl.play()
+                else tl.reverse()
             })
         }
-    }, [zoomLevel])
+
+        window.addEventListener('scroll', onScroll, { passive: true })
+        onScroll()
+
+        return () => window.removeEventListener('scroll', onScroll)
+    }, [])
 
     return (
         <div className="car_scene_overlay" style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease' }}>

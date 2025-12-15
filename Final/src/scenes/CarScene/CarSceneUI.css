@@ -20,6 +20,10 @@
     white-space: nowrap;
 }
 
+.overlay_title_container {
+    will-change: transform, opacity;
+}
+
 .purple {
     color: var(--meteor-shower);
     font-variation-settings: 'wght' 600;
