@@ -1,8 +1,7 @@
-/* UseCases end overlay (reveals after the camera finishes) */
+/* --- UseCases Section Overlay --- */
 .section_car--usecases {
   height: 100vh;
   height: 100svh;
-  /* Keep it non-interactive so pointer events reach the fixed R3F CarScene canvas underneath. */
   pointer-events: none;
 }
 
@@ -18,8 +17,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  color: #000;
-  background: none;
+  color: var(--doctor);
   will-change: opacity, transform;
 }
 
@@ -34,14 +32,399 @@
   font-variation-settings: 'wght' 300, 'slnt' 100, 'CNTR' 100;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  color: #000;
+  color: var(--doctor);
 }
 
 .usecases_overlay_subtitle {
   font-family: 'Montserrat', sans-serif;
   font-size: var(--fz--1);
   font-weight: 300;
-  color: #000;
+  color: var(--doctor);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* --- Case Modal Container --- */
+
+dialog.caseModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 100vw;
+  height: 90vh;
+  max-height: 900px;
+  background: var(--smoky-umber);
+  border: none;
+  border-radius: 20px;
+  padding: 0;
+  margin: 0;
+  /* overflow: hidden; Removed to allow scrolling -> Reinstated for wrapper approach */
+  overflow: hidden;
+  color: var(--smoky-umber);
+  overscroll-behavior: contain;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: auto;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+dialog.caseModal[open] {
+  opacity: 1;
+  display: flex;
+  animation: modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+dialog.caseModal::backdrop {
+  background: var(--smoky-umber), 0.4;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: backdropFadeIn 0.4s ease forwards;
+}
+
+.caseModal__close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  left: auto;
+  transform: none;
+  border: none;
+  background: none;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: background 0.2s ease;
+  padding: 0;
+}
+
+.caseModal__close:hover svg {
+  transform: rotate(90deg);
+}
+
+.caseModal__close svg {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s ease;
+}
+
+.caseModal__close svg {
+  width: 24px;
+  height: 24px;
+}
+
+.caseModal__content {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  width: 100%;
+}
+
+.overview__title {
+  margin-block-end: var(--sp-s);
+}
+
+.overview__text {
+  margin-block-end: var(--sp-l);
+}
+
+.caseModal {
+  overflow-y: auto;
+}
+
+.caseModal__hero {
+  position: relative;
+  width: 100%;
+  min-height: 450px;
+  flex: 0 0 auto;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px;
+  color: var(--doctor);
+}
+
+.caseModal__hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.usecase__title {
+  position: relative;
+  z-index: 1;
+  font-family: 'GT Ultra', sans-serif;
+  font-size: var(--fz-4);
+  margin: 0 0 24px 0;
+  font-weight: 300;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.caseModal__heroButtons {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.usecase__subtitle {
+  padding-block: var(--sp-xl);
+  font-family: 'Montserrat', sans-serif;
+  font-size: var(--fz-1);
+  font-weight: 200;
+  line-height: 150%;
+  margin: 0;
+  text-align: center;
+}
+
+.caseModal__overview {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  padding-inline: var(--sp-l);
+  align-items: center;
+}
+
+.overview__img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.caseModal__accordion {
+  flex: 0 0 auto;
+  padding-inline: var(--sp-l);
+  padding-block-end: var(--sp-xl);
+}
+
+.accordion__item {
+  width: 100%;
+}
+
+.accordion__visible {
+  cursor: pointer;
+  padding: var(--sp-s) 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: opacity 0.2s;
+}
+
+.accordion__visible:hover {
+  opacity: 0.7;
+}
+
+.accordion__title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: var(--fz-1);
+  font-weight: 500;
+  margin: 0;
+}
+
+.accordion__detail {
+  padding-bottom: var(--sp-s);
+  animation: slideDown 0.3s ease-in-out;
+}
+
+.accordion__body {
+  font-family: 'Montserrat', sans-serif;
+  font-size: var(--fz-0);
+  line-height: 1.6;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.accordion__divider {
+  height: 1px;
+  background: var(--doctor);
+  width: 100%;
+}
+
+.caseModal__ending {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 60px;
+  padding-inline: var(--sp-l);
+  padding-block-end: var(--sp-xl);
+  align-items: center;
+}
+
+.quote__img {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.quote__wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.quote {
+  font-family: 'GT Ultra', sans-serif;
+  font-size: var(--fz-2);
+  color: var(--doctor);
+  margin: 0;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+.quote__person {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  color: var(--lucky-grey);
+  margin: 0;
+  font-size: var(--fz-0);
+}
+
+/* --- Buttons --- */
+.button__primary,
+.button__secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  border-radius: 100px;
+  text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: var(--fz-0);
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.quote__button {
+  align-self: flex-start;
+  margin-top: 10px;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+  dialog.caseModal {
+    width: 95vw;
+    height: 95vh;
+  }
+}
+
+@media (max-width: 768px) {
+  dialog.caseModal {
+    width: 100vw;
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+  }
+
+  .caseModal__hero {
+    min-height: 35vh;
+    padding: var(--sp-s);
+  }
+
+  .usecase__title {
+    font-size: var(--fz-3);
+    text-align: center;
+  }
+
+  .caseModal__heroButtons {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .button__primary,
+  .button__secondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .caseModal__overview {
+    grid-template-columns: 1fr;
+    gap: var(--sp-m);
+  }
+
+  .overview__img {
+    order: -1;
+  }
+
+  .caseModal__accordion {
+    padding-inline: var(--sp-m);
+    padding-block-end: var(--sp-l);
+  }
+
+  .caseModal__ending {
+    grid-template-columns: 1fr;
+    gap: var(--sp-m);
+    padding: 60px 24px;
+    text-align: center;
+  }
+
+  .quote__img {
+    width: 50vw;
+    margin: 0 auto;
+  }
+
+  .quote__button {
+    align-self: center;
+  }
+
+  .caseModal__close {
+    top: var(--sp-s);
+    right: var(--sp-s);
+    left: auto;
+    transform: none;
+    width: 40px;
+    height: 40px;
+  }
 }

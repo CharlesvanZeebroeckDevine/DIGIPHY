@@ -37,7 +37,7 @@ const PosterGlowMaterial = shaderMaterial(
 
 extend({ PosterGlowMaterial })
 
-export default function Poster({ url, position, rotation = [0, Math.PI, 0], scale = 2, name, isInteractable = false }) {
+export default function Poster({ url, position, rotation = [0, Math.PI, 0], scale = 2, name, isInteractable = false, onClick }) {
     const texture = useTexture(url)
     texture.colorSpace = THREE.SRGBColorSpace
     const [hovered, setHovered] = useState(false)
@@ -63,6 +63,7 @@ export default function Poster({ url, position, rotation = [0, Math.PI, 0], scal
                     e.stopPropagation() // Prevent event bubbling to background
                     if (isInteractable) {
                         console.log(`${name} clicked`)
+                        onClick && onClick(e)
                     }
                 }}
                 onPointerOver={() => {

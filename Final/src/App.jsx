@@ -31,31 +31,41 @@ function App() {
   const [zoomLevel, setZoomLevel] = useState(0)
   const [interactionStrength, setInteractionStrength] = useState(1)
   const [hasEntered, setHasEntered] = useState(false)
+  const [activeUseCaseIndex, setActiveUseCaseIndex] = useState(null)
 
-  // Block/Unblock scrolling based on hasEntered state
+  // Block/Unblock scrolling based on hasEntered state AND activeUseCaseIndex
   useEffect(() => {
     if (!lenisRef.current) return
 
-    if (!hasEntered) {
+    if (!hasEntered || activeUseCaseIndex !== null) {
       lenisRef.current.stop()
       document.body.style.overflow = 'hidden'
     } else {
       lenisRef.current.start()
-      lenisRef.current.scrollTo(0, { immediate: true })
+      // Note: We don't force scrollTo(0) here because we might be returning from a modal
+      // and want to stay at the same scroll position.
+      // Only do the initial reset if we just entered (handled elsewhere or implicitly ok)
+      if (!hasEntered) lenisRef.current.scrollTo(0, { immediate: true }) // original logic was slightly different
+
       document.body.style.overflow = ''
 
       // Reset animation states to ensure clean start
-      setZoomLevel(0)
-      setInteractionStrength(1)
-      setCameraProgress(0)
-      setUiVisible(true)
+      // Note: We only want to reset these if we are truly "entering" the site, 
+      // not just closing a modal. But for safety, let's keep the user's original logic 
+      // primarily for the LoadingScreen interaction.
+      if (!hasEntered) {
+        setZoomLevel(0)
+        setInteractionStrength(1)
+        setCameraProgress(0)
+        setUiVisible(true)
 
-      // Force refresh after a slight delay to ensure layout is settled
-      setTimeout(() => {
-        ScrollTrigger.refresh()
-      }, 100)
+        // Force refresh after a slight delay to ensure layout is settled
+        setTimeout(() => {
+          ScrollTrigger.refresh()
+        }, 100)
+      }
     }
-  }, [hasEntered])
+  }, [hasEntered, activeUseCaseIndex])
 
   const handleModelSwitch = (newIndex) => {
     if (newIndex === activeModelIndex) return
@@ -248,12 +258,17 @@ function App() {
           isEnabled={true}
           zoomLevel={zoomLevel}
           interactionStrength={interactionStrength}
+          onUseCaseSelect={setActiveUseCaseIndex}
         />
       </div>
       {/* IMPORTANT: This overlay must NOT live inside the pinned `#car-usecases` section.
           ScrollTrigger pins via transforms, and `position: fixed` inside a transformed ancestor
           behaves like it's fixed to that ancestor (can get occluded / not appear). */}
-      <UseCases setCameraProgress={setCameraProgress} />
+      <UseCases
+        setCameraProgress={setCameraProgress}
+        activeUseCaseIndex={activeUseCaseIndex}
+        setActiveUseCaseIndex={setActiveUseCaseIndex}
+      />
       <div data-scroll-container className="scroll_container">
         <section id="car-selection" data-scroll-section data-theme="light" className="section_car--selection">
           {/* This section is transparent so CarScene shows through and can be interacted with */}

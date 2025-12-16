@@ -2,11 +2,13 @@ import { useLayoutEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import VariableText from '../../Components/VariableText'
+import CaseModal from './CaseModal'
+import cases from './cases.json'
 import './useCase.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-export default function UseCases({ setCameraProgress }) {
+export default function UseCases({ setCameraProgress, activeUseCaseIndex, setActiveUseCaseIndex }) {
     const overlayRef = useRef(null)
     const titleWrapRef = useRef(null)
     const subtitleRef = useRef(null)
@@ -139,22 +141,27 @@ export default function UseCases({ setCameraProgress }) {
     }, [setCameraProgress])
 
     return (
-        <div ref={overlayRef} className="usecases_overlay" aria-hidden="true">
-            <div ref={titleWrapRef} className="usecases_overlay_titleWrap">
-                <VariableText
-                    className="usecases_overlay_title"
-                    baseSettings={{ wght: 300, slnt: 100, CNTR: 100, letterSpacing: -5 }}
-                    hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
-                    radius={400}
-                >
-                    <h2>Use Cases</h2>
-                </VariableText>
+        <>
+            <div ref={overlayRef} className="usecases_overlay" aria-hidden="true">
+                <div ref={titleWrapRef} className="usecases_overlay_titleWrap">
+                    <VariableText
+                        className="usecases_overlay_title"
+                        baseSettings={{ wght: 300, slnt: 100, CNTR: 100, letterSpacing: -5 }}
+                        hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
+                        radius={400}
+                    >
+                        <h2>Use Cases</h2>
+                    </VariableText>
+                </div>
+                <div ref={subtitleRef} className="usecases_overlay_subtitle">
+                    Click on a poster to read more
+                </div>
             </div>
-            <div ref={subtitleRef} className="usecases_overlay_subtitle">
-                Click on a poster to read more
-            </div>
-        </div>
+
+            <CaseModal
+                usecase={activeUseCaseIndex !== null ? cases[activeUseCaseIndex] : null}
+                onClose={() => setActiveUseCaseIndex(null)}
+            />
+        </>
     )
 }
-
-

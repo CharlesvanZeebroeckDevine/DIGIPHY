@@ -18,7 +18,7 @@ const carModels = [
   'car-models/FordTransit.glb'
 ]
 
-function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch, uiVisible = true, cameraProgress = 0, isEnabled = true, zoomLevel = 0, interactionStrength = 1 }) {
+function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch, uiVisible = true, cameraProgress = 0, isEnabled = true, zoomLevel = 0, interactionStrength = 1, onUseCaseSelect }) {
   const animationFrameRef = useRef(null)
 
   const activeModelPath = carModels[activeModelIndex]
@@ -61,6 +61,7 @@ function CarScene({ activeModelIndex, transitionOpacity, onModelSwitch, uiVisibl
           cameraProgress={cameraProgress}
           zoomLevel={zoomLevel}
           interactionStrength={interactionStrength}
+          onUseCaseSelect={onUseCaseSelect}
         />
       </Canvas>
 

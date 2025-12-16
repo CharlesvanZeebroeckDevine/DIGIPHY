@@ -261,7 +261,7 @@ function WindowGlowModel({ intensity = 10 }) {
     return <primitive object={scene} />
 }
 
-export default function Experience({ activeModelPath, transitionOpacity, cameraProgress, zoomLevel, interactionStrength }) {
+export default function Experience({ activeModelPath, transitionOpacity, cameraProgress, zoomLevel, interactionStrength, onUseCaseSelect }) {
     const { scene } = useThree()
     // Reserved for future grouping/control of cars; keep setter but avoid unused-var lint
     const [_carsGroup, setCarsGroup] = useState(null)
@@ -313,9 +313,9 @@ export default function Experience({ activeModelPath, transitionOpacity, cameraP
 
             {/* Posters */}
             <group position={[7, 5, 14.5]}>
-                <Poster name="poster1" url="/posters/4.webp" position={[0, 0, 0]} isInteractable={cameraProgress > 0.7} />
-                <Poster name="poster2" url="/posters/5.webp" position={[-4.5, 0, 0]} isInteractable={cameraProgress > 0.7} />
-                <Poster name="poster3" url="/posters/6.webp" position={[-9, 0, 0]} isInteractable={cameraProgress > 0.7} />
+                <Poster name="poster1" url="/posters/4.webp" position={[0, 0, 0]} isInteractable={cameraProgress > 0.7} onClick={() => onUseCaseSelect && onUseCaseSelect(0)} />
+                <Poster name="poster2" url="/posters/5.webp" position={[-4.5, 0, 0]} isInteractable={cameraProgress > 0.7} onClick={() => onUseCaseSelect && onUseCaseSelect(1)} />
+                <Poster name="poster3" url="/posters/6.webp" position={[-9, 0, 0]} isInteractable={cameraProgress > 0.7} onClick={() => onUseCaseSelect && onUseCaseSelect(2)} />
             </group>
 
 
