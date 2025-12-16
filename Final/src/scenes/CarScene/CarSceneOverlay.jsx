@@ -102,9 +102,9 @@ export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visib
                         onClick={() => onModelSwitch(2)}
                     />
                 </div>
-                <div class="scroll-cta">
-                    <div class="scroll-indicator">
-                        <div class="scroll-arrow"></div>
+                <div className="scroll-cta">
+                    <div className="scroll-indicator">
+                        <div className="scroll-arrow"></div>
                     </div>
                 </div>
             </div>

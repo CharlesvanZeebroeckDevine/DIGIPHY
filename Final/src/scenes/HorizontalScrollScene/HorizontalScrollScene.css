@@ -246,11 +246,6 @@
   gap: 1.25rem;
 }
 
-.post_grid_item {
-  position: relative;
-  overflow: hidden;
-}
-
 .post_grid_mask {
   width: 30vw;
   overflow: hidden;
@@ -264,11 +259,12 @@
   display: block;
 }
 
-.post_grid_item .track_item--img {
+.post_grid_panel .post_grid_img {
   width: 100%;
 }
 
-.post_grid_item .track_item--text {
+/* Quote container now lives at `.track_item--text.post_grid_text` (no `.post_grid_item` wrapper anymore) */
+.post_grid_panel .post_grid_text {
   font-size: 1.2rem;
   font-weight: 100;
   line-height: 1.2;
