@@ -27,9 +27,23 @@ function App() {
   const [muteVisible, setMuteVisible] = useState(true)
   const [muteColor, setMuteColor] = useState('white')
   const [cameraProgress, setCameraProgress] = useState(0)
-  const [carSceneEnabled, setCarSceneEnabled] = useState(true) 
-  const [zoomLevel, setZoomLevel] = useState(0) 
-  const [interactionStrength, setInteractionStrength] = useState(1) 
+  const [carSceneEnabled, setCarSceneEnabled] = useState(true)
+  const [zoomLevel, setZoomLevel] = useState(0)
+  const [interactionStrength, setInteractionStrength] = useState(1)
+  const [hasEntered, setHasEntered] = useState(false)
+
+  // Block/Unblock scrolling based on hasEntered state
+  useEffect(() => {
+    if (!lenisRef.current) return
+
+    if (!hasEntered) {
+      lenisRef.current.stop()
+      document.body.style.overflow = 'hidden'
+    } else {
+      lenisRef.current.start()
+      document.body.style.overflow = ''
+    }
+  }, [hasEntered])
 
   const handleModelSwitch = (newIndex) => {
     if (newIndex === activeModelIndex) return
@@ -127,7 +141,7 @@ function App() {
       gsap.utils.toArray('[data-theme]').forEach(section => {
         ScrollTrigger.create({
           trigger: section,
-          start: 'top center', 
+          start: 'top center',
           end: 'bottom center',
           onEnter: () => setMuteColor(section.dataset.theme === 'light' ? 'black' : 'white'),
           onEnterBack: () => setMuteColor(section.dataset.theme === 'light' ? 'black' : 'white')
@@ -136,7 +150,7 @@ function App() {
 
       ScrollTrigger.create({
         trigger: '#footer',
-        start: 'top bottom-=50', 
+        start: 'top bottom-=50',
         onEnter: () => setMuteVisible(false),
         onLeaveBack: () => setMuteVisible(true)
       })
@@ -205,7 +219,7 @@ function App() {
 
   return (
     <>
-      <LoadingScreen />
+      <LoadingScreen onEnter={() => setHasEntered(true)} />
       <div className="nav_container">
         <Nav scrollToSection={handleScrollToSection} />
       </div>
