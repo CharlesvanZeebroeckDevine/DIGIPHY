@@ -1,21 +1,13 @@
 import './LoadingScreen.css'
 import VariableTextAnimation from '../Components/VariableTextAnimation'
 import { useProgress } from '@react-three/drei'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import PrimaryButton from './UI/PrimaryButton'
 
 export default function LoadingScreen({ onEnter }) {
     const { progress, active } = useProgress()
     const [finished, setFinished] = useState(false)
-    const [canEnter, setCanEnter] = useState(false)
-
-    useEffect(() => {
-        if (progress === 100) {
-            setCanEnter(true)
-        } else {
-            setCanEnter(false)
-        }
-    }, [progress])
+    const canEnter = progress === 100
 
     const handleEnter = () => {
         window.scrollTo(0, 0)

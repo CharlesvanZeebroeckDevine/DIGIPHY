@@ -40,7 +40,7 @@ export function useRevealMask(modelRef, isActive = true) {
     const simMaterial = useMemo(() => new MaskSimulationMaterial(), [])
 
     // Create a full-screen quad for the simulation
-    const simMesh = useMemo(() => {
+    const _simMesh = useMemo(() => {
         const geometry = new THREE.PlaneGeometry(2, 2)
         const mesh = new THREE.Mesh(geometry, simMaterial)
         simScene.add(mesh)

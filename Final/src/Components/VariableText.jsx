@@ -1,7 +1,6 @@
 
-import React, { useRef, useEffect, useLayoutEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { gsap } from 'gsap'
-import { mapRange } from 'gsap/all'
 
 export default function VariableText({
     children,
@@ -12,9 +11,8 @@ export default function VariableText({
     fullEffectRadius = 250
 }) {
     const containerRef = useRef(null)
-    const charsRef = useRef([])
+    const charsMapRef = useRef(new Map())
     const mouseRef = useRef({ x: 0, y: 0 })
-    const rectsRef = useRef([]) // Cache positions to avoid layout thrashing
 
     // 1. Mouse Tracking (Passive listener)
     useEffect(() => {
@@ -36,7 +34,8 @@ export default function VariableText({
 
             // READ STEP: Get all positions first to avoid layout thrashing
             // This is necessary because the element moves during scroll
-            const charRects = charsRef.current.map(char => {
+            const chars = Array.from(charsMapRef.current.values())
+            const charRects = chars.map(char => {
                 if (!char) return null
                 const rect = char.getBoundingClientRect()
                 return {
@@ -96,7 +95,11 @@ export default function VariableText({
             return node.split('').map((char, charIndex) => (
                 <span
                     key={`${i}-${charIndex}`}
-                    ref={el => { if (el) charsRef.current.push(el) }}
+                    ref={el => {
+                        const key = `${i}-${charIndex}`
+                        if (el) charsMapRef.current.set(key, el)
+                        else charsMapRef.current.delete(key)
+                    }}
                     style={{
                         display: 'inline-block',
                         whiteSpace: 'pre' // Preserve spacing
@@ -121,9 +124,6 @@ export default function VariableText({
 
         return node
     }
-
-    // Reset refs on render
-    charsRef.current = []
 
     return (
         <div ref={containerRef} className={className}>

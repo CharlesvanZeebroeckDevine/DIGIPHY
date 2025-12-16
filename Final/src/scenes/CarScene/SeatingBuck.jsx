@@ -3,12 +3,14 @@ import React, { useEffect, useRef } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import * as THREE from 'three'
 import { LED_CONFIG, FLIP_MODELS_X, TRANSITION_CONFIG } from './config'
+import { useAudio } from '../../audio/AudioContext.js'
 
 export default function SeatingBuck({ activeModelIndex }) {
     const { scene, animations } = useGLTF('/SB.glb')
     const { actions, mixer } = useAnimations(animations, scene)
     const prevIndex = useRef(activeModelIndex)
     const ledMaterialsRef = useRef([])
+    const audio = useAudio()
 
     // Apply LED configuration and cache materials
     useEffect(() => {
@@ -32,6 +34,7 @@ export default function SeatingBuck({ activeModelIndex }) {
     // Handle Transition Animations
     useEffect(() => {
         if (prevIndex.current === activeModelIndex) return
+        let cancelled = false
 
         // Convert 0-based index to 1-based index (0->1, 1->2, 2->3)
         const from = prevIndex.current + 1
@@ -40,7 +43,12 @@ export default function SeatingBuck({ activeModelIndex }) {
         const clipName = `CAR_${from}_${to}`
         const action = actions[clipName]
 
-        if (action) {
+        const run = async () => {
+            if (!action) {
+                console.warn(`[SeatingBuck] Animation not found: ${clipName}`)
+                return
+            }
+
             console.log(`[SeatingBuck] Playing animation: ${clipName}`)
 
             // Start Blink Sequence: OFF -> IDLE -> OFF -> IDLE -> ACTIVE
@@ -66,10 +74,12 @@ export default function SeatingBuck({ activeModelIndex }) {
 
                 // Switch to Active (Green)
                 setLeds(LED_CONFIG.activeColor)
+                if (!cancelled) void audio.play('greenled', { bus: 'car', volume: 1 })
             }
 
             console.log(`[SeatingBuck] Starting LED Blink Sequence (Purple -> Green)`)
-            blinkSequence()
+            await blinkSequence()
+            if (cancelled) return
 
             // Stop other animations to avoid conflicts
             Object.values(actions).forEach(act => {
@@ -89,6 +99,7 @@ export default function SeatingBuck({ activeModelIndex }) {
             action.setEffectiveTimeScale(timeScale)
             action.setLoop(THREE.LoopOnce)
             action.clampWhenFinished = true
+            void audio.play('carswitch', { bus: 'car', volume: 1 })
             action.play()
 
             // Reset LEDs to default ("Idle" state) when finished
@@ -101,13 +112,13 @@ export default function SeatingBuck({ activeModelIndex }) {
                 }
             }
             mixer.addEventListener('finished', onFinished)
-
-        } else {
-            console.warn(`[SeatingBuck] Animation not found: ${clipName}`)
         }
 
+        void run()
+
         prevIndex.current = activeModelIndex
-    }, [activeModelIndex, actions, mixer])
+        return () => { cancelled = true }
+    }, [activeModelIndex, actions, mixer, audio])
 
     const modelScale = FLIP_MODELS_X ? [-1, 1, 1] : [1, 1, 1]
 

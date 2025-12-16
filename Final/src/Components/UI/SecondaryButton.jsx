@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import './SecondaryButton.css'
+import { useAudio } from '../../audio/AudioContext.js'
 
 export default function PrimaryButton({
     text,
@@ -13,6 +14,7 @@ export default function PrimaryButton({
     const containerRef = useRef(null)
     const fillRef = useRef(null)
     const tlRef = useRef(null)
+    const audio = useAudio()
 
     const chars = text.split('').map((char, index) => ({
         char,
@@ -26,9 +28,9 @@ export default function PrimaryButton({
 
             tlRef.current.to(fillRef.current, {
                 y: '0%',
-                borderRadius: '0% 0% 0 0', 
+                borderRadius: '0% 0% 0 0',
                 duration: duration,
-                ease: 'power2.inOut' 
+                ease: 'power2.inOut'
             }, 0)
 
             tlRef.current.to(charsRef.current, {
@@ -36,7 +38,7 @@ export default function PrimaryButton({
                 duration: duration,
                 stagger: stagger,
                 ease: 'power2.out'
-            }, 0) 
+            }, 0)
 
         }, containerRef)
 
@@ -45,16 +47,22 @@ export default function PrimaryButton({
 
     const handleMouseEnter = () => {
         if (tlRef.current) tlRef.current.play()
+        if (window.matchMedia?.('(hover: hover)').matches) {
+            void audio.play('hover')
+        }
     }
 
     const handleMouseLeave = () => {
         if (tlRef.current) tlRef.current.reverse()
+        if (window.matchMedia?.('(hover: hover)').matches) {
+            void audio.play('hoverout')
+        }
     }
 
     return (
         <div
             ref={containerRef}
-            className="sec_btn"
+            className={`sec_btn ${className}`.trim()}
             onClick={onClick}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}

@@ -263,7 +263,8 @@ function WindowGlowModel({ intensity = 10 }) {
 
 export default function Experience({ activeModelPath, transitionOpacity, cameraProgress, zoomLevel, interactionStrength }) {
     const { scene } = useThree()
-    const [carsGroup, setCarsGroup] = useState(null)
+    // Reserved for future grouping/control of cars; keep setter but avoid unused-var lint
+    const [_carsGroup, setCarsGroup] = useState(null)
 
     // Load the studio scene directly
     const studioScene = useGLTF('/BakedScene.glb')
