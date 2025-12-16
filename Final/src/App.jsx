@@ -236,7 +236,7 @@ function App() {
       </div>
 
       <div className="logo">
-        <span>DIGI<span className="bold">PHY</span> 2.0</span>
+        <a href="#car-selection">DIGI<span className="bold">PHY</span> 2.0</a>
       </div>
       <div className="car_scene--container">
         <CarScene

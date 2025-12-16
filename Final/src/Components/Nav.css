@@ -19,11 +19,6 @@ span {
     gap: var(--sp-m);
 }
 
-.logo span {
-    color: var(--doctor);
-    font-size: var(--fz-2);
-}
-
 .bold {
     font-weight: 700;
     color: var(--meteor-shower);

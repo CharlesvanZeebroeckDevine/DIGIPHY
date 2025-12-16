@@ -2,9 +2,9 @@
     position: relative;
     overflow: hidden;
     cursor: pointer;
-
-    width: 160px;
-    height: 50px;
+    color: var(--doctor);
+    padding-inline: var(--sp-s);
+    padding-block: var(--sp-xs);
     background-color: transparent;
     border-radius: 4px;
     border: 1px solid var(--doctor);
@@ -14,11 +14,8 @@
 
     font-family: 'GT Ultra', sans-serif;
     font-variation-settings: 'wght' 500;
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
+    font-size: var(--fz--1);
     text-transform: uppercase;
-    color: var(--doctor);
 
     transition: all 0.3s cubic-bezier(0.145, 0.045, 0.355, 1);
 }
