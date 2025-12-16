@@ -14,17 +14,17 @@
     {
         "index": 2,
         "name": "CE Certification",
-        "image": "/tech-features/CE_certification.webp",
+        "image": "/tech-features/CE_certification-2.webp",
         "description": "Fully compliant with Directive 2006/42/EC, featuring industrial-grade safety interlocks for corporate studio deployment. This guarantees it meets the safety standards required for daily professional use."
     },
     {
-        "index": 4,
+        "index": 3,
         "name": "Mobile",
         "image": "/tech-features/mobile.webp",
         "description": "Designed to be easily moved, for example to a presentation room or next to a full-scale mockup. This mobility allows teams to seamlessly integrate DigiPHY into different stages of the design workflow."
     },
     {
-        "index": 5,
+        "index": 4,
         "name": "IPAD",
         "image": "/tech-features/ipad.webp",
         "description": "Save and switch instantly between layouts. Quickly compare design variations or present alternative setups directly from the tablet interface."
