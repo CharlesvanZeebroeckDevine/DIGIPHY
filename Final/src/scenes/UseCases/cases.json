@@ -1,65 +1,5 @@
 [
     {
-        "id": 1,
-        "title": "Drako Dragon Hypercar",
-        "buttons": [
-            {
-                "label": "Drako Dragon website",
-                "url": "https://www.drakomotors.com/",
-                "buttonType": "secondary"
-            },
-            {
-                "label": "Read full usecase",
-                "url": "https://static1.squarespace.com/static/6513fe5dc027a77c7b908405/t/663b8eb138a94f1a901a025f/1715179195709/2023_03_17_DigiPHY_Drako_Use-Case.pdf",
-                "buttonType": "primary"
-            }
-        ],
-        "heroImage": "/assets/useCases/hero_drakoDragon.jpg",
-        "subtitle": "Creating a “two-soul” electric hypercar with mixed-reality design.",
-        "overview": {
-            "title": "Project overview",
-            "body": "Drako Motors, in collaboration with Granstudio, used DigiPHY to redefine what an electric hypercar could be, combining the performance of a sports car with the versatility of an SUV. By leveraging mixed-reality design, the team rapidly explored and validated interior layouts, aerodynamics, and user interactions, ensuring both luxury and functionality. This approach enabled real-time simulation of complex design choices, accelerated decision-making, and minimized the need for costly physical prototypes, resulting in a fully optimized, innovative vehicle in record time.",
-            "image": "/assets/useCases/project_drakoDragon.jpg"
-        },
-        "accordion": [
-            {
-                "number": 1,
-                "title": "Phygital Packaging Optimization",
-                "body": "Refined seating positions, interior layout, and aerodynamics while evaluating multiple suspension modes. Blending physical reference points with virtual testing ensured comfort, performance, and spatial efficiency in every configuration."
-            },
-            {
-                "number": 2,
-                "title": "Gull-Wing Door Validation",
-                "body": "Verified easy ingress and egress while ensuring the large doors fit within tight parking spaces. Mixed-reality testing allowed the team to confirm both functionality and real-world practicality early in the design process."
-            },
-            {
-                "number": 3,
-                "title": "Premium “Living Room” Interior",
-                "body": "Developed a spacious, luxurious cabin for five passengers with ergonomic HMI and ample trunk capacity. The design balanced hypercar performance with SUV comfort, creating a user-centered interior experience."
-            },
-            {
-                "number": 4,
-                "title": "Real-Time Mixed-Reality Workflow",
-                "body": "Simulated and validated interior and exterior designs using DigiPHY and Unreal Engine. Teams could test ideas instantly, adjust models on the fly, and align decisions faster than with traditional workflows."
-            },
-            {
-                "number": 5,
-                "title": "Accelerated Development & Cost Savings",
-                "body": "Completed the full design process in just four months while saving over €1 million in physical prototypes. The mixed-reality approach drastically reduced development time and resource use without compromising quality."
-            }
-        ],
-        "ending": {
-            "image": "/assets/useCases/quote_drakoDragon.jpg",
-            "quote": "“Thanks to our mixed reality design process, we created a new typology of electric vehicle derived from lived experiences on DigiPHY.”",
-            "quoteBy": "— Lowie Vermeersch, CEO & Creative Director, Granstudio",
-            "button": {
-                "label": "Read full case",
-                "url": "https://static1.squarespace.com/static/6513fe5dc027a77c7b908405/t/663b8eb138a94f1a901a025f/1715179195709/2023_03_17_DigiPHY_Drako_Use-Case.pdf",
-                "buttonType": "primary"
-            }
-        }
-    },
-    {
         "id": 2,
         "title": "Lynk & Co Cool Family Car",
         "buttons": [
@@ -120,7 +60,7 @@
         }
     },
     {
-        "id": 3,
+        "id": 2,
         "title": "Mazda Design Workshop",
         "buttons": [
             {
@@ -139,7 +79,7 @@
         "overview": {
             "title": "Project overview",
             "body": "Mazda Research Europe leveraged DigiPHY to revolutionize their design workflow for the Mazda MX5, comparing seating layouts and packaging alternatives in immersive VR. By combining physical seating bucks with virtual environments, designers were able to make faster, more accurate decisions, test ergonomics in real time, and iterate without the need for multiple costly physical prototypes. This mixed-reality approach streamlined collaboration between design, engineering, and user experience teams, enabling immediate feedback and highly informed design choices.",
-            "image": "/assets/useCases/project_mazda.jpg"
+            "image": "/assets/useCases/project_mazda.png"
         },
         "accordion": [
             {
@@ -170,11 +110,71 @@
         ],
         "ending": {
             "image": "/assets/useCases/quote_mazda.jpg",
-            "quote": "“Experiencing both designs in parallel and having confidence in the accuracy of DigiPHY enabled us to make key decisions on the spot.” ",
+            "quote": "“ Experiencing both designs in parallel and having confidence in the accuracy of DigiPHY enabled us to make key decisions on the spot.” ",
             "quoteBy": "— Jo Stenuit, Design Director, Mazda Research Europe",
             "button": {
                 "label": "Read full case",
                 "url": "https://static1.squarespace.com/static/6513fe5dc027a77c7b908405/t/663b75b5ced1cc4d17055427/1715172796600/Mazda+Design+Workshop+on+DigiPHY+%281%29.pdf",
+                "buttonType": "primary"
+            }
+        }
+    },
+    {
+        "id": 3,
+        "title": "Drako Dragon Hypercar",
+        "buttons": [
+            {
+                "label": "Drako Dragon website",
+                "url": "https://www.drakomotors.com/",
+                "buttonType": "secondary"
+            },
+            {
+                "label": "Read full usecase",
+                "url": "https://static1.squarespace.com/static/6513fe5dc027a77c7b908405/t/663b8eb138a94f1a901a025f/1715179195709/2023_03_17_DigiPHY_Drako_Use-Case.pdf",
+                "buttonType": "primary"
+            }
+        ],
+        "heroImage": "/assets/useCases/hero_drakoDragon.jpg",
+        "subtitle": "Creating a “two-soul” electric hypercar with mixed-reality design.",
+        "overview": {
+            "title": "Project overview",
+            "body": "Drako Motors, in collaboration with Granstudio, used DigiPHY to redefine what an electric hypercar could be, combining the performance of a sports car with the versatility of an SUV. By leveraging mixed-reality design, the team rapidly explored and validated interior layouts, aerodynamics, and user interactions, ensuring both luxury and functionality. This approach enabled real-time simulation of complex design choices, accelerated decision-making, and minimized the need for costly physical prototypes, resulting in a fully optimized, innovative vehicle in record time.",
+            "image": "/assets/useCases/project_drakoDragon.jpg"
+        },
+        "accordion": [
+            {
+                "number": 1,
+                "title": "Phygital Packaging Optimization",
+                "body": "Refined seating positions, interior layout, and aerodynamics while evaluating multiple suspension modes. Blending physical reference points with virtual testing ensured comfort, performance, and spatial efficiency in every configuration."
+            },
+            {
+                "number": 2,
+                "title": "Gull-Wing Door Validation",
+                "body": "Verified easy ingress and egress while ensuring the large doors fit within tight parking spaces. Mixed-reality testing allowed the team to confirm both functionality and real-world practicality early in the design process."
+            },
+            {
+                "number": 3,
+                "title": "Premium “Living Room” Interior",
+                "body": "Developed a spacious, luxurious cabin for five passengers with ergonomic HMI and ample trunk capacity. The design balanced hypercar performance with SUV comfort, creating a user-centered interior experience."
+            },
+            {
+                "number": 4,
+                "title": "Real-Time Mixed-Reality Workflow",
+                "body": "Simulated and validated interior and exterior designs using DigiPHY and Unreal Engine. Teams could test ideas instantly, adjust models on the fly, and align decisions faster than with traditional workflows."
+            },
+            {
+                "number": 5,
+                "title": "Accelerated Development & Cost Savings",
+                "body": "Completed the full design process in just four months while saving over €1 million in physical prototypes. The mixed-reality approach drastically reduced development time and resource use without compromising quality."
+            }
+        ],
+        "ending": {
+            "image": "/assets/useCases/quote_drakoDragon.jpg",
+            "quote": "“Thanks to our mixed reality design process, we created a new typology of electric vehicle derived from lived experiences on DigiPHY.”",
+            "quoteBy": "— Lowie Vermeersch, CEO & Creative Director, Granstudio",
+            "button": {
+                "label": "Read full case",
+                "url": "https://static1.squarespace.com/static/6513fe5dc027a77c7b908405/t/663b8eb138a94f1a901a025f/1715179195709/2023_03_17_DigiPHY_Drako_Use-Case.pdf",
                 "buttonType": "primary"
             }
         }
