@@ -92,7 +92,7 @@ export default function Poster({ url, position, rotation = [0, Math.PI, 0], scal
                 {/* @ts-ignore */}
                 <posterGlowMaterial
                     ref={glowMaterialRef}
-                    color={[1.1, 1, 1.1]}
+                    color={[1.1, 1, 1.2]}
                     transparent
                     toneMapped={false}
                 />

@@ -36,32 +36,38 @@ export default function UseCases({ setCameraProgress }) {
 
             // Reveal timeline (title then subtitle) — progress is driven by scroll.
             gsap.set(overlayEl, { opacity: 0 })
-            gsap.set(titleEl, { opacity: 0, y: 16 })
-            gsap.set(subtitleEl, { opacity: 0, y: 12 })
-
-            const revealTl = gsap.timeline({ paused: true })
-            revealTl.to(titleEl, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }, 0)
-            revealTl.to(subtitleEl, { opacity: 1, y: 0, duration: 1, ease: 'power2.out' }, 1)
+            gsap.set(titleEl, { opacity: 0, y: 160 })
+            gsap.set(subtitleEl, { opacity: 0, y: 120 })
 
             let baseRevealP = 0
             let fadeOutP = 0
 
             const applyOverlay = () => {
-                // Keep the reveal timeline purely for the reveal.
-                // Fade-out is applied separately via simple opacity multipliers so the subtitle
-                // doesn't linger (rewinding the reveal timeline makes it disappear late).
+                // Drive reveal directly from scroll progress (prevents opacity being overwritten).
+                // revealP: 0..1 over the reveal phase
                 const revealP = Math.max(0, Math.min(1, baseRevealP))
-                revealTl.progress(revealP)
 
                 // Faster fade curve for subtitle, slightly slower for title.
                 const overlayFade = Math.pow(1 - fadeOutP, 1.6)
                 const titleFade = Math.pow(1 - fadeOutP, 2.0)
                 const subtitleFade = Math.pow(1 - fadeOutP, 4.0)
 
-                const visible = revealP > 0 && overlayFade > 0.001
+                // Two-stage reveal: title first half, subtitle second half
+                const titleIn = Math.max(0, Math.min(1, revealP * 2))
+                const subtitleIn = Math.max(0, Math.min(1, (revealP - 0.5) * 2))
+
+                const visible = titleIn > 0.001 && overlayFade > 0.001
                 gsap.set(overlayEl, { opacity: visible ? 1 : 0 })
-                gsap.set(titleEl, { opacity: titleFade })
-                gsap.set(subtitleEl, { opacity: subtitleFade })
+
+                // Fade in + slide up, then apply fadeOut multipliers
+                gsap.set(titleEl, {
+                    opacity: titleIn * titleFade,
+                    y: (1 - titleIn) * 160,
+                })
+                gsap.set(subtitleEl, {
+                    opacity: subtitleIn * subtitleFade,
+                    y: (1 - subtitleIn) * 120,
+                })
             }
 
             // Pre-roll: start camera motion immediately when UseCases starts entering the viewport.
@@ -84,6 +90,7 @@ export default function UseCases({ setCameraProgress }) {
                     const { totalPinnedPx } = computeUseCasesPhasesPx()
                     return `+=${totalPinnedPx}`
                 },
+                id: 'usecases-pin',
                 pin: true,
                 pinSpacing: true,
                 scrub: true,

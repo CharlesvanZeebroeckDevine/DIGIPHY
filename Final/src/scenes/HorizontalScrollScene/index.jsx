@@ -6,6 +6,7 @@ import { InteractiveCubeGrid } from './InteractiveCubeGrid'
 
 import { Suspense, useRef, useLayoutEffect } from 'react'
 import VariableText from '../../Components/VariableText'
+import PrimaryButton from '../../Components/UI/PrimaryButton'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
@@ -387,6 +388,7 @@ function SceneContent({
                 const postMaskEl = ui.postItemMaskRef?.current
                 const postImgEl = ui.postItemImgRef?.current
                 const postTextEl = ui.postItemTextRef?.current
+                const postCtaEl = ui.postCtaRef?.current
                 const postRevealStart = 'phase4+=0.2'
 
                 if (postMaskEl && postImgEl) {
@@ -413,7 +415,20 @@ function SceneContent({
                         stagger: 0.01,
                         duration: DURATIONS.trackItemText,
                         ease: 'power2.out'
-                    }, `${postRevealStart}+=0.5`)
+                    }, 'phase4+=1.6')
+                }
+
+                // CTA: reveal after the quote/text is revealed
+                if (postCtaEl) {
+                    gsap.set(postCtaEl, { opacity: 0, y: 20, pointerEvents: 'none' })
+                    tl.to(postCtaEl, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.6,
+                        ease: 'power2.out',
+                        onStart: () => { postCtaEl.style.pointerEvents = 'auto' },
+                        onReverseComplete: () => { postCtaEl.style.pointerEvents = 'none' },
+                    }, 'phase4+=3.3')
                 }
 
                 if (trackItem) {
@@ -626,6 +641,18 @@ export default function HorizontalScrollScene() {
     const postItemMaskRef = useRef(null)
     const postItemImgRef = useRef(null)
     const postItemTextRef = useRef(null)
+    const postCtaRef = useRef(null)
+
+    const handleScrollToUseCases = () => {
+        // Scroll to the END of the pinned UseCases sequence (when its text reveal is complete)
+        const st = ScrollTrigger.getById?.('usecases-pin')
+        if (st?.end != null) {
+            window.scrollTo({ top: st.end - 2, behavior: 'smooth' })
+            return
+        }
+        // Fallback: just go to the section start
+        document.getElementById('car-usecases')?.scrollIntoView({ behavior: 'smooth' })
+    }
 
     useLayoutEffect(() => {
         const el = containerRef.current
@@ -690,6 +717,7 @@ export default function HorizontalScrollScene() {
                                     postItemMaskRef,
                                     postItemImgRef,
                                     postItemTextRef,
+                                    postCtaRef,
                                 }}
                             />
                         </Suspense>
@@ -717,29 +745,26 @@ export default function HorizontalScrollScene() {
 
                         {/* Panel 3: Post-grid content */}
                         <div className="track_panel post_grid_panel">
-                            <div className="post_grid_content">
-
-                                <div className="post_grid_stack">
-                                    <div className="post_grid_item">
-                                        <div ref={postItemMaskRef} className="track_item--reveal-mask post_grid_mask">
-                                            <img
-                                                ref={postItemImgRef}
-                                                className="track_item--img post_grid_img"
-                                                src="/pictures/2.webp"
-                                                alt="Tangible"
-                                            />
-                                        </div>
-                                        <div ref={postItemTextRef} className="track_item--text post_grid_quote">
-                                            "On my way to Turin, I was concerned about the precision of the
-                                            VR. The first thing I did was touch the roof. I could see and feel exactly where my hands were, that gave me the trust I needed to make confident design decisions."
-                                        </div>
-                                        <div className="post_grid_author"> <span className="post_grid_author_name">Jean-Michel Gallay</span> Architecture and Engineering team at <span className="post_grid_author_company">Renault</span></div>
-                                    </div>
-                                </div>
-
-                                {/* Line2 target marker for alignment */}
-                                <div ref={postLineTargetRef} className="post_grid_line_target" />
+                            <div ref={postItemMaskRef} className="track_item--reveal-mask post_grid_mask">
+                                <img
+                                    ref={postItemImgRef}
+                                    className="track_item--img post_grid_img"
+                                    src="/pictures/2.webp"
+                                    alt="Tangible"
+                                />
                             </div>
+                            {/* Text is outside the image container (same pattern as Track Item 1) */}
+                            <div ref={postItemTextRef} className="track_item--text post_grid_text" >
+                                <div className="post_grid_quote">
+                                    "On my way to Turin, I was concerned about the precision of the
+                                    VR. The first thing I did was touch the roof. I could see and feel exactly where my hands were, that gave me the trust I needed to make confident design decisions."
+                                </div>
+                                <div className="post_grid_author">
+                                    <span className="post_grid_author_name">Jean-Michel Gallay</span><span className="post_grid_author_company">Architecture and Engineering team at Renault</span>
+                                </div>
+                            </div>
+                            {/* Line2 target marker for alignment */}
+                            <div ref={postLineTargetRef} className="post_grid_line_target" />
                         </div>
 
                         {/* SVG Line: Positioned absolute relative to Track, starting at center of Panel 1 */}
@@ -770,6 +795,14 @@ export default function HorizontalScrollScene() {
                                 for seamless integration of physical properties.
                             </div>
                         </div>
+                    </div>
+
+                    {/* Post-grid CTA overlay (kept outside .horizontal_track because it has pointer-events: none) */}
+                    <div ref={postCtaRef} className="post_grid_cta_overlay">
+                        <PrimaryButton
+                            text="Explore use cases"
+                            onClick={handleScrollToUseCases}
+                        />
                     </div>
 
                     {/* SEPARATE STEERING WHEEL SCENE (Now Interactive Grid) */}

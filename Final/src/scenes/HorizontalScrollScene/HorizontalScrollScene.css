@@ -226,19 +226,18 @@
 }
 
 .post_grid_content {
-  width: min(1100px, 90vw);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .post_grid_text {
   color: var(--doctor);
   font-family: 'GT Ultra', sans-serif;
-  font-size: var(--fz-2);
   font-weight: 200;
+  max-width: 30rem;
   line-height: 1.1;
+  margin-left: 4vw;
+  margin-top: 12vh;
 }
 
 .post_grid_stack {
@@ -247,12 +246,8 @@
   gap: 1.25rem;
 }
 
-.post_grid_item {
-  position: relative;
-  overflow: hidden;
-}
-
 .post_grid_mask {
+  width: 30vw;
   overflow: hidden;
   border: 1px solid rgb(255, 255, 255);
 
@@ -262,15 +257,19 @@
   width: 100%;
   height: auto;
   display: block;
-  transform: scale(1.5);
 }
 
-.post_grid_item .track_item--img {
+.post_grid_panel .post_grid_img {
   width: 100%;
 }
 
-.post_grid_item .track_item--text {
-  max-width: 100%;
+/* Quote container now lives at `.track_item--text.post_grid_text` (no `.post_grid_item` wrapper anymore) */
+.post_grid_panel .post_grid_text {
+  font-size: 1.2rem;
+  font-weight: 100;
+  line-height: 1.2;
+  color: rgba(249, 249, 249, 0.8);
+  text-align: left;
 }
 
 .post_grid_label {
@@ -290,12 +289,37 @@
   pointer-events: none;
 }
 
+.post_grid_cta_overlay {
+  position: absolute;
+  left: 50%;
+  bottom: 20%;
+  transform: translateX(-50%) translateY(50%);
+  z-index: 200;
+  pointer-events: none;
+  /* GSAP enables when visible */
+}
+
+/* Make the CTA button wider (scoped to this overlay only) */
+.post_grid_cta_overlay .footer_btn {
+  width: min(320px, 40vw);
+  margin: 0 auto;
+}
+
+.post_grid_quote {
+  font-size: 1.2rem;
+  font-weight: 100;
+  line-height: 1.2;
+  color: rgba(249, 249, 249, 0.8);
+}
+
 .post_grid_author {
   margin-top: var(--sp-s);
-
   font-family: 'Montserrat', sans-serif;
   font-size: 0.9rem;
   color: rgba(249, 249, 249, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3xs);
 }
 
 .post_grid_author_name {
