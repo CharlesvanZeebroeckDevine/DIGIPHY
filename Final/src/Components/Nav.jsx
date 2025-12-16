@@ -4,9 +4,9 @@ import './Nav.css'
 const Nav = ({ scrollToSection }) => {
     return (
         <div className="nav_container">
-            <div className="logo">
+           {/*  <div className="logo">
                 <span>DIGI<span className="bold">PHY</span> 2.0</span>
-            </div>
+            </div> */}
             <div className="nav_buttons">
                 <PrimaryButton
                     text="Use Cases"
