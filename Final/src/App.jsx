@@ -12,6 +12,7 @@ import LoadingScreen from './Components/LoadingScreen'
 import Nav from './Components/Nav'
 import { TRANSITION_CONFIG } from './scenes/CarScene/config'
 import UseCases from './scenes/UseCases'
+import { useAudio } from './audio/AudioContext'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -25,6 +26,7 @@ function App() {
   const [transitionOpacity, setTransitionOpacity] = useState(1.0)
   const [uiVisible, setUiVisible] = useState(true)
   const [muteVisible, setMuteVisible] = useState(true)
+  const { muted, setMuted } = useAudio()
 
   const [cameraProgress, setCameraProgress] = useState(0)
   const [carSceneEnabled, setCarSceneEnabled] = useState(true)
@@ -232,10 +234,13 @@ function App() {
   return (
     <>
       <LoadingScreen onEnter={() => setHasEntered(true)} />
-      <div className="nav_container">
+      <div className={`nav_container`}>
         <Nav scrollToSection={handleScrollToSection} />
       </div>
-      <div className={`mute ${!muteVisible ? 'hidden' : ''}`}>
+      <div
+        className={`mute ${!muteVisible ? 'hidden' : ''} ${muted ? 'disabled' : ''}`}
+        onClick={() => setMuted(!muted)}
+      >
         {[...Array(8)].map((_, i) => (
           <div
             key={i}
