@@ -4,7 +4,7 @@ import { useProgress } from '@react-three/drei'
 import { useEffect, useState } from 'react'
 import PrimaryButton from './UI/PrimaryButton'
 
-export default function LoadingScreen() {
+export default function LoadingScreen({ onEnter }) {
     const { progress, active } = useProgress()
     const [finished, setFinished] = useState(false)
     const [canEnter, setCanEnter] = useState(false)
@@ -19,6 +19,7 @@ export default function LoadingScreen() {
 
     const handleEnter = () => {
         setFinished(true)
+        if (onEnter) onEnter()
     }
 
     return (
