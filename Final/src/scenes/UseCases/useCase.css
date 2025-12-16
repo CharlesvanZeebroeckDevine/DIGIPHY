@@ -8,13 +8,15 @@
 
 .usecases_overlay {
   position: fixed;
-  top: 8vh;
-  left: 6vw;
-  /* Must be above later sections (TechFeatures, etc.) */
+  top: 20vh;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
   z-index: 9999;
   pointer-events: none;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 0.75rem;
   color: #000;
   background: none;
