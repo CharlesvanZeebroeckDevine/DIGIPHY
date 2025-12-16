@@ -38,6 +38,7 @@
     transition: opacity 0.5s ease-in-out;
 }
 
+
 .feature_background img.active {
     opacity: 1;
 }
@@ -62,15 +63,12 @@
 
 .feature_description span {
     color: var(--doctor);
-    mix-blend-mode: difference;
     font-family: 'Montserrat', sans-serif;
     font-size: var(--fz-0);
     line-height: 150%;
     font-weight: 400;
 
 }
-
-
 
 .feature_image {
     width: 100%;
@@ -81,7 +79,7 @@
     background: none;
     padding-block: 2.5rem;
     padding-inline: 1rem;
-    color: #8d8892;
+    color: #d5d0da;
     cursor: pointer;
     transition: 0.3s ease-in-out;
     width: 100%;
@@ -93,7 +91,7 @@
 }
 
 .feature_button.active {
-    color: var(--doctor);
+    color: var(--meteor-shower);
 }
 
 .feature_button:hover {

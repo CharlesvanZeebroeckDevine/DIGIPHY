@@ -23,6 +23,12 @@
     transition: all 0.3s cubic-bezier(0.145, 0.045, 0.355, 1);
 }
 
+.sec_btn.active {
+    background-color: var(--meteor-shower);
+    color: white;
+    /* Optional: Ensure contrast if needed, but keeping user request simple */
+}
+
 .sec_btn_fill {
     position: absolute;
     bottom: 0;

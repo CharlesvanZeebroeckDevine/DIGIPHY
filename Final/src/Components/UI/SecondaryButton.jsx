@@ -7,6 +7,7 @@ export default function PrimaryButton({
     text,
     onClick,
     className = '',
+    active = false,
     duration = 0.5,
     stagger = 0.05
 }) {
@@ -62,7 +63,7 @@ export default function PrimaryButton({
     return (
         <div
             ref={containerRef}
-            className={`sec_btn ${className}`.trim()}
+            className={`sec_btn ${active ? 'active' : ''} ${className}`.trim()}
             onClick={onClick}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}

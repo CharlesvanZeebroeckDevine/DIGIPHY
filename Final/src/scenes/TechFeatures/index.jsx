@@ -41,7 +41,7 @@ const TechFeatures = () => {
             <div ref={containerRef} className="feature_container">
                 <div className="feature_background">
                     {features.map((feature, index) => (
-                        <img
+                        <img 
                             key={index}
                             src={feature.image}
                             alt={feature.name}
