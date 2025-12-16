@@ -119,12 +119,12 @@ a {
   border-radius: 10px;
   animation: sound-wave 2s ease-in-out infinite;
   animation-delay: calc(var(--dist) * -0.1s);
-  /* transition: background-color 0.5s ease; */
+  transition: background-color 0.5s ease;
 }
 
-.logo span {
+.logo a {
   color: var(--doctor);
-  font-size: var(--fz-2);
+  font-size: var(--fz-1);
 }
 
 .bold {
