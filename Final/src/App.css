@@ -124,7 +124,7 @@ a {
 
 .logo a {
   color: var(--doctor);
-  font-size: var(--fz-1);
+  font-size: var(--fz--1);
 }
 
 .bold {

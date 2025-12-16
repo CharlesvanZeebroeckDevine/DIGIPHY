@@ -49,7 +49,6 @@
     grid-template-columns: 20vw auto 20vw;
     align-items: center;
     position: relative;
-    z-index: 1;
 }
 
 .feature_nav {
@@ -58,6 +57,17 @@
 
 .feature_description {
     grid-column: 3;
+
+}
+
+.feature_description span {
+    color: var(--doctor);
+    mix-blend-mode: difference;
+    font-family: 'Montserrat', sans-serif;
+    font-size: var(--fz-0);
+    line-height: 150%;
+    font-weight: 400;
+
 }
 
 
@@ -87,6 +97,6 @@
 }
 
 .feature_button:hover {
-    color: var(--meteor-shower);
+    color: var(--doctor);
     transition: 0.3s ease-in-out;
 }

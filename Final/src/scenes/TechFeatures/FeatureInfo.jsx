@@ -16,9 +16,9 @@ const FeatureInfo = ({ selectedFeature }) => {
 
     return (
         <div className="feature_description">
-            <p key={selectedFeature.index} ref={textRef}>
+            <span key={selectedFeature.index} ref={textRef}>
                 {selectedFeature.description}
-            </p>
+            </span>
         </div>
     );
 };
