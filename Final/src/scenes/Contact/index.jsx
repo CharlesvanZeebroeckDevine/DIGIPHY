@@ -40,28 +40,18 @@ const Contact = () => {
                             <label className="form_item--label" htmlFor="workoption">i would like to:</label>
                             <div className="radio_container">
                                 <div className="radio_container--item">
-                                    <input type="radio" id="sub" name="sub__option" value="sub" />
+                                    <input type="radio" id="sub" name="inquiry_type" value="sub" />
                                     <label htmlFor="sub">Subscribe to the newsletter</label>
                                 </div>
 
                                 <div className="radio_container--item">
-                                    <input type="radio" id="book" name="book__option" value="book" />
+                                    <input type="radio" id="book" name="inquiry_type" value="book" />
                                     <label htmlFor="book">Book a workshop</label>
                                 </div>
 
                                 <div className="radio_container--item">
-                                    <input type="radio" id="rent" name="rent__option" value="rent" />
-                                    <label htmlFor="rent">Rent the DigiPHY model</label>
-                                </div>
-
-                                <div className="radio_container--item">
-                                    <input type="radio" id="buy" name="buy__option" value="buy" />
-                                    <label htmlFor="buy">Buy the DigiPHY model</label>
-                                </div>
-
-                                <div className="radio_container--item">
-                                    <input type="radio" id="other" name="buy__option" value="other" />
-                                    <label htmlFor="other">Other</label>
+                                    <input type="radio" id="quote" name="inquiry_type" value="quote" />
+                                    <label htmlFor="quote">Request a quote</label>
                                 </div>
                             </div>
                         </div>
