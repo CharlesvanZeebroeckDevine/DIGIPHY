@@ -18,6 +18,7 @@ export default function LoadingScreen({ onEnter }) {
     }, [progress])
 
     const handleEnter = () => {
+        window.scrollTo(0, 0)
         setFinished(true)
         if (onEnter) onEnter()
     }

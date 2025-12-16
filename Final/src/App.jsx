@@ -25,7 +25,7 @@ function App() {
   const [transitionOpacity, setTransitionOpacity] = useState(1.0)
   const [uiVisible, setUiVisible] = useState(true)
   const [muteVisible, setMuteVisible] = useState(true)
-  const [muteColor, setMuteColor] = useState('white')
+
   const [cameraProgress, setCameraProgress] = useState(0)
   const [carSceneEnabled, setCarSceneEnabled] = useState(true)
   const [zoomLevel, setZoomLevel] = useState(0)
@@ -41,7 +41,19 @@ function App() {
       document.body.style.overflow = 'hidden'
     } else {
       lenisRef.current.start()
+      lenisRef.current.scrollTo(0, { immediate: true })
       document.body.style.overflow = ''
+
+      // Reset animation states to ensure clean start
+      setZoomLevel(0)
+      setInteractionStrength(1)
+      setCameraProgress(0)
+      setUiVisible(true)
+
+      // Force refresh after a slight delay to ensure layout is settled
+      setTimeout(() => {
+        ScrollTrigger.refresh()
+      }, 100)
     }
   }, [hasEntered])
 
@@ -138,16 +150,6 @@ function App() {
         onLeaveBack: () => setUiVisible(true)
       })
 
-      gsap.utils.toArray('[data-theme]').forEach(section => {
-        ScrollTrigger.create({
-          trigger: section,
-          start: 'top center',
-          end: 'bottom center',
-          onEnter: () => setMuteColor(section.dataset.theme === 'light' ? 'black' : 'white'),
-          onEnterBack: () => setMuteColor(section.dataset.theme === 'light' ? 'black' : 'white')
-        })
-      })
-
       ScrollTrigger.create({
         trigger: '#footer',
         start: 'top bottom-=50',
@@ -223,7 +225,7 @@ function App() {
       <div className="nav_container">
         <Nav scrollToSection={handleScrollToSection} />
       </div>
-      <div className={`mute ${!muteVisible ? 'hidden' : ''} ${muteColor === 'black' ? 'on-light' : ''}`}>
+      <div className={`mute ${!muteVisible ? 'hidden' : ''}`}>
         {[...Array(8)].map((_, i) => (
           <div
             key={i}
@@ -231,6 +233,10 @@ function App() {
             style={{ '--dist': Math.abs(i - 7) }}
           />
         ))}
+      </div>
+
+      <div className="logo">
+        <span>DIGI<span className="bold">PHY</span> 2.0</span>
       </div>
       <div className="car_scene--container">
         <CarScene

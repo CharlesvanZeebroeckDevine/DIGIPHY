@@ -104,6 +104,7 @@ a {
   pointer-events: auto;
   transition: opacity 0.5s ease;
   opacity: 1;
+  mix-blend-mode: difference;
 }
 
 .mute.hidden {
@@ -118,9 +119,25 @@ a {
   border-radius: 10px;
   animation: sound-wave 2s ease-in-out infinite;
   animation-delay: calc(var(--dist) * -0.1s);
-  transition: background-color 0.5s ease;
+  /* transition: background-color 0.5s ease; */
 }
 
-.mute.on-light .bar {
-  background-color: var(--smoky-umber);
+.logo span {
+  color: var(--doctor);
+  font-size: var(--fz-2);
+}
+
+.bold {
+  font-weight: 700;
+  color: var(--meteor-shower);
+}
+
+.logo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  margin-block-start: var(--sp-l);
+  margin-inline-start: var(--sp-s);
+  mix-blend-mode: difference;
 }
