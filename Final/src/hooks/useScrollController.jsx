@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 
 export const useScrollController = () => {
   const [scrollY, setScrollY] = useState(0)
-  const [activeSection, setActiveSection] = useState(0)
   const [isScrollLocked, setIsScrollLocked] = useState(false)
+  const [viewportHeight, setViewportHeight] = useState(() => window.innerHeight)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,13 +17,12 @@ export const useScrollController = () => {
   }, [isScrollLocked])
 
   useEffect(() => {
-    const viewportHeight = window.innerHeight
-    if (scrollY < viewportHeight * 0.5) {
-      setActiveSection(0)
-    } else {
-      setActiveSection(1)
-    }
-  }, [scrollY])
+    const onResize = () => setViewportHeight(window.innerHeight)
+    window.addEventListener('resize', onResize, { passive: true })
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  const activeSection = scrollY < viewportHeight * 0.5 ? 0 : 1
 
   return {
     scrollY,

@@ -27,48 +27,48 @@ const random = (min, max) => Math.random() * (max - min) + min
 export const LiquidFooterLine = () => {
     const pathRefs = useRef([])
     const simulationRef = useRef([])
-    const [blobCount, setBlobCount] = useState(80)
-
-    const initSimulation = () => {
-        const width = window.innerWidth
-        const height = window.innerHeight
-
-        const blobs = []
-
-        const buffer = 50
-
-        for (let i = 0; i < blobCount; i++) {
-
-            const cx = random(-buffer, width + buffer)
-            const cy = random(-buffer, height + buffer)
-            const radius = random(80, 300)
-
-            const vx = random(-0.3, 0.3)
-            const vy = random(-0.3, 0.3)
-
-            const pointsCount = 10
-            const points = []
-            for (let j = 0; j < pointsCount; j++) {
-                points.push({
-                    angle: (Math.PI * 2 * j) / pointsCount,
-                    noiseOffset: random(0, 100),
-                    amp: random(10, 30)
-                })
-            }
-
-            blobs.push({ cx, cy, radius, vx, vy, points })
-        }
-        simulationRef.current = blobs
-    }
+    const [blobCount] = useState(80)
 
     useEffect(() => {
+        const initSimulation = () => {
+            const width = window.innerWidth
+            const height = window.innerHeight
+
+            const blobs = []
+
+            const buffer = 50
+
+            for (let i = 0; i < blobCount; i++) {
+
+                const cx = random(-buffer, width + buffer)
+                const cy = random(-buffer, height + buffer)
+                const radius = random(80, 300)
+
+                const vx = random(-0.3, 0.3)
+                const vy = random(-0.3, 0.3)
+
+                const pointsCount = 10
+                const points = []
+                for (let j = 0; j < pointsCount; j++) {
+                    points.push({
+                        angle: (Math.PI * 2 * j) / pointsCount,
+                        noiseOffset: random(0, 100),
+                        amp: random(10, 30)
+                    })
+                }
+
+                blobs.push({ cx, cy, radius, vx, vy, points })
+            }
+            simulationRef.current = blobs
+        }
+
         initSimulation()
 
         const ticker = () => {
             const time = Date.now() * 0.001
             const width = window.innerWidth
             const height = window.innerHeight
-            const buffer = 300 
+            const buffer = 300
 
             simulationRef.current.forEach((blob, i) => {
                 const pathEl = pathRefs.current[i]

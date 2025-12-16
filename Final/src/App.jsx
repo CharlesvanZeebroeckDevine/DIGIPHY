@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -245,7 +245,7 @@ function App() {
           onModelSwitch={handleModelSwitch}
           uiVisible={uiVisible}
           cameraProgress={cameraProgress}
-          isEnabled={carSceneEnabled}
+          isEnabled={true}
           zoomLevel={zoomLevel}
           interactionStrength={interactionStrength}
         />

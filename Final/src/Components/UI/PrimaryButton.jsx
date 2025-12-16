@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import './PrimaryButton.css'
+import { useAudio } from '../../audio/AudioContext.js'
 
 export default function PrimaryButton({
     text,
@@ -13,6 +14,7 @@ export default function PrimaryButton({
     const containerRef = useRef(null)
     const fillRef = useRef(null)
     const tlRef = useRef(null)
+    const audio = useAudio()
 
     const chars = text.split('').map((char, index) => ({
         char,
@@ -45,16 +47,22 @@ export default function PrimaryButton({
 
     const handleMouseEnter = () => {
         if (tlRef.current) tlRef.current.play()
+        if (window.matchMedia?.('(hover: hover)').matches) {
+            void audio.play('hover')
+        }
     }
 
     const handleMouseLeave = () => {
         if (tlRef.current) tlRef.current.reverse()
+        if (window.matchMedia?.('(hover: hover)').matches) {
+            void audio.play('hoverout')
+        }
     }
 
     return (
         <div
             ref={containerRef}
-            className="footer_btn"
+            className={`footer_btn ${className}`.trim()}
             onClick={onClick}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}

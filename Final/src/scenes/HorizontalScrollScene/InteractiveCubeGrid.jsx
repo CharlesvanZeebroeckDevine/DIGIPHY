@@ -179,7 +179,7 @@ export const InteractiveCubeGrid = forwardRef(function InteractiveCubeGrid(_prop
         },
     }), [])
 
-    useFrame((state, delta) => {
+    useFrame(() => {
         if (!cubesRef.current.length) return
 
         // Raycasting
