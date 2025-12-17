@@ -7,7 +7,6 @@ export const SOUND_FILES = {
     hoverout: '/sound/hoverout.aac',
 }
 
-// Default mixing values (0..1). You can later expose these in a UI and persist to localStorage.
 export const DEFAULT_VOLUMES = {
     master: 0.85,
     music: 0.8,
