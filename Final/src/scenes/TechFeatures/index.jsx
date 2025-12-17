@@ -5,6 +5,7 @@ import VariableText from '../../Components/VariableText'
 import features from "./techFeatures.json";
 import FeatureNavigation from "./FeatureNavigation";
 import FeatureInfo from "./FeatureInfo";
+import TechFeaturesCanvas from "./TechFeaturesCanvas";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -40,14 +41,7 @@ const TechFeatures = () => {
         <div ref={wrapperRef} className="feature_container--wrapper">
             <div ref={containerRef} className="feature_container">
                 <div className="feature_background">
-                    {features.map((feature, index) => (
-                        <img 
-                            key={index}
-                            src={feature.image}
-                            alt={feature.name}
-                            className={selectedFeature.index === index ? 'active' : ''}
-                        />
-                    ))}
+                    <TechFeaturesCanvas selectedFeature={selectedFeature} />
                 </div>
                 <h2 className="visibility-hidden">Tech Features</h2>
                 <div style={{ pointerEvents: 'none', position: 'relative', zIndex: 1 }}>

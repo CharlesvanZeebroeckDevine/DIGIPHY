@@ -91,7 +91,7 @@
 }
 
 .feature_button.active {
-    color: var(--meteor-shower);
+    color: var(--doctor);
 }
 
 .feature_button:hover {
