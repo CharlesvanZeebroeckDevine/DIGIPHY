@@ -1,16 +1,25 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { AudioManager } from './AudioManager'
-import { DEFAULT_VOLUMES } from './sounds'
+import { DEFAULT_VOLUME } from './sounds'
 import { AudioContext } from './AudioContext'
 
 export function AudioProvider({ children }) {
   const [muted, setMutedState] = useState(false)
-  const [volumes, setVolumesState] = useState(() => {
-    try {
-      const raw = localStorage.getItem('digiphy:audioVolumes')
-      return raw ? { ...DEFAULT_VOLUMES, ...JSON.parse(raw) } : { ...DEFAULT_VOLUMES }
-    } catch {
-      return { ...DEFAULT_VOLUMES }
+  const [soundVolumes, setSoundVolumesState] = useState(() => {
+    // Keep `sounds.js` as the single source of truth for the default mix.
+    // (LocalStorage persistence was overriding this and made it seem like volume values “don’t work”.)
+    return {
+      background: DEFAULT_VOLUME.background,
+      carswitch: DEFAULT_VOLUME.carswitch,
+      greenled: DEFAULT_VOLUME.greenled,
+      click: DEFAULT_VOLUME.click,
+      hover: DEFAULT_VOLUME.hover,
+      hoverout: DEFAULT_VOLUME.hoverout,
+      posterhover: DEFAULT_VOLUME.posterhover,
+      swoosh1: DEFAULT_VOLUME.swoosh1,
+      swoosh2: DEFAULT_VOLUME.swoosh2,
+      swoosh3: DEFAULT_VOLUME.swoosh3,
+      swoosh4: DEFAULT_VOLUME.swoosh4,
     }
   })
 
@@ -22,13 +31,8 @@ export function AudioProvider({ children }) {
   }, [])
 
   useEffect(() => {
-    AudioManager.setVolumes(volumes)
-    try {
-      localStorage.setItem('digiphy:audioVolumes', JSON.stringify(volumes))
-    } catch {
-      // ignore
-    }
-  }, [volumes])
+    AudioManager.setSoundVolumes(soundVolumes)
+  }, [soundVolumes])
 
   useEffect(() => {
     AudioManager.setMuted(muted)
@@ -47,7 +51,7 @@ export function AudioProvider({ children }) {
       }
 
       // Click SFX should still fire even if unlocked already.
-      void AudioManager.play('click', { bus: 'ui', volume: 1 })
+      void AudioManager.play('click', { volume: 1 })
     }
 
     window.addEventListener('pointerdown', onPointerDownCapture, { capture: true })
@@ -57,9 +61,12 @@ export function AudioProvider({ children }) {
   const api = useMemo(() => {
     return {
       muted,
-      volumes,
+      soundVolumes,
       setMuted: (v) => setMutedState(Boolean(v)),
-      setVolumes: (next) => setVolumesState((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) })),
+      setSoundVolumes: (next) =>
+        setSoundVolumesState((prev) => ({ ...prev, ...(typeof next === 'function' ? next(prev) : next) })),
+      setSoundVolume: (name, value) =>
+        setSoundVolumesState((prev) => ({ ...prev, [name]: value })),
       unlock: async () => {
         const ok = await AudioManager.unlock()
         if (ok) AudioManager.startBackgroundOnce()
@@ -67,7 +74,7 @@ export function AudioProvider({ children }) {
       },
       play: async (name, opts) => await AudioManager.play(name, opts),
     }
-  }, [muted, volumes])
+  }, [muted, soundVolumes])
 
   return <AudioContext.Provider value={api}>{children}</AudioContext.Provider>
 }

@@ -74,7 +74,7 @@ export default function SeatingBuck({ activeModelIndex }) {
 
                 // Switch to Active (Green)
                 setLeds(LED_CONFIG.activeColor)
-                if (!cancelled) void audio.play('greenled', { bus: 'car', volume: 1 })
+                if (!cancelled) void audio.play('greenled', { volume: 1 })
             }
 
             console.log(`[SeatingBuck] Starting LED Blink Sequence (Purple -> Green)`)
@@ -99,7 +99,7 @@ export default function SeatingBuck({ activeModelIndex }) {
             action.setEffectiveTimeScale(timeScale)
             action.setLoop(THREE.LoopOnce)
             action.clampWhenFinished = true
-            void audio.play('carswitch', { bus: 'car', volume: 1 })
+            void audio.play('carswitch', { volume: 1 })
             action.play()
 
             // Reset LEDs to default ("Idle" state) when finished

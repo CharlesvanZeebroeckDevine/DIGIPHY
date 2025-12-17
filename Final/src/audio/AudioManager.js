@@ -1,4 +1,4 @@
-import { DEFAULT_VOLUMES, SOUND_BUS, SOUND_FILES } from './sounds'
+import { DEFAULT_VOLUME, SOUND_FILES } from './sounds'
 
 // A small WebAudio manager (singleton-friendly) for mixing + low-latency SFX.
 class AudioManagerImpl {
@@ -8,11 +8,22 @@ class AudioManagerImpl {
         this._loading = new Map()
 
         this._masterGain = null
-        this._busGains = new Map() // name -> GainNode
         this._loopSources = new Map() // soundName -> { source, gain }
 
         this._muted = false
-        this._volumes = { ...DEFAULT_VOLUMES }
+        this._soundVolumes = {
+            background: DEFAULT_VOLUME.background,
+            carswitch: DEFAULT_VOLUME.carswitch,
+            greenled: DEFAULT_VOLUME.greenled,
+            click: DEFAULT_VOLUME.click,
+            hover: DEFAULT_VOLUME.hover,
+            hoverout: DEFAULT_VOLUME.hoverout,
+            posterhover: DEFAULT_VOLUME.posterhover,
+            swoosh1: DEFAULT_VOLUME.swoosh1,
+            swoosh2: DEFAULT_VOLUME.swoosh2,
+            swoosh3: DEFAULT_VOLUME.swoosh3,
+            swoosh4: DEFAULT_VOLUME.swoosh4,
+        }
         this._unlocked = false
         this._backgroundStarted = false
     }
@@ -27,16 +38,8 @@ class AudioManagerImpl {
         this._ctx = new Ctx()
 
         this._masterGain = this._ctx.createGain()
-        this._masterGain.gain.value = this._muted ? 0 : this._volumes.master
+        this._masterGain.gain.value = this._muted ? 0 : 1
         this._masterGain.connect(this._ctx.destination)
-
-            // Buses
-            ;['music', 'ui', 'car'].forEach((bus) => {
-                const g = this._ctx.createGain()
-                g.gain.value = this._volumes[bus] ?? 1
-                g.connect(this._masterGain)
-                this._busGains.set(bus, g)
-            })
     }
 
     async unlock() {
@@ -69,20 +72,23 @@ class AudioManagerImpl {
     setMuted(muted) {
         this._muted = Boolean(muted)
         if (this._masterGain) {
-            this._masterGain.gain.value = this._muted ? 0 : this._volumes.master
+            this._masterGain.gain.value = this._muted ? 0 : 1
         }
     }
 
-    setVolumes(next) {
-        this._volumes = { ...this._volumes, ...(next || {}) }
-        if (this._masterGain) this._masterGain.gain.value = this._muted ? 0 : this._volumes.master
-        for (const [bus, gainNode] of this._busGains.entries()) {
-            if (typeof this._volumes[bus] === 'number') gainNode.gain.value = this._volumes[bus]
+    setSoundVolumes(next) {
+        this._soundVolumes = { ...this._soundVolumes, ...(next || {}) }
+
+        // Update looped sounds (e.g. background) immediately
+        for (const [name, entry] of this._loopSources.entries()) {
+            const perSound = typeof this._soundVolumes[name] === 'number' ? this._soundVolumes[name] : 1
+            const base = typeof entry.baseVolume === 'number' ? entry.baseVolume : 1
+            if (entry?.gain?.gain) entry.gain.gain.value = base * perSound
         }
     }
 
-    getVolumes() {
-        return { ...this._volumes }
+    getSoundVolumes() {
+        return { ...this._soundVolumes }
     }
 
     async _fetchDecode(url) {
@@ -120,11 +126,6 @@ class AudioManagerImpl {
         Object.keys(SOUND_FILES).forEach((k) => void this.load(k))
     }
 
-    _getBusGain(busName) {
-        this.init()
-        return this._busGains.get(busName) || this._masterGain
-    }
-
     async play(name, opts = {}) {
         if (!this._ctx) this.init()
         if (!this._unlocked) return null
@@ -132,8 +133,8 @@ class AudioManagerImpl {
         const buf = await this.load(name)
         if (!buf) return null
 
-        const bus = opts.bus || SOUND_BUS[name] || 'ui'
         const volume = typeof opts.volume === 'number' ? opts.volume : 1
+        const perSound = typeof this._soundVolumes[name] === 'number' ? this._soundVolumes[name] : 1
         const playbackRate = typeof opts.playbackRate === 'number' ? opts.playbackRate : 1
 
         const src = this._ctx.createBufferSource()
@@ -141,10 +142,10 @@ class AudioManagerImpl {
         src.playbackRate.value = playbackRate
 
         const g = this._ctx.createGain()
-        g.gain.value = volume
+        g.gain.value = volume * perSound
 
         src.connect(g)
-        g.connect(this._getBusGain(bus))
+        g.connect(this._masterGain)
         src.start(0)
         return src
     }
@@ -158,21 +159,21 @@ class AudioManagerImpl {
         const buf = await this.load(name)
         if (!buf) return null
 
-        const bus = opts.bus || SOUND_BUS[name] || 'music'
         const volume = typeof opts.volume === 'number' ? opts.volume : 1
+        const perSound = typeof this._soundVolumes[name] === 'number' ? this._soundVolumes[name] : 1
 
         const src = this._ctx.createBufferSource()
         src.buffer = buf
         src.loop = true
 
         const g = this._ctx.createGain()
-        g.gain.value = volume
+        g.gain.value = volume * perSound
 
         src.connect(g)
-        g.connect(this._getBusGain(bus))
+        g.connect(this._masterGain)
         src.start(0)
 
-        const entry = { source: src, gain: g }
+        const entry = { source: src, gain: g, baseVolume: volume }
         this._loopSources.set(name, entry)
         return entry
     }

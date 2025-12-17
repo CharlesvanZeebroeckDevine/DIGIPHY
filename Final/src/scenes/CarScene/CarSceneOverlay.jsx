@@ -65,7 +65,11 @@ export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visib
 
     return (
 
-        <div className="car_scene_overlay" style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease' }}>
+        <div
+            className={`car_scene_overlay ${visible ? 'is-visible' : 'is-hidden'}`}
+            aria-hidden={!visible}
+            style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.5s ease' }}
+        >
             <div
                 ref={titleRef}
                 className="overlay_title_container"
@@ -84,7 +88,7 @@ export default function CarSceneOverlay({ activeModelIndex, onModelSwitch, visib
                     <h1>The ULTIMATE <span className="purple">XR</span> <br /> SEATING BUCK</h1>
                 </VariableText>
             </div>
-            <div className="overlay_controls">
+            <div className="overlay_controls" style={{ pointerEvents: visible ? 'auto' : 'none' }}>
                 <div className="controls">
                     <SecondaryButton
                         text="SUV"

@@ -10,6 +10,7 @@ import PrimaryButton from '../../Components/UI/PrimaryButton'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
+import { useAudio } from '../../audio/AudioContext.js'
 
 gsap.registerPlugin(ScrollTrigger, SplitText)
 
@@ -46,12 +47,23 @@ function SceneContent({
     // Ref to track animation state without re-renders
     const animState = useRef({ intensity: 1 })
     const scrollDirRef = useRef(1)
+    const audio = useAudio()
+    const swooshRef = useRef({ s1: false, s2: false, s3: false, s4: false })
 
     useLayoutEffect(() => {
         // Now this only runs after Suspense resolves, so sphereRef.current SHOULD be populated
         if (!sphereRef.current || !containerRef.current) return
 
         const ctx = gsap.context(() => {
+            const playSwooshOnce = (key, soundName) => {
+                // Only fire on forward scroll so scrubbing back doesn't spam SFX
+                const dir = scrollDirRef.current ?? 1
+                if (dir !== 1) return
+                if (swooshRef.current[key]) return
+                swooshRef.current[key] = true
+                void audio.play(soundName)
+            }
+
             const splits = []
             const createSplit = (el, options) => {
                 const split = new SplitText(el, options)
@@ -109,6 +121,13 @@ function SceneContent({
                         invalidateOnRefresh: true,
                         onUpdate: (self) => {
                             scrollDirRef.current = self.direction
+                            // If user scrubs back to the start, allow swooshes to play again.
+                            if (self.progress < 0.01) {
+                                swooshRef.current.s1 = false
+                                swooshRef.current.s2 = false
+                                swooshRef.current.s3 = false
+                                swooshRef.current.s4 = false
+                            }
                         }
                     }
                 })
@@ -129,6 +148,8 @@ function SceneContent({
 
             const addPhase1SpiralIn = (tl, { leftPivot, rightPivot, leftSphere, rightSphere, splitChars }) => {
                 tl.addLabel("phase1", 0)
+                // swoosh1: when spheres start moving toward the center
+                tl.call(() => playSwooshOnce('s1', 'swoosh1'), null, "phase1")
 
                 tl.to([leftPivot.rotation, rightPivot.rotation], {
                     y: "+=" + Math.PI * 2.5,
@@ -232,6 +253,8 @@ function SceneContent({
 
                 // Start phase3 immediately (removes the “dead scroll” feeling)
                 const phase3Start = "phase3"
+                // swoosh2: when 1st line starts revealing from the dot
+                tl.call(() => playSwooshOnce('s2', 'swoosh2'), null, phase3Start)
 
                 // Track panel math for 3 panels (300vw total):
                 // - To reveal panel 2, move left by 100vw => xPercent: -33.333...
@@ -278,6 +301,8 @@ function SceneContent({
                         const arrived = headX >= (targetClientX - 2)
                         if (arrived && !gridRevealTriggered.current) {
                             gridRevealTriggered.current = true
+                            // swoosh3: when the cube grid reveals for the first time
+                            playSwooshOnce('s3', 'swoosh3')
                             containerRef.current.dispatchEvent(new CustomEvent('cubegrid:reveal', { detail: { state: 'play' } }))
                         } else if (!arrived && gridRevealTriggered.current) {
                             gridRevealTriggered.current = false
@@ -376,6 +401,13 @@ function SceneContent({
                     duration: DURATIONS.line2Draw,
                     ease: 'power1.inOut',
                 }, lineContinueStart)
+
+                // swoosh4: when 2nd line is halfway through its reveal
+                tl.call(
+                    () => playSwooshOnce('s4', 'swoosh4'),
+                    null,
+                    `${lineContinueStart}+=${DURATIONS.line2Draw * 0.5}`
+                )
 
                 // Direction-aware cube hide/show so scrubbing back restores panel2
                 tl.call(() => {

@@ -2,6 +2,7 @@ import { useTexture, shaderMaterial } from '@react-three/drei'
 import { extend, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useState, useRef } from 'react'
+import { useAudio } from '../../audio/AudioContext.js'
 
 const PosterGlowMaterial = shaderMaterial(
     {
@@ -42,6 +43,7 @@ export default function Poster({ url, position, rotation = [0, Math.PI, 0], scal
     texture.colorSpace = THREE.SRGBColorSpace
     const [hovered, setHovered] = useState(false)
     const glowMaterialRef = useRef()
+    const audio = useAudio()
 
     useFrame((state, delta) => {
         if (glowMaterialRef.current) {
@@ -66,13 +68,14 @@ export default function Poster({ url, position, rotation = [0, Math.PI, 0], scal
                         onClick && onClick(e)
                     }
                 }}
-                onPointerOver={() => {
+                onPointerEnter={() => {
                     if (isInteractable) {
                         document.body.style.cursor = 'pointer'
                         setHovered(true)
+                        void audio.play('posterhover')
                     }
                 }}
-                onPointerOut={() => {
+                onPointerLeave={() => {
                     document.body.style.cursor = 'auto'
                     setHovered(false)
                 }}
@@ -93,7 +96,7 @@ export default function Poster({ url, position, rotation = [0, Math.PI, 0], scal
                 {/* @ts-ignore */}
                 <posterGlowMaterial
                     ref={glowMaterialRef}
-                    color={[1.1, 1, 1.2]}
+                    color={[1.5, 1.3, 1.6]}
                     transparent
                     toneMapped={false}
                 />
