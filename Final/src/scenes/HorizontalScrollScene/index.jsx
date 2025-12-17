@@ -1,6 +1,6 @@
 import './HorizontalScrollScene.css'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, Stats } from '@react-three/drei'
+import { OrbitControls } from '@react-three/drei'
 import { Sphere } from './Sphere'
 import { InteractiveCubeGrid } from './InteractiveCubeGrid'
 
@@ -724,7 +724,6 @@ export default function HorizontalScrollScene() {
                     >
                         <Suspense fallback={null}>
                             <color attach="background" args={['#191411']} />
-                            <Stats />
                             <SceneContent
                                 containerRef={containerRef}
                                 ui={{

@@ -1,0 +1,8 @@
+.endsection_container {
+    width: 100%;
+    min-height: 100vh;
+    height: auto;
+    background-color: var(--smoky-umber);
+    position: relative;
+    z-index: 2;
+}

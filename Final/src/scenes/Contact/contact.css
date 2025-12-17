@@ -1,5 +1,7 @@
 .contact_container {
-    background-color: var(--smoky-umber);
+    /* background-color: var(--smoky-umber); Removed to show liquid line */
+    position: relative;
+    z-index: 2;
     padding: var(--sp-xl);
     display: flex;
     flex-direction: row;
@@ -119,4 +121,9 @@ form {
     font-family: 'Montserrat', sans-serif;
     font-size: var(--fz--1);
     font-weight: 200;
+}
+
+.form_item input.input-error {
+    border-bottom: 1px solid red;
+    transition: 0.3s ease-in-out;
 }

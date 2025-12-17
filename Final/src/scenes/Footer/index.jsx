@@ -1,36 +1,67 @@
 import './footer.css'
 import VariableText from '../../Components/VariableText'
-import { LiquidFooterLine } from './LiquidFooterLine'
 import PrimaryButton from '../../Components/UI/PrimaryButton'
 import FooterSocialButton from '../../Components/UI/FooterSocialButton'
+import { useRef, useLayoutEffect } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const Footer = ({ scrollToSection }) => {
+    const titleContainerRef = useRef()
+    const containerRef = useRef()
+
+    useLayoutEffect(() => {
+        const ctx = gsap.context(() => {
+            gsap.set(titleContainerRef.current, {
+                opacity: 0,
+                y: 100
+            })
+
+            gsap.to(titleContainerRef.current, {
+                scrollTrigger: {
+                    trigger: containerRef.current,
+                    start: "top 40%", 
+                    toggleActions: "play none none reverse", 
+                },
+                opacity: 1,
+                y: 0,
+                duration: 0.4,
+                ease: "power2.out"
+            })
+        }, containerRef)
+
+        return () => ctx.revert()
+    }, [])
+
     return (
-        <div className="footer_container--wrapper">
-            <LiquidFooterLine />
+        <div id="footer" className="footer_container--wrapper" ref={containerRef}>
             <div className="footer_container">
                 <div className="footer_top">
-                    <div style={{ pointerEvents: 'none' }}>
-                        <VariableText
-                            className="footer_title"
-                            baseSettings={{ wght: 300, slnt: 100, CNTR: 100, letterSpacing: -5 }}
-                            hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
-                            radius={400}
-                        >
-                            DigiPHY
-                        </VariableText>
-                        <VariableText
-                            className="footer_title"
-                            baseSettings={{ wght: 300, slnt: 100, CNTR: 100, letterSpacing: -5 }}
-                            hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
-                            radius={400}
-                        >
-                            <a href="https://granstudio.com/" target="_blank" rel="noopener noreferrer">
-                                by GranStudio
-                            </a>
-                        </VariableText>
+                    <div className="footer_title_wrapper" ref={titleContainerRef} style={{ pointerEvents: 'none' }}>
+                        <div>
+                            <VariableText
+                                className="footer_title"
+                                baseSettings={{ wght: 300, slnt: 100, CNTR: 100, letterSpacing: -5 }}
+                                hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
+                                radius={400}
+                            >
+                                DigiPHY
+                            </VariableText>
+                            <VariableText
+                                className="footer_title"
+                                baseSettings={{ wght: 300, slnt: 100, CNTR: 100, letterSpacing: -5 }}
+                                hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
+                                radius={400}
+                            >
+                                <a href="https://granstudio.com/" target="_blank" rel="noopener noreferrer">
+                                    by GranStudio
+                                </a>
+                            </VariableText>
+                        </div>
+                        <p className="footer_subtitle">The ultimate <span>XR</span> seating buck.</p>
                     </div>
-                    <p className="footer_subtitle">The ultimate <span>XR</span> seating buck.</p>
                 </div>
                 <div className="footer_bottom">
                     <div className="socials">

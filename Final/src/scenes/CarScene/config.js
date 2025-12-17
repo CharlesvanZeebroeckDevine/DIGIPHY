@@ -34,7 +34,7 @@ export const USECASE_CAMERA_CONFIG = {
     { x: -8, y: 2, z: -20 },    // P0: Start (Matches Zoom Out position)
     { x: 0, y: 6, z: -10 },   // P1: Wide out
     { x: 2, y: 5, z: -10 },   // P2: Swoop in
-    { x: 2.5, y: 6, z: 0 }      // P3: Target 
+    { x: 2.5, y: 6, z: -2 }      // P3: Target 
   ],
   lookAtTarget: { x: 2.5, y: 6, z: 1 } // Where camera looks at end of sequence
 }

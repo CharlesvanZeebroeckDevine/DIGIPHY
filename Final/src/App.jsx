@@ -6,8 +6,7 @@ import './App.css'
 import CarScene from './scenes/CarScene'
 import HorizontalScrollScene from './scenes/HorizontalScrollScene'
 import TechFeatures from './scenes/TechFeatures'
-import Contact from './scenes/Contact'
-import Footer from './scenes/Footer'
+import EndSection from './scenes/EndSection'
 import LoadingScreen from './Components/LoadingScreen'
 import Nav from './Components/Nav'
 import { TRANSITION_CONFIG } from './scenes/CarScene/config'
@@ -163,7 +162,7 @@ function App() {
       })
 
       ScrollTrigger.create({
-        trigger: '#footer',
+        trigger: '#endsection', // Changed from #footer
         start: 'top bottom-=50',
         onEnter: () => setMuteVisible(false),
         onLeaveBack: () => setMuteVisible(true)
@@ -287,11 +286,8 @@ function App() {
         <section id="tech-features" data-scroll-section data-theme="dark" className="section_tech--features">
           <TechFeatures />
         </section>
-        <section id="contact" data-scroll-section data-theme="dark" className="section_contact">
-          <Contact />
-        </section>
-        <section id="footer" data-scroll-section data-theme="dark" className="section_footer">
-          <Footer scrollToSection={handleScrollToSection} />
+        <section id="endsection" data-scroll-section data-theme="dark" className="section_endsection">
+          <EndSection scrollToSection={handleScrollToSection} />
         </section>
       </div>
     </>

@@ -27,12 +27,14 @@ const random = (min, max) => Math.random() * (max - min) + min
 export const LiquidFooterLine = () => {
     const pathRefs = useRef([])
     const simulationRef = useRef([])
-    const [blobCount] = useState(80)
+    const containerRef = useRef(null)
+    const [blobCount] = useState(120) // Increased for larger area
 
     useEffect(() => {
         const initSimulation = () => {
-            const width = window.innerWidth
-            const height = window.innerHeight
+            if (!containerRef.current) return
+            const width = containerRef.current.clientWidth
+            const height = containerRef.current.clientHeight
 
             const blobs = []
 
@@ -62,12 +64,15 @@ export const LiquidFooterLine = () => {
             simulationRef.current = blobs
         }
 
+        // Initialize with a slight delay to ensure layout is computed, or just rely on ResizeObserver/initial run
+        // We call it immediately
         initSimulation()
 
         const ticker = () => {
+            if (!containerRef.current) return
             const time = Date.now() * 0.001
-            const width = window.innerWidth
-            const height = window.innerHeight
+            const width = containerRef.current.clientWidth
+            const height = containerRef.current.clientHeight
             const buffer = 300
 
             simulationRef.current.forEach((blob, i) => {
@@ -113,6 +118,7 @@ export const LiquidFooterLine = () => {
 
     return (
         <svg
+            ref={containerRef}
             style={{
                 position: 'absolute',
                 top: 0,

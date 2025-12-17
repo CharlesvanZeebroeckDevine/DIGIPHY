@@ -32,7 +32,7 @@ const TechFeatures = () => {
                 scrollTrigger: {
                     trigger: wrapperRef.current,
                     start: "top top",
-                    end: "+=150%",
+                    end: "+=200%",
                     pin: true,
                     scrub: 1,
                 }
@@ -78,11 +78,11 @@ const TechFeatures = () => {
                     <div ref={titleRef}>
                         <VariableText
                             className="feature_title"
-                            baseSettings={{ wght: 300, slnt: 100, CNTR: 100, letterSpacing: -5 }}
-                            hoverSettings={{ wght: 700, slnt: 0, CNTR: 0, letterSpacing: 5 }}
+                            baseSettings={{ wght: 700, slnt: 100, CNTR: 100, letterSpacing: 2 }}
+                            hoverSettings={{ wght: 300, slnt: 0, CNTR: 0, letterSpacing: -5 }}
                             radius={400}
                         >
-                            <h2>The Hidden Layer Inside DigiPHY</h2>
+                            <h2>THE HIDDEN LAYER INSIDE <span className="bold">DIGIPHY</span></h2>
                         </VariableText>
                     </div>
                 </div>
